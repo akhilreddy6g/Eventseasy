@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { SessionService } from './session.service';
-import { LogInfoService } from '../logger/logger.service';
+import { LoggerModule } from '../logger/logger.module';
 
 @Module({
-    providers: [SessionService, LogInfoService],
-    exports: [SessionService]
+    providers: [SessionService],
+    exports: [SessionService],
+    imports: [LoggerModule]
 })
 export class SessionModule{}
