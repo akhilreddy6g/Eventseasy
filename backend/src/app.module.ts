@@ -12,8 +12,7 @@ import { LogInfoService } from './auth/logger/logger.service';
 
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AuthMiddleware)
-      .forRoutes({ path: 'events', method: RequestMethod.ALL });
-  }
+    consumer.apply(AuthMiddleware).forRoutes(
+      { path: 'events/conf', method: RequestMethod.ALL }
+    );}
 }

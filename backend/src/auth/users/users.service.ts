@@ -2,7 +2,7 @@ import { Injectable} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schema/users.schema';
 import { Model } from 'mongoose';
-import { AuthdtoSigin, AuthdtoSignup, HashPass, Response, SigninResponse } from '../dto';
+import { AuthdtoSigin, AuthdtoSignup, HashPass, Response, SigninResponse, Tokens } from '../dto';
 import * as argon from "argon2";
 import { LogInfoService } from '../logger/logger.service';
 import { SessionService } from '../session/session.service';
@@ -68,7 +68,7 @@ export class UsersService {
       if (!user) return { message: "Email does not exist", authneticated: false, accessToken: null, refreshToken: null };
       const passwordCheck = await this.verifyPassword({ hash: user.password, plain: data.password });
       if(!passwordCheck.success) return { message: "Invalid password", authneticated: false, accessToken: null, refreshToken: null };
-      const token = await this.sessionService.genToken({email: data.email, password: data.password, accType: user.accType});
+      const token = this.sessionService.genToken({email: data.email, password: data.password, accType: user.accType});
       if(token.accessToken && token.refreshToken){
         this.logService.Logger({request: "User Signin", source: "users service -> signin", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Signin successful", error: "none"})
         return { message: "Signin successful", authneticated: true, accessToken: token.accessToken, refreshToken: token.refreshToken}
@@ -78,25 +78,29 @@ export class UsersService {
       }
     } catch (error) {
       this.logService.Logger({request: "User Signin", source: "users service -> signin", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error during signin", error: error})
-      return { message: "Server error", authneticated: false, accessToken: null, refreshToken: null  };
+      return { message: "An error occurred during signin", authneticated: false, accessToken: null, refreshToken: null  };
     }
   }
 
-  async signup(data: AuthdtoSignup): Promise<Response> {
+  async signup(data: AuthdtoSignup): Promise<SigninResponse> {
     try {
       const emailExists = await this.findEmail({ email: data.email, password: data.password });
-      if (emailExists) return { message: "Email already exists. Use another email.", success: false };
+      if (emailExists) return { message: "Email already exists. Use another email.", authneticated: false, accessToken: null, refreshToken: null };
       const hashResponse = await this.hashPassword(data);
-      if (!hashResponse.success) return { message: hashResponse.message, success: false };
+      if (!hashResponse.success) return { message: hashResponse.message, authneticated: false, accessToken: null, refreshToken: null  };
       const user = await this.createAccount({ email: data.email, password: hashResponse.message, accType: data.accType });
       this.logService.Logger({request: "User Signup", source: "users service -> signup", timestamp: new Date(), queryParams: false, bodyParams: true, response: user? "Signup successful" : "Signup Failed - Unable to create am account", error: "none"})
-      return user
-        ? { message: "Account setup successful", success: true }
-        : { message: "Failed to create account", success: false };
+      const token = this.sessionService.genToken({email: data.email, password: data.password, accType: data.accType});
+      if(token.accessToken && token.refreshToken){
+        this.logService.Logger({request: "User Signup", source: "users service -> signup", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Signup successful", error: "none"})
+        return { message: "Account setup successful", authneticated: true, accessToken: token.accessToken, refreshToken: token.refreshToken}
+      } else {
+        this.logService.Logger({request: "User Signup", source: "users service -> signup", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Token generation failed", error: "none"})
+        return { message: "Failed to create account - Token generation failed", authneticated: false, accessToken: null, refreshToken: null};
+      }
     } catch (error) {
-      console.error("Error during signup:", error);
-      this.logService.Logger({request: "User Signin", source: "users service -> signup", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error during signup", error: error})
-      return { message: "An error occurred during sign-up", success: false };
+      this.logService.Logger({request: "User Signup", source: "users service -> signup", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error during signup", error: error})
+      return { message: "An error occurred during signup", authneticated: false, accessToken: null, refreshToken: null  };
     }
   }
 }

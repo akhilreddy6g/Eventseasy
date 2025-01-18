@@ -12,7 +12,7 @@ export class AuthMiddleware implements NestMiddleware {
         throw new UnauthorizedException('Requests must be over HTTPS');
       }
       const token = req.headers['authorization']?.split(' ')[1]; 
-      if (!token) {
+      if (!token || !req.cookies.auth) {
         throw new UnauthorizedException('Token not provided');
       }
       const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
@@ -20,11 +20,10 @@ export class AuthMiddleware implements NestMiddleware {
         throw new UnauthorizedException('Invalid token');
       }
       req.user = decoded;
+      next(); 
     } catch (error) {
-      console.log(error);
       this.logService.Logger({request: "Service Request", source: "AuthMiddleware ", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Token Missing in Auth Headers/ Wrong Token", error: error})
       res.status(401).json({message: "token missing/expired", error: error})
     }
-    next();
   }
 }
