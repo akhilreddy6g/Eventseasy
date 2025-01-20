@@ -2,12 +2,9 @@
 
 import { Bell, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu"
+import LogoutButton from "../ui/logout"
+import { cn } from "@/lib/utils"
 
 export function DashboardHeader() {
   return (
@@ -24,10 +21,10 @@ export function DashboardHeader() {
                 <Settings className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Sign out</DropdownMenuItem>
+            <DropdownMenuContent>
+                <DropdownMenuItem className={cn("pl-5")}>Profile</DropdownMenuItem>
+                <DropdownMenuItem className={cn("pl-5")}>Settings</DropdownMenuItem>
+                <DropdownMenuItem className={cn("pl-5")}><LogoutButton/></DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

@@ -6,21 +6,34 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Icons } from "@/components/icons"
+import { useRouter} from 'next/navigation';
+import { NextRequest } from 'next/server';
+import { apiUrl } from "../noncomponents"
 
 interface AuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   type: "login" | "signup"
 }
 
-export function AuthForm({ type, className, ...props }: AuthFormProps) {
+export function AuthForm({ type, className, ...props }: AuthFormProps, req: NextRequest) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const form = useForm()
-
+  const router = useRouter();
   async function onSubmit(data: any) {
-    setIsLoading(true)
-    // TODO: Implement authentication logic
-    setTimeout(() => setIsLoading(false), 1000)
+    setIsLoading(true);
+    try {
+      const response = await apiUrl.post("/auth/signin", {email: data.email, password: data.password})
+      if (response.data.Authenticated) {
+        router.push(`/dashboard`);
+      } else {
+        console.log("Authentication failed");
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+    } finally {
+      setIsLoading(false);
+    }
   }
-
+  
   return (
     <div className="grid gap-6" {...props}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -34,6 +47,7 @@ export function AuthForm({ type, className, ...props }: AuthFormProps) {
               autoComplete="email"
               autoCorrect="off"
               disabled={isLoading}
+              required
               {...form.register("email")}
             />
           </div>
@@ -44,6 +58,7 @@ export function AuthForm({ type, className, ...props }: AuthFormProps) {
               type="password"
               autoComplete="current-password"
               disabled={isLoading}
+              required
               {...form.register("password")}
             />
           </div>
