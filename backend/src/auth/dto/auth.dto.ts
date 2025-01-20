@@ -67,6 +67,8 @@ export class AccToken{
 export class Tokens{
   accessToken: string
   refreshToken: string
+  email?: string
+  accType?: string
 }
 
 export class SigninResponse{
@@ -74,6 +76,7 @@ export class SigninResponse{
   message: string
   accessToken: string
   refreshToken: string
+  accType?: string
 }
 
 export class Log{

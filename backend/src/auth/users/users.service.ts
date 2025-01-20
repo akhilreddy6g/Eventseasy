@@ -65,13 +65,13 @@ export class UsersService {
   async signin(data: AuthdtoSigin): Promise<SigninResponse> {
     try {
       const user = await this.findEmail(data);
-      if (!user) return { message: "Email does not exist", authneticated: false, accessToken: null, refreshToken: null };
+      if (!user) return { message: "Email does not exist", authneticated: false, accessToken: null, refreshToken: null};
       const passwordCheck = await this.verifyPassword({ hash: user.password, plain: data.password });
-      if(!passwordCheck.success) return { message: "Invalid password", authneticated: false, accessToken: null, refreshToken: null };
+      if(!passwordCheck.success) return { message: "Invalid password", authneticated: false, accessToken: null, refreshToken: null};
       const token = this.sessionService.genToken({email: data.email, password: data.password, accType: user.accType});
       if(token.accessToken && token.refreshToken){
         this.logService.Logger({request: "User Signin", source: "users service -> signin", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Signin successful", error: "none"})
-        return { message: "Signin successful", authneticated: true, accessToken: token.accessToken, refreshToken: token.refreshToken}
+        return { message: "Signin successful", authneticated: true, accessToken: token.accessToken, refreshToken: token.refreshToken, accType: user.accType}
       } else {
         this.logService.Logger({request: "User Signin", source: "users service -> signin", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Token generation failed", error: "none"})
         return { message: "Token generation failed", authneticated: false, accessToken: null, refreshToken: null};
@@ -93,7 +93,7 @@ export class UsersService {
       const token = this.sessionService.genToken({email: data.email, password: data.password, accType: data.accType});
       if(token.accessToken && token.refreshToken){
         this.logService.Logger({request: "User Signup", source: "users service -> signup", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Signup successful", error: "none"})
-        return { message: "Account setup successful", authneticated: true, accessToken: token.accessToken, refreshToken: token.refreshToken}
+        return { message: "Account setup successful", authneticated: true, accessToken: token.accessToken, refreshToken: token.refreshToken, accType: user.accType}
       } else {
         this.logService.Logger({request: "User Signup", source: "users service -> signup", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Token generation failed", error: "none"})
         return { message: "Failed to create account - Token generation failed", authneticated: false, accessToken: null, refreshToken: null};

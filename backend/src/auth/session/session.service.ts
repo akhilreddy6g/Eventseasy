@@ -42,7 +42,7 @@ export class SessionService {
                 if(truth){
                     const accessToken = jwt.sign({email: email, accType: accType }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m', issuer: process.env.ACCESS_ISSUER })
                     this.logService.Logger({request: "Access Token Regeneration Service", source: "session service -> refreshAccessToken", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Successfully generated a new access token", error: "none"})
-                    return {accessToken:accessToken, refreshToken:refreshToken}
+                    return {accessToken:accessToken, refreshToken:refreshToken, accType: accType, email: email}
                 }
             }
         }catch(error) {
