@@ -11,8 +11,8 @@ export class SessionService {
     constructor(private logService: LogInfoService){}
     genToken(data: UserData): Tokens {
         try {
-            const accessToken = jwt.sign({email: data.email, accType: data.accType}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m', issuer: process.env.ACCESS_ISSUER });
-            const refreshToken = jwt.sign({email: data.email, accType: data.accType}, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '30d', issuer: process.env.REFRESH_ISSUER });
+            const accessToken = jwt.sign({email: data.email}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m', issuer: process.env.ACCESS_ISSUER });
+            const refreshToken = jwt.sign({email: data.email}, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '30d', issuer: process.env.REFRESH_ISSUER });
             this.logService.Logger({request: "Token Generation Service", source: "session service -> genToken ", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Tokens generated", error: "none"})
             return { accessToken: accessToken, refreshToken: refreshToken };
         } catch (error) {
@@ -38,11 +38,11 @@ export class SessionService {
             const refreshToken = JSON.parse(req.cookies.auth)
             if(refreshToken){
                 const truth = jwt.verify(refreshToken.rft, process.env.REFRESH_TOKEN_SECRET)
-                const { email, accType} = truth as jwt.JwtPayload;
+                const {email} = truth as jwt.JwtPayload;
                 if(truth){
-                    const accessToken = jwt.sign({email: email, accType: accType }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m', issuer: process.env.ACCESS_ISSUER })
+                    const accessToken = jwt.sign({email: email}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m', issuer: process.env.ACCESS_ISSUER })
                     this.logService.Logger({request: "Access Token Regeneration Service", source: "session service -> refreshAccessToken", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Successfully generated a new access token", error: "none"})
-                    return {accessToken:accessToken, refreshToken:refreshToken, accType: accType, email: email}
+                    return {accessToken:accessToken, refreshToken:refreshToken, email: email}
                 }
             }
         }catch(error) {

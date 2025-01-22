@@ -1,11 +1,5 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString, IsEnum } from "class-validator";
 
-export enum AccountType {
-  HOST = 'host',
-  GUEST = 'guest',
-  EVENT_MANAGER = 'event manager',
-}
-
 export interface HashPass{
   hash: string
   plain: string
@@ -14,34 +8,6 @@ export interface HashPass{
 export interface Response{
   success: boolean
   message: string
-}
-
-export class AuthdtoSigin{
-  @IsEmail()
-  @IsNotEmpty()
-  email: string
-
-  @IsString()
-  @IsNotEmpty()
-  password: string
-}
-
-export class AuthdtoSignup {
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
-
-  @IsString()
-  @IsNotEmpty()
-  password: string;
-
-  @IsEnum(AccountType)
-  @IsNotEmpty()
-  accType: AccountType;
-
-  @IsOptional()
-  @IsString()
-  eventCode?: string;
 }
 
 export class UserData{
@@ -53,9 +19,6 @@ export class UserData{
   @IsNotEmpty()
   password: string
 
-  @IsString()
-  @IsNotEmpty()
-  accType: string;
 }
 
 export class AccToken{
@@ -68,7 +31,6 @@ export class Tokens{
   accessToken: string
   refreshToken: string
   email?: string
-  accType?: string
 }
 
 export class SigninResponse{
@@ -76,7 +38,6 @@ export class SigninResponse{
   message: string
   accessToken: string
   refreshToken: string
-  accType?: string
 }
 
 export class Log{
