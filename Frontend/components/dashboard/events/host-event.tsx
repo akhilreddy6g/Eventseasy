@@ -117,7 +117,7 @@ export default function HostEvent() {
       <Card className="w-full max-w-xl p-6 shadow-lg border border-gray-200 rounded-lg bg-white">
         <CardHeader className="mb-4">
           <CardTitle className="text-2xl font-bold text-gray-800 text-center">
-            Create an Event
+            Host an Event
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -132,7 +132,7 @@ export default function HostEvent() {
                 type="text"
                 placeholder="Enter event name"
                 {...register("eventName", { required: "Event name is required" })}
-                className="peer block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
+                className="peer block w-full px-4 py-2 border border-gray-300 rounded-lg placeholder-gray-400"
               />
               {errors.eventName && (
                 <p className="text-sm text-red-500 mt-1">{errors.eventName.message}</p>
@@ -218,10 +218,10 @@ export default function HostEvent() {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-blue-600 text-white rounded-lg py-2"
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-2"
               disabled={!isValid}
             >
-              Create Event
+              Submit
             </Button>
           </form>
         </CardContent>

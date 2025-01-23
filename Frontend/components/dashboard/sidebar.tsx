@@ -72,12 +72,14 @@ export function DashboardSidebar() {
               <item.icon key={`item-link-icon-${item.name}`} className="h-5 w-5" />
               {item.name}
             </Link>
-            {isOpen && item.name === "Events" && (
+          </div>
+        ))}
+         {isOpen && (
               <div className="mt-1">
                 {events.map((event, eventIndex) => (
-                  <>
+                 <div key={`event-group-${eventIndex}`}>
                   <div key={`event-container-${event.action}`} className="flex pl-1 items-center">
-                    <button onClick={()=>{setToggle(event.action)}}><ChevronRight /></button>
+                    <button key={`button-${event.action}`} onClick={()=>{setToggle(event.action)}}><ChevronRight /></button>
                     <Link
                        key={`event-link-${event.action}`}
                       href={`${event.href}`}
@@ -90,12 +92,10 @@ export function DashboardSidebar() {
                     </Link>
                   </div>
                   { event.action==toggle && <Link key={`sub-link-${event.action}`} href={`/events/${event.action.toLocaleLowerCase()}`}><div key={`sub-div-${event.action}`} className="flex pl-1 pt-1 pb-1 gap-1 items-center text-muted-foreground"><Plus key={`plus-icon-${event.action}`}/>{event.action} an Event</div></Link>}
-                  </>
+                  </div>
                 ))}
               </div>
             )}
-          </div>
-        ))}
       </nav>
     </div>
   );
