@@ -29,3 +29,17 @@ export class HostBodyData{
     @IsNotEmpty()
     event: string
 }
+
+export class JoineeBodyData{
+    @IsNotEmpty()
+    @IsString()
+    user: string
+
+    @IsNotEmpty()
+    @IsString()
+    entryCode: string
+
+    @IsNotEmpty()
+    @IsString()
+    accType: string
+}
