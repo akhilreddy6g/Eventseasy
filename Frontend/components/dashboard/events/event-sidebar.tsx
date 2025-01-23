@@ -13,12 +13,9 @@ import {
   MapPin,
 } from "lucide-react";
 
-// Sidebar component
 export default function EventSidebar() {
   const pathname = usePathname();
-  const basePath = pathname.split('/').slice(0, 3).join('/'); // Adjust to extract your base path.
-
-  // Navigation links for the sidebar.
+  const basePath = pathname.split('/').slice(0, 3).join('/'); 
   const navigation = [
     { name: "Overview", href: "/overview", icon: Info },
     { name: "Guests", href: "/guests", icon: Users },
@@ -35,7 +32,7 @@ export default function EventSidebar() {
         {navigation.map((item) => (
           <Link
             key={item.name}
-            href={`${basePath}${item.href}`} // Use basePath instead of pathname
+            href={`${basePath}${item.href}`}
             className={cn(
               "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md",
               pathname.endsWith(item.href)

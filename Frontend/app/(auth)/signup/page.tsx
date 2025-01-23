@@ -19,23 +19,6 @@ export default function SignUpPage() {
           <p className="text-sm text-muted-foreground">
             Enter your details below to create your account
           </p>
-          <p className="font-medium text-sm text-left pt-2 pb-0">
-            Sign Up as
-          </p>
-          <RadioGroup defaultValue="guest">
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="host" id="host" />
-              <Label htmlFor="host" className="text-muted-foreground">Host</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="event-manager" id="event-manager" />
-              <Label htmlFor="event-manager" className="text-muted-foreground">Event Manager</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="guest" id="guest" />
-              <Label htmlFor="guest" className="text-muted-foreground">Guest</Label>
-            </div>
-          </RadioGroup>
         </div>
         <AuthForm type="signup" />
         <p className="px-8 text-center text-sm text-muted-foreground">

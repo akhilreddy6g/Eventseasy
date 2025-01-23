@@ -20,8 +20,9 @@ export function AuthForm({ type, className, ...props }: AuthFormProps, req: Next
   const router = useRouter();
   async function onSubmit(data: any) {
     setIsLoading(true);
+    const route = type === "login" ? "/auth/signin" : "/auth/signup"
     try {
-      const response = await apiUrl.post("/auth/signin", {email: data.email, password: data.password})
+      const response = await apiUrl.post(route, {email: data.email, password: data.password})
       if (response.data.Authenticated) {
         router.push(`/dashboard`);
       } else {

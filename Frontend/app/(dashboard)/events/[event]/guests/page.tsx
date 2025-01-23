@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 import { GuestList } from "@/components/dashboard/guests/guest-list"
 // import { SendInvitation } from "@/components/dashboard/guests/send-invitation"
-import EventSidebar from "@/components/dashboard/events/Eventsidebar";
+import EventSidebar from "@/components/dashboard/events/event-sidebar";
 
 export const metadata: Metadata = {
   title: "Guests - EventBuzz",

@@ -1,4 +1,4 @@
-import EventSidebar from "@/components/dashboard/events/Eventsidebar";
+import EventSidebar from "@/components/dashboard/events/event-sidebar";
 
 // Generate static params for all dynamic event pages.
 export async function generateStaticParams() {
@@ -11,9 +11,9 @@ export async function generateStaticParams() {
 // Mock event data (replace with your actual data source).
 async function fetchEvents() {
   return [
-    { slug: "1" },
-    { slug: "2" },
-    { slug: "ak" },
+    { slug: "hosted" },
+    { slug: "managed" },
+    { slug: "attended" },
   ];
 }
 

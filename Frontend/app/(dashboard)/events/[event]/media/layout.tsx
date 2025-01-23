@@ -1,4 +1,4 @@
-import EventSidebar from "@/components/dashboard/events/Eventsidebar";
+import EventSidebar from "@/components/dashboard/events/event-sidebar";
   
 export default function guestsLayout({
     children,
