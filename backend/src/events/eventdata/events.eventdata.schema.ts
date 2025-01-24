@@ -3,6 +3,7 @@ import { HydratedDocument } from 'mongoose';
 
 export type EventDocument = HydratedDocument<Event>;
 export type AttendeeDocument = HydratedDocument<Attendant>
+export type ViewerDocument = HydratedDocument<Viewer>
 
 @Schema({ versionKey: false })
 export class Event {
@@ -47,7 +48,26 @@ export class Attendant {
 
   @Prop()
   access: boolean
+
+  @Prop()
+  eventId: string
+}
+
+@Schema({ versionKey: false})
+export class Viewer {
+  @Prop()
+  _id: string
+
+  @Prop()
+  user: string
+
+  @Prop()
+  accType: string
+
+  @Prop()
+  eventId: string
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
 export const AttendeeSchema = SchemaFactory.createForClass(Attendant);
+export const ViewerSchema = SchemaFactory.createForClass(Viewer);
