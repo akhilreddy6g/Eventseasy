@@ -1,5 +1,5 @@
 import { Metadata } from "next"
-import { GuestList } from "@/components/dashboard/guests/guest-list"
+import { GuestList } from "@/components/dashboard/guests/guest-overview"
 // import { SendInvitation } from "@/components/dashboard/guests/send-invitation"
 import EventSidebar from "@/components/dashboard/events/event-sidebar";
 
