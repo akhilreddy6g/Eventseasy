@@ -32,7 +32,7 @@ export class InviteService{
         const result = await this.entryCodeGenerator(data);
         if(result.success){
             try {
-                const entry = await this.attendantModel.updateOne({user:data.user}, {$set: {access:data.access, entryCode:result.message, accType:data.accType}}, {upsert: true})
+                const entry = await this.attendantModel.updateOne({user:data.user}, {$set: {entryCode:result.message, accType:data.accType, access:data.access, eventId: data.eventId}}, {upsert: true})
                 if (entry){
                     this.logService.Logger({request: "Guest Invite Service", source: "invite service -> codeEntry", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Successfully logged the entry code in db", error: "none"});
                     return {success: true, message: result.message}
@@ -55,7 +55,8 @@ export class InviteService{
         ${data.message && "<p> Here's what" + " " + data.hostName + " has to say: <br/> &emsp;" + data.message +"</p>"}
         <ol>
             <li> Signup with the same email on <a href="www.google.com">Eventseasy</a></li>
-            <li> Enter the entry code: <h3>${entryCode}<h3></li>
+            <li> Enter the event id: <h3>${data.eventId}</3> </li>
+            <li> Enter the entry code: <h3>${entryCode}</h3></li>
             <li> Join the event and keep yourself updated</li>
         </ol>
         <br/>

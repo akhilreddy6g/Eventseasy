@@ -44,13 +44,13 @@ export class EventService{
 
     async verifyJoinee(data: JoineeBodyData){
       try {
-        const isExists = await this.attendantModel.find({user: data.user, access:false, entryCode:data.entryCode, accType:data.accType})
+        const isExists = await this.attendantModel.find({user: data.user, access:false, entryCode:data.entryCode, accType:data.accType, eventId:data.eventId})
         if(isExists[0]){
           try {
-            const update = await this.attendantModel.updateOne({user: data.user, entryCode:data.entryCode, accType:data.accType}, {$set : {access: true}})
+            const update = await this.attendantModel.updateOne({user: data.user, entryCode:data.entryCode, accType:data.accType, eventId:data.eventId}, {$set : {access: true}})
             this.logService.Logger({request: "Attendant Verification Service", source: "events service -> verifyJoinee", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Attendant credentials verified and access granted", error: "none"})
             try {
-              const result1 = await this.insertIntoViewers(data, isExists[0].eventId)
+              const result1 = await this.insertIntoViewers(data, data.eventId)
               if (result1.success){
                 this.logService.Logger({request: "Attendant Verification Service", source: "events service -> verifyJoinee", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Successfully recorded the change in viewers", error: "none"})
                 return {success: true, message: "Event joined successfully"};
@@ -78,7 +78,7 @@ export class EventService{
 
     async insertIntoViewers(data: HostBodyData | JoineeBodyData, eventId: string){
       try {
-        const result = await this.viewerModel.insertMany({user: data.user, accType:data.accType, eventId:eventId})
+        const result = await this.viewerModel.insertMany({user: data.user, accType:data.accType, eventId:eventId, event:data.event})
         return {success: true, message: "Successfully inserted the event into viewers"}
       } catch (error) {
         this.logService.Logger({request: "Insert into Viewers Service", source: "events service -> insertIntoViewers", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while inserting the event into viewers", error: error})

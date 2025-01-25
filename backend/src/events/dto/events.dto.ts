@@ -42,4 +42,12 @@ export class JoineeBodyData{
     @IsNotEmpty()
     @IsString()
     accType: string
+
+    @IsString()
+    @IsNotEmpty()
+    event: string
+
+    @IsString()
+    @IsNotEmpty()
+    eventId: string
 }

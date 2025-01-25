@@ -66,6 +66,9 @@ export class Viewer {
 
   @Prop()
   eventId: string
+
+  @Prop()
+  event: string
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
