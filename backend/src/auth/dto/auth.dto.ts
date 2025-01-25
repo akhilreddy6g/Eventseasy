@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, IsEnum } from "class-validator";
+import { IsEmail, IsNotEmpty, IsOptional, IsString} from "class-validator";
 
 export interface HashPass{
   hash: string
@@ -11,14 +11,17 @@ export interface Response{
 }
 
 export class UserData{
+  @IsString()
+  @IsOptional()
+  username?: string
+
   @IsEmail()
   @IsNotEmpty()
-  email: string
+  user: string
 
   @IsString()
   @IsNotEmpty()
   password: string
-
 }
 
 export class AccToken{
@@ -30,7 +33,7 @@ export class AccToken{
 export class Tokens{
   accessToken: string
   refreshToken: string
-  email?: string
+  user?: string
 }
 
 export class SigninResponse{

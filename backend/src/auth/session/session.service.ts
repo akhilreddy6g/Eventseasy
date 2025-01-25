@@ -1,4 +1,4 @@
-import { Injectable, Req } from "@nestjs/common";
+import { Injectable} from "@nestjs/common";
 import { AccToken, Tokens, UserData } from "../dto";
 import { LogInfoService } from "../logger/logger.service";
 import * as jwt from 'jsonwebtoken';
@@ -11,8 +11,8 @@ export class SessionService {
     constructor(private logService: LogInfoService){}
     genToken(data: UserData): Tokens {
         try {
-            const accessToken = jwt.sign({email: data.email}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m', issuer: process.env.ACCESS_ISSUER });
-            const refreshToken = jwt.sign({email: data.email}, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '30d', issuer: process.env.REFRESH_ISSUER });
+            const accessToken = jwt.sign({user: data.user}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m', issuer: process.env.ACCESS_ISSUER });
+            const refreshToken = jwt.sign({user: data.user}, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '30d', issuer: process.env.REFRESH_ISSUER });
             this.logService.Logger({request: "Token Generation Service", source: "session service -> genToken ", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Tokens generated", error: "none"})
             return { accessToken: accessToken, refreshToken: refreshToken };
         } catch (error) {
@@ -38,11 +38,11 @@ export class SessionService {
             const refreshToken = JSON.parse(req.cookies.auth)
             if(refreshToken){
                 const truth = jwt.verify(refreshToken.rft, process.env.REFRESH_TOKEN_SECRET)
-                const {email} = truth as jwt.JwtPayload;
+                const {user} = truth as jwt.JwtPayload;
                 if(truth){
-                    const accessToken = jwt.sign({email: email}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m', issuer: process.env.ACCESS_ISSUER })
+                    const accessToken = jwt.sign({user: user}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m', issuer: process.env.ACCESS_ISSUER })
                     this.logService.Logger({request: "Access Token Regeneration Service", source: "session service -> refreshAccessToken", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Successfully generated a new access token", error: "none"})
-                    return {accessToken:accessToken, refreshToken:refreshToken, email: email}
+                    return {accessToken:accessToken, refreshToken:refreshToken, user: user}
                 }
             }
         }catch(error) {

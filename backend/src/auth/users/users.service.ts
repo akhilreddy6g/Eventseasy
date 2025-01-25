@@ -11,18 +11,18 @@ import { SessionService } from '../session/session.service';
 export class UsersService {
   constructor(private sessionService: SessionService, private logService: LogInfoService, @InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async findEmail(data: UserData): Promise<User | null> {
+  async findUser(data: UserData): Promise<User | null> {
     try {
-      const user = await this.userModel.findOne({ email: data.email }).lean().exec();
+      const user = await this.userModel.findOne({ user: data.user }).lean().exec();
       if(!user){
-        this.logService.Logger({request: "Email Search", source: "users service -> findEmail", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Email does not exist", error: "none"})
+        this.logService.Logger({request: "User Search", source: "users service -> findUser", timestamp: new Date(), queryParams: false, bodyParams: true, response: "User does not exist", error: "none"})
       } else {
-        this.logService.Logger({request: "Email Search", source: "users service -> findEmail", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Email exists", error: "none"})
+        this.logService.Logger({request: "User Search", source: "users service -> findUser", timestamp: new Date(), queryParams: false, bodyParams: true, response: "User exists", error: "none"})
       }
       return user;
     } catch (error) {
-      console.error("Error finding the email:", error);
-      this.logService.Logger({request: "Email Search", source: "users service -> findEmail", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error searching email", error: error})
+      console.error("Error finding the User:", error);
+      this.logService.Logger({request: "User Search", source: "users service -> findUser", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error searching User", error: error})
       return null;
     }
   }
@@ -64,11 +64,11 @@ export class UsersService {
 
   async signin(data: UserData): Promise<SigninResponse> {
     try {
-      const user = await this.findEmail(data);
-      if (!user) return { message: "Email does not exist", authneticated: false, accessToken: null, refreshToken: null};
+      const user = await this.findUser(data);
+      if (!user) return { message: "User does not exist", authneticated: false, accessToken: null, refreshToken: null};
       const passwordCheck = await this.verifyPassword({ hash: user.password, plain: data.password });
       if(!passwordCheck.success) return { message: "Invalid password", authneticated: false, accessToken: null, refreshToken: null};
-      const token = this.sessionService.genToken({email: data.email, password: data.password});
+      const token = this.sessionService.genToken({user: data.user, password: data.password});
       if(token.accessToken && token.refreshToken){
         this.logService.Logger({request: "User Signin", source: "users service -> signin", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Signin successful", error: "none"})
         return { message: "Signin successful", authneticated: true, accessToken: token.accessToken, refreshToken: token.refreshToken}
@@ -84,13 +84,13 @@ export class UsersService {
 
   async signup(data: UserData): Promise<SigninResponse> {
     try {
-      const emailExists = await this.findEmail({ email: data.email, password: data.password });
-      if (emailExists) return { message: "Email already exists. Use another email.", authneticated: false, accessToken: null, refreshToken: null };
+      const userExists = await this.findUser({ user: data.user, password: data.password });
+      if (userExists) return { message: "User already exists. Use another contact.", authneticated: false, accessToken: null, refreshToken: null };
       const hashResponse = await this.hashPassword(data);
       if (!hashResponse.success) return { message: hashResponse.message, authneticated: false, accessToken: null, refreshToken: null  };
-      const user = await this.createAccount({ email: data.email, password: hashResponse.message});
+      const user = await this.createAccount({ user: data.user, password: hashResponse.message});
       this.logService.Logger({request: "User Signup", source: "users service -> signup", timestamp: new Date(), queryParams: false, bodyParams: true, response: user? "Signup successful" : "Signup Failed - Unable to create am account", error: "none"})
-      const token = this.sessionService.genToken({email: data.email, password: data.password});
+      const token = this.sessionService.genToken({user: data.user, password: data.password});
       if(token.accessToken && token.refreshToken){
         this.logService.Logger({request: "User Signup", source: "users service -> signup", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Signup successful", error: "none"})
         return { message: "Account setup successful", authneticated: true, accessToken: token.accessToken, refreshToken: token.refreshToken}
