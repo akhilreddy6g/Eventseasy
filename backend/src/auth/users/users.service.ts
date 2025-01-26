@@ -88,7 +88,7 @@ export class UsersService {
       if (userExists) return { message: "User already exists. Use another contact.", authneticated: false, accessToken: null, refreshToken: null };
       const hashResponse = await this.hashPassword(data);
       if (!hashResponse.success) return { message: hashResponse.message, authneticated: false, accessToken: null, refreshToken: null  };
-      const user = await this.createAccount({ user: data.user, password: hashResponse.message});
+      const user = await this.createAccount({ username: data.username, user: data.user, password: hashResponse.message});
       this.logService.Logger({request: "User Signup", source: "users service -> signup", timestamp: new Date(), queryParams: false, bodyParams: true, response: user? "Signup successful" : "Signup Failed - Unable to create am account", error: "none"})
       const token = this.sessionService.genToken({user: data.user, password: data.password});
       if(token.accessToken && token.refreshToken){

@@ -1,4 +1,5 @@
-import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator"
+import { IsDate, IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator"
+import { Types } from "mongoose";
 
 export class HostBodyData{
     @IsNotEmpty()
@@ -21,7 +22,7 @@ export class HostBodyData{
     @IsString()
     accType: string
 
-    @IsString()
+    @IsEmail()
     @IsNotEmpty()
     user: string
 
@@ -32,22 +33,13 @@ export class HostBodyData{
 
 export class JoineeBodyData{
     @IsNotEmpty()
-    @IsString()
+    @IsEmail()
     user: string
-
-    @IsNotEmpty()
-    @IsString()
-    entryCode: string
 
     @IsNotEmpty()
     @IsString()
     accType: string
 
-    @IsString()
     @IsNotEmpty()
-    event: string
-
-    @IsString()
-    @IsNotEmpty()
-    eventId: string
+    eventId: Types.ObjectId
 }

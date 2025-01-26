@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsString } from "class-validator";
+import { IsBoolean, IsEmail, IsNotEmpty, IsString } from "class-validator";
 
 export class EmailBody{
     @IsNotEmpty()
@@ -6,7 +6,7 @@ export class EmailBody{
     username: string
 
     @IsNotEmpty()
-    @IsString()
+    @IsEmail()
     user: string
 
     @IsNotEmpty()

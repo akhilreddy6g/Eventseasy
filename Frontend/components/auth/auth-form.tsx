@@ -22,7 +22,8 @@ export function AuthForm({ type, className, ...props }: AuthFormProps, req: Next
     setIsLoading(true);
     const route = type === "login" ? "/auth/signin" : "/auth/signup"
     try {
-      const response = await apiUrl.post(route, {email: data.email, password: data.password})
+      const body = type ==="login"? {user: data.email, password: data.password} : {username: data.username, user: data.email, password: data.password}
+      const response = await apiUrl.post(route, body)
       if (response.data.Authenticated) {
         router.push(`/dashboard`);
       } else {
@@ -39,6 +40,19 @@ export function AuthForm({ type, className, ...props }: AuthFormProps, req: Next
     <div className="grid gap-6" {...props}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="grid gap-4">
+          {type=="signup" && <div className="grid gap-2">
+            <Label htmlFor="email">Name</Label>
+            <Input
+              id="username"
+              type="text"
+              autoCapitalize="none"
+              autoComplete="none"
+              autoCorrect="off"
+              disabled={isLoading}
+              required
+              {...form.register("username")}
+            />
+          </div>}
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input

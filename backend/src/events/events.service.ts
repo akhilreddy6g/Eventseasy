@@ -3,7 +3,7 @@ import { LogInfoService } from "src/auth/logger/logger.service";
 import { HostBodyData, JoineeBodyData } from "./dto";
 import { Attendant, AttendeeDocument, Event, EventDocument, Viewer, ViewerDocument } from "./eventdata/events.eventdata.schema";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 
 @Injectable()
 export class EventService{
@@ -44,10 +44,10 @@ export class EventService{
 
     async verifyJoinee(data: JoineeBodyData){
       try {
-        const isExists = await this.attendantModel.find({user: data.user, access:false, entryCode:data.entryCode, accType:data.accType, eventId:data.eventId})
+        const isExists = await this.attendantModel.find({user: data.user, access:false, accType:data.accType, eventId:data.eventId})
         if(isExists[0]){
           try {
-            const update = await this.attendantModel.updateOne({user: data.user, entryCode:data.entryCode, accType:data.accType, eventId:data.eventId}, {$set : {access: true}})
+            const update = await this.attendantModel.updateOne({user: data.user, accType:data.accType, eventId:data.eventId}, {$set : {access: true}})
             this.logService.Logger({request: "Attendant Verification Service", source: "events service -> verifyJoinee", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Attendant credentials verified and access granted", error: "none"})
             try {
               const result1 = await this.insertIntoViewers(data, data.eventId)
@@ -56,7 +56,7 @@ export class EventService{
                 return {success: true, message: "Event joined successfully"};
               } else {
                 this.logService.Logger({request: "Attendant Verification Service", source: "events service -> verifyJoinee", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Failed to record the change in viewers", error: "none"})
-                return {success: true, message: "Event joined successfully, but couldn't record change in viewers"};
+                return {success: false, message: "Event joined successfully, but couldn't record change in viewers"};
               }
             } catch (error) {
               this.logService.Logger({request: "Attendant Verification Service", source: "events service -> verifyJoinee", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while recording the change in viewers", error: error})
@@ -76,9 +76,9 @@ export class EventService{
       }
     }
 
-    async insertIntoViewers(data: HostBodyData | JoineeBodyData, eventId: string){
+    async insertIntoViewers(data: HostBodyData | JoineeBodyData, eventId: Types.ObjectId){
       try {
-        const result = await this.viewerModel.insertMany({user: data.user, accType:data.accType, eventId:eventId, event:data.event})
+        const result = await this.viewerModel.create({user: data.user, accType:data.accType, eventId:eventId})
         return {success: true, message: "Successfully inserted the event into viewers"}
       } catch (error) {
         this.logService.Logger({request: "Insert into Viewers Service", source: "events service -> insertIntoViewers", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while inserting the event into viewers", error: error})
@@ -98,11 +98,11 @@ export class EventService{
 
     async insertEvent(data: HostBodyData){
       try {
-        const result = await this.userModel.insertMany([data])
+        const result = await this.userModel.create([data])
         return {success: true, message: result[0]._id}
       } catch (error) {
         this.logService.Logger({request: "Host Event Insertion Service", source: "events service -> insertEvent", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error inserting a host event", error: error})
-        return {success: false, message: "Error inserting a host event"}
+        return {success: false, message: null}
       }
     }
 }

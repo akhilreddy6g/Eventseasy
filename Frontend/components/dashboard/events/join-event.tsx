@@ -13,26 +13,23 @@ interface EventJoinee{
 }
 
 export default function JoinEvent({accType}: EventJoinee){
-    const [eventCode, setEventCode] = useState("");
     const [error, setError] = useState("");
-  
+    const [eventId, setEventId] = useState("");
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
       try {
-        if (!eventCode.trim()) {
-            setError("Event entry code is required.");
-            return;
-          }
+        if (!eventId.trim()){
+            setError("Event Id code is required.");    
+        }
           setError("");
-          console.log("Event Code Submitted:", eventCode);
           const cookies = Cookies.get("accessToken");
           if (cookies) {
             const session = JSON.parse(cookies);
-            const user = session.email;
+            const user = session.user;
             const body = {
                 user: user,
-                entryCode: eventCode,
                 accType: accType,
+                eventId: eventId
             }
             const response = (await apiUrl.post(`/events/join`, body)).data
             if (response && response.success){
@@ -60,15 +57,15 @@ export default function JoinEvent({accType}: EventJoinee){
               {accType=="manager"? "Manage an Event" : "Attend an Event"}
             </h1>
             <div className="space-y-3">
-              <Label htmlFor="event-code" className="text-sm font-medium">
-                Entry Code
+              <Label htmlFor="event-id" className="text-sm font-medium">
+                Event Id
               </Label>
               <Input
-                id="event-code"
+                id="event-id"
                 type="text"
-                placeholder="Enter the Entry Code"
-                value={eventCode}
-                onChange={(e) => setEventCode(e.target.value)}
+                placeholder="Enter the Event Id"
+                value={eventId}
+                onChange={(e) => setEventId(e.target.value)}
                 className="w-full"
               />
               {error && (
@@ -78,7 +75,7 @@ export default function JoinEvent({accType}: EventJoinee){
             <Button
               type="submit"
               className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-              disabled={!eventCode}
+              disabled={!eventId}
             >
               Submit
             </Button>

@@ -8,9 +8,6 @@ export type ViewerDocument = HydratedDocument<Viewer>
 @Schema({ versionKey: false })
 export class Event {
   @Prop()
-  _id: string
-
-  @Prop()
   startDate: Date
 
   @Prop()
@@ -34,14 +31,9 @@ export class Event {
 
 @Schema({ versionKey: false })
 export class Attendant {
-  @Prop()
-  _id: string
 
   @Prop()
   user: string
-
-  @Prop()
-  entryCode: string
 
   @Prop()
   accType: string
@@ -55,8 +47,6 @@ export class Attendant {
 
 @Schema({ versionKey: false})
 export class Viewer {
-  @Prop()
-  _id: string
 
   @Prop()
   user: string
@@ -66,9 +56,6 @@ export class Viewer {
 
   @Prop()
   eventId: string
-
-  @Prop()
-  event: string
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);

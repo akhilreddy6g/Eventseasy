@@ -97,7 +97,7 @@ export default function HostEvent() {
       const cookies = Cookies.get("accessToken");
       if (cookies) {
       const session = JSON.parse(cookies);
-      const body = {startDate: data.eventStartDate, endDate: data.eventEndDate, startTime: data.eventStartTime, endTime: data.eventEndTime, accType:"Host", event: data.eventName, user: session.email}
+      const body = {startDate: data.eventStartDate, endDate: data.eventEndDate, startTime: data.eventStartTime, endTime: data.eventEndTime, accType:"Host", event: data.eventName, user: session.user}
       const response = (await apiUrl.post(`/events/host`, body)).data
       if (response && response.success){
         console.log("data inserted succesfully")
