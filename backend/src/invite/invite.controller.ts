@@ -7,7 +7,7 @@ import { EmailBody } from "./dto/invite.dto";
 export class InviteController{
     constructor(private iService: InviteService){}
 
-    @Post("/guest")
+    @Post("/send")
     async sendInvite(@Body() data: EmailBody){
         try {
             const op = await this.iService.sendEmail(data)

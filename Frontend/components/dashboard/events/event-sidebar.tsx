@@ -12,6 +12,7 @@ import {
   Info,
   MapPin,
 } from "lucide-react";
+import { UserOctagon } from "@mynaui/icons-react";
 
 export default function EventSidebar() {
   const pathname = usePathname();
@@ -19,6 +20,7 @@ export default function EventSidebar() {
   const navigation = [
     { name: "Overview", href: "/overview", icon: Info },
     { name: "Guests", href: "/guests", icon: Users },
+    { name: "Managers", href: "/managers", icon: UserOctagon },
     { name: "Path to Destination", href: "/destination", icon: MapPin },
     { name: "Landmarks at the Event", href: "/landmarks", icon: Map },
     { name: "Media", href: "/media", icon: Image },

@@ -7,23 +7,8 @@ import { Plus } from "lucide-react"
 import { BookUser } from "@mynaui/icons-react";
 import GuestTable from "./view-guests"
 import InvitedList from "./invited-guests"
-import InviteGuest from "./invite-guest"
 import InvitationAcceptedList from "./invitation-accepted-guests"
-
-const guests = {
-  invited: [
-    { id: 1, name: "John Doe", email: "john@example.com", status: "invited" },
-    // Add more invited guests...
-  ],
-  accepted: [
-    { id: 2, name: "Jane Smith", email: "jane@example.com", status: "accepted" },
-    // Add more accepted guests...
-  ],
-  awaiting: [
-    { id: 3, name: "Bob Wilson", email: "bob@example.com", status: "pending" },
-    // Add more pending guests...
-  ], 
-}
+import InviteUser from "../invite/common-invite"
 
 export function GuestList() {
   return (
@@ -36,15 +21,15 @@ export function GuestList() {
           <TabsList className="flex gap-2">
             <TabsTrigger value="allguests" className="w-1/4">
               <BookUser className="mr-2 h-4" />
-              All Guests ({guests.accepted.length})
+              All Guests ({15})
             </TabsTrigger>
             <TabsTrigger value="accepted" className="w-1/4">
               <UserCheck className="mr-2 h-4" />
-              Accepted ({guests.accepted.length})
+              Accepted ({10})
             </TabsTrigger>
             <TabsTrigger value="invited" className="w-1/4">
               <Users className="mr-2 h-4" />
-              Invited ({guests.invited.length})
+              Invited ({5})
             </TabsTrigger>
             <TabsTrigger value="invite" className="w-1/4">
               <Plus className="mr-2 h-4" />
@@ -61,7 +46,7 @@ export function GuestList() {
             <InvitedList></InvitedList>
           </TabsContent>
           <TabsContent value="invite" className="mt-4">
-            <InviteGuest></InviteGuest>
+            <InviteUser accType="guest"></InviteUser>
           </TabsContent>
 
         </Tabs>

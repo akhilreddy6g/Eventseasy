@@ -8,13 +8,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { apiUrl } from "@/components/noncomponents";
 
-export default function InviteGuest() {
+interface InviteType{
+    accType: "manager" | "guest";
+}
+
+export default function InviteUser({accType}: InviteType) {
   const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string>("");
   const [hostname, setHostname] = useState<string>("");
+  const user = accType.charAt(0).toUpperCase() + accType.slice(1).toLowerCase()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,12 +33,12 @@ export default function InviteGuest() {
         setError("Your name cannot be empty.");
         return;
     }
-    const body = {username: username, user: email, hostName: hostname, eventId: "I012552gkrnGTAK", eventName:"CS&AI Career Fair", accType: "guest", access: false, message: message}
-    const response = await apiUrl.post("/invite/guest", body)
+    const body = {username: username, user: email, hostName: hostname, eventId: "I012552gkrnGTAK", eventName:"CS&AI Career Fair", accType: accType, access: true, message: message}
+    const response = await apiUrl.post(`/invite/send`, body)
     if(response && response.data.success){
-        alert("Invitation Sent to the Guest!");
+        alert(`Invitation sent to the ${accType}!`);
     } else {
-        alert("Unable to Send an Invite to the Guest")
+        alert(`Unable to send an invite to the ${accType}`)
     }
     setError("");
     setEmail("");
@@ -63,12 +68,12 @@ export default function InviteGuest() {
     {/* Username */}
       <div className="mb-4">
         <Label htmlFor="username" className="block mb-2 text-sm font-medium">
-            Guest Name <span className="text-red-600">*</span>
+            {user + " Name"} <span className="text-red-600">*</span>
         </Label>
         <Input
             id="username"
             type="text"
-            placeholder="Enter the Guest Name"
+            placeholder={`Enter the ${user} Name`}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className={cn(
@@ -107,7 +112,7 @@ export default function InviteGuest() {
         <Input
           id="email-phone"
           type="text"
-          placeholder="Enter the Guest Email"
+          placeholder={`Enter the ${user} Email`}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className={cn(
