@@ -9,7 +9,7 @@ import { InviteModule } from './invite/invite.module';
 @Module({
   imports: [AuthModule,
   InviteModule,
-  MongooseModule.forRoot('mongodb://localhost:27017/Eventseasy'),
+  MongooseModule.forRoot(process.env.MONGO_URI),
   ConfigModule.forRoot({
     isGlobal: true,
   }), 
