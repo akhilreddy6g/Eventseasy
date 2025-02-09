@@ -1,5 +1,4 @@
-import { Body, Controller, Post, Req } from "@nestjs/common";
-import { Request } from "express";
+import { Body, Controller, Post} from "@nestjs/common";
 import { EventService } from "./events.service";
 import { HostBodyData, JoineeBodyData } from "./dto/events.dto";
 
