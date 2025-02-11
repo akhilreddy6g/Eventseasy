@@ -105,4 +105,43 @@ export class EventService{
         return {success: false, message: null}
       }
     }
+
+    async userData(user : string) {
+      try {
+        const data = await this.viewerModel.aggregate([
+          {
+            $match: {
+              user: user, 
+            },
+          },
+          {
+            $lookup: {
+              from: 'events', 
+              let: { eventIdStr: '$eventId' }, 
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $eq: [
+                        '$_id', 
+                        { $toObjectId: '$$eventIdStr' }, 
+                      ],
+                    },
+                  },
+                },
+                {
+                  $project: { event:1 }, 
+                },
+              ],
+              as: 'eventData', 
+            },
+          },
+        ]);
+        this.logService.Logger({request: "initialUserData", source: "users service -> initialUserData", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Initial user data retrieval successful", error: null})
+        return {success: true, data: data};
+      } catch (error) {
+        this.logService.Logger({request: "initialUserData", source: "users service -> initialUserData", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Error retrieving initial user data", error: error})
+        return {success: false, data: null};
+      }
+    }
 }

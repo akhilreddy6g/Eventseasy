@@ -20,6 +20,6 @@ import { InviteModule } from './invite/invite.module';
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(AuthMiddleware).forRoutes(
-      { path: 'events/conf', method: RequestMethod.ALL }
+      { path: 'events/data', method: RequestMethod.ALL }
     );}
 }
