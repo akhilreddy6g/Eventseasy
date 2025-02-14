@@ -9,7 +9,7 @@ import Cookies from 'js-cookie'
 import { apiUrl } from "@/components/noncomponents";
 
 interface EventJoinee{
-    accType: "manager" | "guest";
+    accType: "Manage" | "Attend";
 }
 
 export default function JoinEvent({accType}: EventJoinee){
@@ -54,7 +54,7 @@ export default function JoinEvent({accType}: EventJoinee){
             )}
           >
             <h1 className="text-xl font-bold text-center text-primary">
-              {accType=="manager"? "Manage an Event" : "Attend an Event"}
+              {accType=="Manage"? "Manage an Event" : "Attend an Event"}
             </h1>
             <div className="space-y-3">
               <Label htmlFor="event-id" className="text-sm font-medium">

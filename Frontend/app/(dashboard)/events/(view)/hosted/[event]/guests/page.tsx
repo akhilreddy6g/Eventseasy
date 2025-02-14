@@ -10,7 +10,7 @@ export default async function GuestsPage({ params }: { params: Promise<{ event: 
   const { event } = await params;
   return (
     <div className="space-y-6 flex-1">
-      <GuestList/>
+      <GuestList eventId={event}/>
     </div>
   )
 }

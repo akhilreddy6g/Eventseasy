@@ -30,7 +30,7 @@ export class InviteService{
         <ol>
             <li> Signup with the same email on <a href="www.google.com">Eventseasy</a></li>
             <li> Enter the event id: <h3>${data.eventId}</3> </li>
-            <li> Join the event ${data.accType==="guest"? "and keep yourself updated" : ""}</li>
+            <li> Join the event ${data.accType==="Attend"? "and keep yourself updated" : ""}</li>
         </ol>
         <br/>
         <p>Regards, </p>

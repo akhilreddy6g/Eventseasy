@@ -8,8 +8,11 @@ import { ManagerList } from "./view-managers";
 import { ManagerRequests } from "./manager-requests";
 import InviteUser from "../invite/common-invite";
 
+interface managerInvite {
+  eventId: string
+}
 
-const ManagersOverview: React.FC = () => {
+const ManagersOverview = ({eventId}: managerInvite) => {
   return (
     <Card>
         <CardHeader>
@@ -38,7 +41,7 @@ const ManagersOverview: React.FC = () => {
             <ManagerRequests></ManagerRequests>
         </TabsContent>
         <TabsContent value="invite" className="mt-4">
-            <InviteUser accType="manager"></InviteUser>
+            <InviteUser accType="Manage" eventId={eventId}></InviteUser>
         </TabsContent>
       </Tabs>
     </CardContent>

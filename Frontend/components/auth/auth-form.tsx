@@ -24,6 +24,12 @@ export function AuthForm({ type, className, ...props }: AuthFormProps, req: Next
     try {
       const body = type ==="login"? {user: data.email, password: data.password} : {username: data.username, user: data.email, password: data.password}
       const response = await apiUrl.post(route, body)
+      if(response.headers["authorization"]){
+        apiUrl.defaults.headers.common["Authorization"] = response.headers["authorization"];
+        sessionStorage.setItem("authorization", response.headers["authorization"]);
+      } else if(sessionStorage.getItem("authorization")){
+        apiUrl.defaults.headers.common["Authorization"] = sessionStorage.getItem("authorization");
+      };
       if (response.data.Authenticated) {
         router.push(`/dashboard`);
       } else {

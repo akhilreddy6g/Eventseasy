@@ -8,10 +8,9 @@ export const metadata: Metadata = {
 
 export default async function GuestsPage({ params }: { params: Promise<{ event: string }> }) {
   const { event } = await params;
-  console.log("event params are: ", params);
   return (
     <div className="space-y-6 flex-1">
-      <GuestList/>
+      <GuestList eventId={event}/>
     </div>
   )
 }

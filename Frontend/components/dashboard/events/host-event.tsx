@@ -28,7 +28,7 @@ const timeOptions = Array.from({ length: 24 * 2 }, (_, i) => {
 });
 
 export default function HostEvent() {
-  const { register, handleSubmit, setValue, watch, formState: { errors, isValid } } = useForm<EventFormInputs>({
+  const { register, handleSubmit, setValue, watch, reset, formState: { errors, isValid } } = useForm<EventFormInputs>({
     mode: "onChange",
     defaultValues: {
       eventName: "",
@@ -110,6 +110,7 @@ export default function HostEvent() {
       console.log("something went wrong: ", error);
       return
     }
+    reset();
   };
 
   return (

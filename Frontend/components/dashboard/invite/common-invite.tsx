@@ -9,10 +9,11 @@ import { cn } from "@/lib/utils";
 import { apiUrl } from "@/components/noncomponents";
 
 interface InviteType{
-    accType: "manager" | "guest";
+    accType: "Manage" | "Attend";
+    eventId: string;
 }
 
-export default function InviteUser({accType}: InviteType) {
+export default function InviteUser({accType, eventId}: InviteType) {
   const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [message, setMessage] = useState<string>("");
@@ -33,7 +34,7 @@ export default function InviteUser({accType}: InviteType) {
         setError("Your name cannot be empty.");
         return;
     }
-    const body = {username: username, user: email, hostName: hostname, eventId: "I012552gkrnGTAK", eventName:"CS&AI Career Fair", accType: accType, access: true, message: message}
+    const body = {username: username, user: email, hostName: hostname, eventId: eventId, eventName:"CS&AI Career Fair", accType: accType, access: false, message: message}
     const response = await apiUrl.post(`/invite/send`, body)
     if(response && response.data.success){
         alert(`Invitation sent to the ${accType}!`);

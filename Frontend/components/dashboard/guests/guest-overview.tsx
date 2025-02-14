@@ -10,7 +10,11 @@ import InvitedList from "./invited-guests"
 import InvitationAcceptedList from "./invitation-accepted-guests"
 import InviteUser from "../invite/common-invite"
 
-export function GuestList() {
+interface guestInvite {
+  eventId: string
+}
+
+export function GuestList({eventId}: guestInvite ) {
   return (
     <Card className="flex-1">
       <CardHeader>
@@ -46,7 +50,7 @@ export function GuestList() {
             <InvitedList></InvitedList>
           </TabsContent>
           <TabsContent value="invite" className="mt-4">
-            <InviteUser accType="guest"></InviteUser>
+            <InviteUser accType="Attend" eventId={eventId}></InviteUser>
           </TabsContent>
 
         </Tabs>

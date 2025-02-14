@@ -11,7 +11,7 @@ export class AuthMiddleware implements NestMiddleware {
       if (process.env.NODE_ENV === 'production' && req.protocol !== 'http') {
         throw new UnauthorizedException('Requests must be over HTTPS');
       }
-      const token = req.headers['authorization']?.split(' ')[1];
+      const token = req.headers.authorization;
       if (!token || !req.cookies.auth) {
         throw new UnauthorizedException('Token not provided');
       }
