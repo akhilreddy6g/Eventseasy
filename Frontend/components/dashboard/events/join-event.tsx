@@ -7,6 +7,9 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import Cookies from 'js-cookie'
 import { apiUrl } from "@/components/noncomponents";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/lib/store";
+import { onAddNewEvent } from "@/lib/features/initial-slice";
 
 interface EventJoinee{
     accType: "Manage" | "Attend";
@@ -15,6 +18,7 @@ interface EventJoinee{
 export default function JoinEvent({accType}: EventJoinee){
     const [error, setError] = useState("");
     const [eventId, setEventId] = useState("");
+    const dispatch = useDispatch <AppDispatch>()
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
       try {
@@ -33,16 +37,18 @@ export default function JoinEvent({accType}: EventJoinee){
             }
             const response = (await apiUrl.post(`/events/join`, body)).data
             if (response && response.success){
+                dispatch(onAddNewEvent())
                 console.log("entry to the event granted")
+                setEventId("");
             } else {
-                console.log("Incorrect credentials provided")
+                console.error("Incorrect credentials provided")
             return
             }
           } else {
-            console.log("session logged out")
+            console.error("session logged out")
           }
       } catch (error) {
-        console.log("error submitting the form: ", error)
+        console.error("error submitting the form: ", error)
       }
     };
     return (

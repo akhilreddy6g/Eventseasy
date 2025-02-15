@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import QueryProvider from "@/components/query-provider";
+import StoreProvider from './StoreProvider';
 
 
 const inter = Inter({ subsets: ['latin'] });
@@ -20,14 +21,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={inter.className}> 
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-           <QueryProvider>{children}</QueryProvider>
+           <QueryProvider>
+             <StoreProvider>
+              {children}
+            </StoreProvider>
+            </QueryProvider>
           <Toaster />
         </ThemeProvider>
       </body>

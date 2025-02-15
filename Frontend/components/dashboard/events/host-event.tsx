@@ -12,6 +12,9 @@ import { format, isBefore, addMinutes, startOfDay } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { apiUrl } from '@/components/noncomponents';
 import Cookies from 'js-cookie'
+import { useDispatch} from 'react-redux';
+import { onAddNewEvent } from '@/lib/features/initial-slice';
+import { AppDispatch } from '@/lib/store';
 
 interface EventFormInputs {
   eventName: string;
@@ -43,6 +46,8 @@ export default function HostEvent() {
   const watchEventEndDate = watch("eventEndDate");
   const watchEventStartTime = watch("eventStartTime");
   const watchEventEndTime = watch("eventEndTime");
+
+  const dispatch = useDispatch <AppDispatch>()
 
   const validateStartDate = (date: Date | null) => {
     if (!date) return "Start date is required";
@@ -100,14 +105,15 @@ export default function HostEvent() {
       const body = {startDate: data.eventStartDate, endDate: data.eventEndDate, startTime: data.eventStartTime, endTime: data.eventEndTime, accType:"Host", event: data.eventName, user: session.user}
       const response = (await apiUrl.post(`/events/host`, body)).data
       if (response && response.success){
+        dispatch(onAddNewEvent())
         console.log("data inserted succesfully")
       }
       } else {
-      console.log("Cookie not found, data insertion failed");
+      console.error("Cookie not found, data insertion failed");
       return; 
     }
     } catch (error) {
-      console.log("something went wrong: ", error);
+      console.error("something went wrong: ", error);
       return
     }
     reset();

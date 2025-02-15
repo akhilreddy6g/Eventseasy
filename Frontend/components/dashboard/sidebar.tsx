@@ -7,16 +7,19 @@ import { CalendarDays, LayoutDashboard } from "lucide-react";
 import { useState, ReactNode, useEffect, useRef} from "react";
 import { ChevronRight } from "@mynaui/icons-react";
 import { Plus } from "@mynaui/icons-react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiUrl } from "../noncomponents";
 import { useMemo } from "react";
+import { useDispatch} from "react-redux";
+import { onInitialLogIn } from "@/lib/features/initial-slice";
+import { AppDispatch, useAppSelector } from "@/lib/store";
 
-interface eventDetails {
+export interface eventDetails {
   _id: string
   event: string
 }
 
-interface userEvents {
+export interface userEvents {
   _id: string
   user: string
   accType: string
@@ -24,7 +27,7 @@ interface userEvents {
   eventData: eventDetails []
 }
 
-interface dataFormat {
+export interface dataFormat {
   eventId: string
   eventName: string
   action: string
@@ -34,6 +37,11 @@ export function DashboardSidebar(): ReactNode {
   const pathname = usePathname();
   const [path, setPath] = useState(pathname.split("/"));
   const [eventSelected, setEventSelected] = useState("");
+  const dispatch = useDispatch<AppDispatch>()
+  const appState = useAppSelector((state)=> state.initialSliceReducer)
+  const eventState = appState.eventState
+  const queryClient = useQueryClient()
+
 
   const [events, setEvents] = useState([
     { name: "Events Hosted", action: "Host", href: "/events/hosted", flag: false, eventsData: [] },
@@ -56,7 +64,7 @@ export function DashboardSidebar(): ReactNode {
     return res.data
   };
 
-  const { data, error, isLoading } = useQuery({
+  const { data , error, isLoading } = useQuery({
     queryKey: ["data"],
     queryFn: fetchData,
     retry: false
@@ -70,7 +78,15 @@ export function DashboardSidebar(): ReactNode {
     })) || [];
   }, [data]); 
 
-  const [fetchedData, changeData] = useState(mappedData);
+  useEffect(() => {
+    if (data?.data) {
+      dispatch(onInitialLogIn(data?.data));
+    }
+  }, [data, dispatch]);
+
+  useEffect(()=> {
+    queryClient.invalidateQueries({queryKey: ['data']})
+  }, [eventState])
 
   useEffect(() => {
     setEventSelected(path?.[3])

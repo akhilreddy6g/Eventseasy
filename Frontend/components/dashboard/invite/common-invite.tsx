@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { apiUrl } from "@/components/noncomponents";
+import { useAppSelector } from "@/lib/store";
 
 interface InviteType{
     accType: "Manage" | "Attend";
@@ -21,6 +22,7 @@ export default function InviteUser({accType, eventId}: InviteType) {
   const [error, setError] = useState<string>("");
   const [hostname, setHostname] = useState<string>("");
   const user = accType.charAt(0).toUpperCase() + accType.slice(1).toLowerCase()
+  const appState = useAppSelector((state)=> state.initialSliceReducer)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +36,7 @@ export default function InviteUser({accType, eventId}: InviteType) {
         setError("Your name cannot be empty.");
         return;
     }
-    const body = {username: username, user: email, hostName: hostname, eventId: eventId, eventName:"CS&AI Career Fair", accType: accType, access: false, message: message}
+    const body = {username: username, user: email, hostName: hostname, eventId: eventId, eventName:appState?.userData?.filter((curr)=> curr?.eventId===eventId)?.[0]?.eventData?.[0]?.event, accType: accType, access: false, message: message}
     const response = await apiUrl.post(`/invite/send`, body)
     if(response && response.data.success){
         alert(`Invitation sent to the ${accType}!`);
