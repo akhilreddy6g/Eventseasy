@@ -7,17 +7,20 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Icons } from "@/components/icons"
 import { useRouter} from 'next/navigation';
-import { NextRequest } from 'next/server';
 import { apiUrl } from "../noncomponents"
+import { useDispatch} from "react-redux";
+import { AppDispatch} from "@/lib/store";
+import { onLogIn } from "@/lib/features/user-slice"
 
 interface AuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   type: "login" | "signup"
 }
 
-export function AuthForm({ type, className, ...props }: AuthFormProps, req: NextRequest) {
+export function AuthForm({ type }: AuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const form = useForm()
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>()
   async function onSubmit(data: any) {
     setIsLoading(true);
     const route = type === "login" ? "/auth/signin" : "/auth/signup"
@@ -31,6 +34,9 @@ export function AuthForm({ type, className, ...props }: AuthFormProps, req: Next
         apiUrl.defaults.headers.common["Authorization"] = sessionStorage.getItem("authorization");
       };
       if (response.data.Authenticated) {
+        dispatch(onLogIn(data.email))
+        sessionStorage.setItem("user", data.email);
+        sessionStorage.setItem("eventChange", JSON.stringify(0));
         router.push(`/dashboard`);
       } else {
         console.log("Authentication failed");
@@ -43,7 +49,7 @@ export function AuthForm({ type, className, ...props }: AuthFormProps, req: Next
   }
   
   return (
-    <div className="grid gap-6" {...props}>
+    <div className="grid gap-6">
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="grid gap-4">
           {type=="signup" && <div className="grid gap-2">

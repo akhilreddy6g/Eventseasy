@@ -10,6 +10,9 @@ export default function LogoutButton() {
 
   const handleLogout = async () => {
     await apiUrl.delete("/auth/logout")
+    sessionStorage.removeItem("user")
+    sessionStorage.removeItem("eventChange")
+    sessionStorage.removeItem("authorization")
     router.push("/");
   };
 

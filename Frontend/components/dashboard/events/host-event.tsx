@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon} from "lucide-react";
+import { CalendarIcon, Flag} from "lucide-react";
 import { format, isBefore, addMinutes, startOfDay } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { apiUrl } from '@/components/noncomponents';
@@ -100,15 +100,22 @@ export default function HostEvent() {
     }
     try {
       const cookies = Cookies.get("accessToken");
+      let flag = JSON.parse(sessionStorage.getItem("eventChange") ?? "");
       if (cookies) {
       const session = JSON.parse(cookies);
       const body = {startDate: data.eventStartDate, endDate: data.eventEndDate, startTime: data.eventStartTime, endTime: data.eventEndTime, accType:"Host", event: data.eventName, user: session.user}
+      if (flag == 0){
+        sessionStorage.setItem("eventChange", JSON.stringify(1));
+      } else {
+        sessionStorage.setItem("eventChange", JSON.stringify(0));
+      }
       const response = (await apiUrl.post(`/events/host`, body)).data
       if (response && response.success){
         dispatch(onAddNewEvent())
-        console.log("data inserted succesfully")
       }
       } else {
+        let sstcFlag = JSON.parse(flag);
+        sessionStorage.setItem("eventChange", sstcFlag);
       console.error("Cookie not found, data insertion failed");
       return; 
     }

@@ -7,7 +7,7 @@ import { CalendarDays, LayoutDashboard } from "lucide-react";
 import { useState, ReactNode, useEffect, useRef} from "react";
 import { ChevronRight } from "@mynaui/icons-react";
 import { Plus } from "@mynaui/icons-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiUrl } from "../noncomponents";
 import { useMemo } from "react";
 import { useDispatch} from "react-redux";
@@ -41,7 +41,7 @@ export function DashboardSidebar(): ReactNode {
   const appState = useAppSelector((state)=> state.initialSliceReducer)
   const eventState = appState.eventState
   const queryClient = useQueryClient()
-
+  const userState = useAppSelector((state)=> state.userLoginSliceReducer)
 
   const [events, setEvents] = useState([
     { name: "Events Hosted", action: "Host", href: "/events/hosted", flag: false, eventsData: [] },
@@ -60,8 +60,12 @@ export function DashboardSidebar(): ReactNode {
     if(sessionStorage.getItem("authorization")){
       apiUrl.defaults.headers.common["Authorization"] = sessionStorage.getItem("authorization");
     };
-    const res = await apiUrl.get("/events/data");
-    return res.data
+    const user = userState.user || sessionStorage.getItem("user")
+    if(user){
+      const flag = JSON.parse(sessionStorage.getItem("eventChange")|| "")
+      const res = await apiUrl.get(`/events/data?user=${user}&status=${flag}`);
+      return res.data
+    }
   };
 
   const { data , error, isLoading } = useQuery({
@@ -148,7 +152,7 @@ export function DashboardSidebar(): ReactNode {
               { event?.flag && 
                 <div>
                   {event?.eventsData?.length > 0 && event?.eventsData?.map((curr: dataFormat) => (
-                    <Link key={curr?.eventId} href={`${event?.href}/${curr?.eventId}`} onClick={()=>{setEventSelected(curr?.eventId)}}>
+                    <Link key={curr?.eventId} href={`${event?.href}/${curr?.eventId}sstc${sessionStorage.getItem("eventChange")}`} onClick={()=>{setEventSelected(curr?.eventId)}}>
                       <p className={`flex w-28 ml-7 px-2 py-1 gap-1 text-muted-foreground rounded-md overflow-scroll ${eventSelected===curr?.eventId ? 'bg-primary text-white rounded-md' : 'hover:bg-muted'}`}>{curr.eventName}</p>
                     </Link>
                   ))}
