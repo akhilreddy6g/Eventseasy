@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post, Req} from "@nestjs/common";
+import { Body, Controller, Get, Post, Query, Req} from "@nestjs/common";
 import { EventService } from "./events.service";
-import { HostBodyData, JoineeBodyData } from "./dto/events.dto";
+import { GetEventsQueryDto, HostBodyData, JoineeBodyData } from "./dto/events.dto";
 import { Request } from "express";
 
 @Controller("events")
@@ -19,9 +19,8 @@ export class CreateEvents{
     }
 
     @Get("/data")
-    userData(@Req() req: Request){
-        const user = JSON.parse(req.cookies.auth)?.user;
-        return this.eService.userData(user);
+    userData(@Query() query: GetEventsQueryDto){
+        return this.eService.userData(query.user, query.status);
     }
 
 }

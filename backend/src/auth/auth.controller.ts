@@ -3,10 +3,11 @@ import { AuthService } from "./auth.service";
 import { Response, Request } from "express";
 import { SessionService } from "./session/session.service";
 import { UserData } from "./dto";
+import { RedisService } from "src/redis/redis.service";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly sessionService: SessionService, private readonly authService: AuthService){}
+  constructor(private readonly sessionService: SessionService, private readonly authService: AuthService, private readonly redisService: RedisService){}
 
   @Post("/signin") 
   async signin(@Res() res: Response, @Body() data: UserData) {
@@ -62,6 +63,8 @@ export class AuthController {
   @Delete("/logout")
   async logout(@Res() res: Response, @Req() req: Request){
     if (req.cookies.auth){
+      const user = JSON.parse(req.cookies.auth).user;
+      this.redisService.del(user)
       res.clearCookie('auth', { secure: process.env.NODE_ENV === "production",sameSite: "strict", httpOnly: true });
       res.clearCookie('accessToken', {secure: process.env.NODE_ENV === "production",sameSite: "strict"})
       res.removeHeader("authorization");

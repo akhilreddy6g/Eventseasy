@@ -43,3 +43,14 @@ export class JoineeBodyData{
     @IsNotEmpty()
     eventId: Types.ObjectId
 }
+
+export class GetEventsQueryDto {
+    @IsNotEmpty()
+    @IsEmail()
+    user: string
+
+
+    @IsOptional()
+    @IsString()
+    status?: string;
+  }

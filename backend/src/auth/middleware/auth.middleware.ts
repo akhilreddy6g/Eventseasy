@@ -12,7 +12,7 @@ export class AuthMiddleware implements NestMiddleware {
         throw new UnauthorizedException('Requests must be over HTTPS');
       }
       const token = req.headers.authorization;
-      if (!token || !req.cookies.auth) {
+      if (!token) {
         throw new UnauthorizedException('Token not provided');
       }
       const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);

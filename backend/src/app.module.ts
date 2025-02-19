@@ -3,8 +3,10 @@ import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthMiddleware } from './auth/middleware/auth.middleware';
 import { LogInfoService } from './auth/logger/logger.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule} from '@nestjs/config';
 import { InviteModule } from './invite/invite.module';
+import { RedisModule } from './redis/redis.module';
+
 
 @Module({
   imports: [AuthModule,
@@ -12,9 +14,10 @@ import { InviteModule } from './invite/invite.module';
   MongooseModule.forRoot(process.env.MONGO_URI),
   ConfigModule.forRoot({
     isGlobal: true,
-  }), 
+  }),
+  RedisModule
   ],
-  providers: [AuthMiddleware, LogInfoService]
+  providers: [AuthMiddleware, LogInfoService],
 })
 
 export class AppModule {

@@ -4,6 +4,7 @@ import { HostBodyData, JoineeBodyData } from "./dto";
 import { Attendant, AttendeeDocument, Event, EventDocument, Viewer, ViewerDocument } from "./eventdata/events.eventdata.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
+import { RedisService } from "src/redis/redis.service";
 
 @Injectable()
 export class EventService{
@@ -12,7 +13,8 @@ export class EventService{
       private logService: LogInfoService, 
       @InjectModel(Event.name) private userModel: Model<EventDocument>, 
       @InjectModel(Attendant.name) private attendantModel: Model <AttendeeDocument>,
-      @InjectModel(Viewer.name) private viewerModel: Model <ViewerDocument>
+      @InjectModel(Viewer.name) private viewerModel: Model <ViewerDocument>,
+      private readonly redisService: RedisService
       ){}
 
     async hostEvent(data: HostBodyData){
@@ -106,8 +108,19 @@ export class EventService{
       }
     }
 
-    async userData(user : string) {
+    async userData(user : string, status: string) { 
       try {
+        const redisUserData = await this.redisService.get(user)
+        if(redisUserData){
+          const redisStatus = JSON.parse(redisUserData)?.["redisStatus"]
+          const redisData = JSON.parse(redisUserData)?.["redisData"]
+          if(redisStatus==status){
+            if(redisData){
+              this.logService.Logger({request: "userData", source: "users service -> userData", timestamp: new Date(), queryParams: true, bodyParams: false, response: "User data retrieval from redis successful", error: null})
+              return {success: true, data: redisData}
+            } 
+          }
+        }
         const data = await this.viewerModel.aggregate([
           {
             $match: {
@@ -122,7 +135,7 @@ export class EventService{
                 {
                   $match: {
                     $expr: {
-                      $eq: [
+                      $eq: [ 
                         '$_id', 
                         { $toObjectId: '$$eventIdStr' }, 
                       ],
@@ -137,10 +150,11 @@ export class EventService{
             },
           },
         ]);
-        this.logService.Logger({request: "initialUserData", source: "users service -> initialUserData", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Initial user data retrieval successful", error: null})
+        this.redisService.set(user, {redisStatus:status, redisData:data});
+        this.logService.Logger({request: "userData", source: "users service -> userData", timestamp: new Date(), queryParams: false, bodyParams: false, response: "User data retrieval from db successful", error: null})
         return {success: true, data: data};
       } catch (error) {
-        this.logService.Logger({request: "initialUserData", source: "users service -> initialUserData", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Error retrieving initial user data", error: error})
+        this.logService.Logger({request: "userData", source: "users service -> userData", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Error retrieving user data", error: error})
         return {success: false, data: null};
       }
     }
