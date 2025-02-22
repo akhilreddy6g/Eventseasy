@@ -21,12 +21,20 @@ export interface GuestInvite {
   eventId: string
 }
 
-export interface GuestList {
+export interface GuestStrucuture {
   user: string
   userName: string
   accType: string
   access: boolean
   eventId: string
+}
+
+export interface MappedDataStrcuture {
+  invited: Guest []
+  attending: Guest []
+  combined: Guest []
+  totalIAGuests: number
+  totalIRPGuests: number
 }
 
 export function GuestList({eventId}: GuestInvite ) {
@@ -49,9 +57,9 @@ export function GuestList({eventId}: GuestInvite ) {
     queryClient.invalidateQueries({queryKey: ['guests']})
   }, [newInviteState])
 
-  const separateEventGuests = (guestlist: GuestList []) => {
-    const invited: GuestList [] = []
-    const attending: GuestList [] = []
+  const separateEventGuests = (guestlist: GuestStrucuture []) => {
+    const invited: GuestStrucuture [] = []
+    const attending: GuestStrucuture [] = []
     guestlist.forEach(element => {
       if (element.access){
         attending.push(element)
@@ -62,20 +70,23 @@ export function GuestList({eventId}: GuestInvite ) {
     return {invited: invited, attending: attending}
   }
 
-  const mappedData = useMemo(() => {
+  const mappedData: MappedDataStrcuture = useMemo(() => {
     if(data?.success){
       const separatedEvents = separateEventGuests(data?.data);
-      const invited: Guest [] = separatedEvents?.invited?.map((curr: GuestList) => ({name: curr.userName ?? "none", email: curr.user, status: "Invited"}))
-      dispatch(onInviteResponsePendingGuestsLoad(invited))
-      const attending: Guest [] = separatedEvents?.attending?.map((curr: any) => ({name: "none", email: curr.user, status: "Accepted"}))
-      changeCount({totalIAGuests: attending?.length, totalIRPGuests: invited?.length})
-      dispatch(onInvitedGuestsLoad(attending))
+      const invited: Guest [] = separatedEvents?.invited?.map((curr: GuestStrucuture) => ({name: curr.userName ?? "none", email: curr.user, status: "Invited"}))
+      const attending: Guest [] = separatedEvents?.attending?.map((curr: any) => ({name: "none", email: curr.user, status: "Accepted"}))     
       const combined: Guest [] = [...invited, ...attending]
-      dispatch(onGuestsLoad(combined))
-      return combined
+      return {invited: invited, attending: attending, combined: combined, totalIAGuests: attending?.length, totalIRPGuests: invited?.length}
     }
-    return null
+    return {invited: [], attending: [], combined: [], totalIAGuests: 0, totalIRPGuests: 0}
   }, [data]); 
+
+  useEffect(()=>{
+    dispatch(onInviteResponsePendingGuestsLoad(mappedData?.invited))
+    dispatch(onInvitedGuestsLoad(mappedData?.attending))
+    dispatch(onGuestsLoad(mappedData?.combined))
+    changeCount({totalIAGuests: mappedData?.totalIAGuests, totalIRPGuests: mappedData?.totalIRPGuests})
+  }, [mappedData])
 
   return (
     <Card className="flex-1">
@@ -87,7 +98,7 @@ export function GuestList({eventId}: GuestInvite ) {
           <TabsList className="flex gap-2">
             <TabsTrigger value="allguests" className="w-1/4">
               <BookUser className="mr-2 h-4" />
-              All Guests ({mappedData?.length})
+              All Guests ({mappedData?.combined?.length})
             </TabsTrigger>
             <TabsTrigger value="accepted" className="w-1/4">
               <UserCheck className="mr-2 h-4" />

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { TableCell } from "@/components/ui/table";
 import { useAppSelector } from "@/lib/store";
 import { Guest } from "./view-guests";
+import CommonGuestView from "./common-guest-view";
 
 const InvitedList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -20,6 +21,19 @@ const InvitedList: React.FC = () => {
     console.log(`Invite resent to ${email}`);
   };
 
+  function specialComponent(guestParam: any, property: string, key:string){
+    return (
+      <TableCell key={"button"+key} className="flex justify-center px-3">
+        <Button
+          onClick={() => resendInvite(guestParam?.["email"])}
+          className="text-xs font-medium bg-primary text-white px-3 rounded-md hover:bg-primary/90"
+        >
+          Resend Invite
+        </Button>
+      </TableCell>
+    )
+  }
+
   return (
     <div className="p-6 bg-gray-50 rounded-lg shadow-md">
         <div className="flex items-center gap-10">
@@ -33,39 +47,7 @@ const InvitedList: React.FC = () => {
                 />
         </div>
       </div>
-      <Table className="w-full text-sm text-left border border-gray-200 bg-white">
-        <TableHeader>
-          <TableRow className="bg-gray-100">
-            <TableHead className="p-3">Name</TableHead>
-            <TableHead className="p-3">Email</TableHead>
-            <TableHead className="p-3 text-center">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredInvitees.length > 0 ? (
-            filteredInvitees.map((invitee, index) => (
-              <TableRow key={index} className="hover:bg-gray-50">
-                <TableCell className="p-3">{invitee.name}</TableCell>
-                <TableCell className="p-3">{invitee.email}</TableCell>
-                <TableCell className="p-3 text-center">
-                  <Button
-                    onClick={() => resendInvite(invitee.email)}
-                    className="text-xs font-medium bg-primary text-white px-3 py-1 rounded-md hover:bg-primary/90"
-                  >
-                    Resend Invite
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={3} className="p-3 text-center text-gray-500 italic">
-                No invitees found.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+      <CommonGuestView guests={filteredInvitees} headers={['name', 'email', 'action']} special="action" footer="No guests found" spclComp={specialComponent}></CommonGuestView>
     </div>
   );
 };

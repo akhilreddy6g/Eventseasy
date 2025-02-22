@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { TableCell} from "@/components/ui/table";
 import { useAppSelector } from "@/lib/store";
 import { Guest } from "./view-guests";
+import CommonGuestView from "./common-guest-view";
 
 const InvitationAcceptedList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -20,6 +21,20 @@ const InvitationAcceptedList: React.FC = () => {
     setAcceptedUsers((prev) => prev.filter((user) => user.email !== email));
     console.log(`User with email ${email} removed.`);
   };
+
+  function specialComponent(guestParam: any, property: string, key:string){
+    return (
+      <TableCell key={"button" + key} className="flex justify-center px-3">
+        <Button
+          onClick={() => removeUser(guestParam?.["email"])}
+          className="text-xs font-medium bg-red-500 text-white px-3 rounded-md hover:bg-red-600"
+        >
+          Remove
+        </Button>
+      </TableCell>
+    )
+  }
+
   return (
     <div className="p-6 bg-gray-50 rounded-lg shadow-md">
         <div className="flex items-center gap-10">
@@ -33,39 +48,7 @@ const InvitationAcceptedList: React.FC = () => {
                 />
         </div>
       </div>
-      <Table className="w-full text-sm text-left border border-gray-200 bg-white">
-        <TableHeader>
-          <TableRow className="bg-gray-100">
-            <TableHead className="p-3">Name</TableHead>
-            <TableHead className="p-3">Email</TableHead>
-            <TableHead className="p-3 text-center">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredAcceptedUsers.length > 0 ? (
-            filteredAcceptedUsers.map((user, index) => (
-              <TableRow key={index} className="hover:bg-gray-50">
-                <TableCell className="p-3">{user.name}</TableCell>
-                <TableCell className="p-3">{user.email}</TableCell>
-                <TableCell className="p-3 text-center">
-                  <Button
-                    onClick={() => removeUser(user.email)}
-                    className="text-xs font-medium bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
-                  >
-                    Remove
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={3} className="p-3 text-center text-gray-500 italic">
-                No users found.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+      <CommonGuestView guests={filteredAcceptedUsers} headers={['name', 'email', 'action']} special="action" footer="No guests found" spclComp={specialComponent}></CommonGuestView>
     </div>
   );
 };
