@@ -108,6 +108,16 @@ export class EventService{
       }
     }
 
+    async eventManagers(data: GetEventId){
+      try {
+        const eventGuests = await this.attendantModel.find({eventId:data.eventId, accType:"Manage"})
+        return {success: true, data:eventGuests}
+      } catch (error) {
+        this.logService.Logger({request: "Event Managers Info Service", source: "events service -> eventManagers", timestamp: new Date(), queryParams: true, bodyParams: false, response: "Error fetching event managers", error: error})
+        return {success: false, data: null}
+      }
+    }
+
     async insertEvent(data: HostBodyData){
       try {
         const result = await this.userModel.create([data])

@@ -1,7 +1,6 @@
-import { Body, Controller, Get, Post, Query, Req} from "@nestjs/common";
+import { Body, Controller, Get, Post, Query} from "@nestjs/common";
 import { EventService } from "./events.service";
 import { GetEventId, GetEventsQueryDto, HostBodyData, JoineeBodyData } from "./dto/events.dto";
-import { Request } from "express";
 
 @Controller("events")
 
@@ -26,6 +25,11 @@ export class CreateEvents{
     @Get("/guests")
     eventGuests(@Query() query: GetEventId){
         return this.eService.eventGuests(query);
+    }
+
+    @Get("/managers")
+    eventManagers(@Query() query: GetEventId){
+        return this.eService.eventManagers(query);
     }
 
 }
