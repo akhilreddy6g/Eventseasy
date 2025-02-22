@@ -6,7 +6,7 @@ import { TableCell} from "@/components/ui/table";
 import { useMemo } from "react";
 import { useAppSelector } from "@/lib/store";
 import { GuestInvite } from "./guest-overview";
-import CommonGuestView from "./common-guest-view";
+import CommonAttendeeView from "../common/common-attendee-view";
 
 export interface Guest {
   name: string;
@@ -63,7 +63,7 @@ const GuestTable = ({eventId}: GuestInvite) => {
                 />
             </div>
         </div>
-        <CommonGuestView guests={filteredGuests} headers={['name', 'email', 'status']} special="status" footer="No guests found" spclComp={specialComponent}></CommonGuestView>
+        <CommonAttendeeView attendee={filteredGuests} headers={['name', 'email', 'status']} special={["status"]} footer="No guests found" spclComp={{status:specialComponent}}></CommonAttendeeView>
     </div>
   );
 };

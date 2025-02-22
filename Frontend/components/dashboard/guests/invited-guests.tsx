@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { TableCell } from "@/components/ui/table";
 import { useAppSelector } from "@/lib/store";
 import { Guest } from "./view-guests";
-import CommonGuestView from "./common-guest-view";
+import CommonAttendeeView from "../common/common-attendee-view";
 
 const InvitedList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -47,7 +47,7 @@ const InvitedList: React.FC = () => {
                 />
         </div>
       </div>
-      <CommonGuestView guests={filteredInvitees} headers={['name', 'email', 'action']} special="action" footer="No guests found" spclComp={specialComponent}></CommonGuestView>
+      <CommonAttendeeView attendee={filteredInvitees} headers={['name', 'email', 'action']} special={["action"]} footer="No guests found" spclComp={{action:specialComponent}}></CommonAttendeeView>
     </div>
   );
 };

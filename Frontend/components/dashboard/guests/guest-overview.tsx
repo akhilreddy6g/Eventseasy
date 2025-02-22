@@ -8,13 +8,13 @@ import { BookUser } from "@mynaui/icons-react";
 import GuestTable, { Guest } from "./view-guests"
 import InvitedList from "./invited-guests"
 import InvitationAcceptedList from "./invitation-accepted-guests"
-import InviteUser from "../invite/common-invite"
+import InviteUser from "../common/common-invite"
 import { apiUrl } from "@/components/noncomponents"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useMemo, useState } from "react"
 import { useDispatch} from "react-redux";
 import { AppDispatch } from "@/lib/store"
-import { guestSlice, onGuestsLoad, onInvitedGuestsLoad, onInviteResponsePendingGuestsLoad } from "@/lib/features/guest-slice"
+import { onGuestsLoad, onInvitedGuestsLoad, onInviteResponsePendingGuestsLoad } from "@/lib/features/guest-slice"
 import { useAppSelector } from "@/lib/store"
 
 export interface GuestInvite {
