@@ -1,9 +1,10 @@
 "use client"
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Guest } from "./view-guests";
+import { Guest } from "../guests/view-guests";
+import { Manager } from "../managers/view-managers";
 
-export default function CommonGuestView({guests, headers, special, footer, spclComp}:{guests: Guest [], headers: string [], special: string, footer: string, spclComp: any}){
+export default function CommonAttendeeView({attendee, headers, special, footer, spclComp}:{attendee: Guest [] | Manager [], headers: string [], special: string [], footer: string, spclComp: any}){
     return (
         <>
           <Table className="w-full text-sm text-left border border-gray-200 bg-white">
@@ -15,17 +16,17 @@ export default function CommonGuestView({guests, headers, special, footer, spclC
               </TableRow>
             </TableHeader>
             <TableBody className="flex-1">
-              {guests?.length > 0 ? (
-                guests?.map((guest: any, index: any) => (
+              {attendee?.length > 0 ? (
+                attendee?.map((attendee: any, index: any) => (
                   <TableRow key={index} className="hover:bg-gray-50">
                     {headers.map((curr)=>(
-                        curr==special? spclComp(guest, special, curr+index+guest.curr): <TableCell key={curr+index+guest.curr} className={`p-3 w-1/${headers.length} text-center`}>{guest?.[curr]}</TableCell>
+                        special.includes(curr)? spclComp?.[curr]?.(attendee, curr, curr+index+attendee.curr): <TableCell key={curr+index+attendee.curr} className={`p-3 w-1/${headers.length} text-center`}>{attendee?.[curr]}</TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={3} className="p-3 text-center text-gray-500 italic">
+                  <TableCell colSpan={headers.length} className="p-3 text-center text-gray-500 italic">
                     {footer}
                   </TableCell>
                 </TableRow>

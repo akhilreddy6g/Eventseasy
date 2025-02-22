@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { userEvents } from "@/components/dashboard/sidebar";
 import { Guest } from "@/components/dashboard/guests/view-guests";
 
 const guestState = {
