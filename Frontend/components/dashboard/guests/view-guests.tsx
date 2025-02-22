@@ -3,26 +3,41 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useQueryClient } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { useAppSelector } from "@/lib/store";
+import { GuestInvite } from "./guest-overview";
 
-interface Guest {
+export interface Guest {
   name: string;
   email: string;
   status: "Invited" | "Accepted";
 }
 
-const GuestTable: React.FC = () => {
+const GuestTable = ({eventId}: GuestInvite) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [guests, setGuests] = useState<Guest[]>([
-    { name: "Alice Johnson", email: "alice@example.com", status: "Invited" },
-    { name: "Bob Smith", email: "bob@example.com", status: "Accepted" },
-    { name: "Carol White", email: "carol@example.com", status: "Invited" },
-  ]);
+  const [guests, setGuests] = useState<Guest[]>([]);
+  const queryClient = useQueryClient()
 
-  const filteredGuests = guests.filter(
-    (guest) =>
-      guest.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      guest.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const guestData = useAppSelector((state)=> state.eventGuestsSliceReducer)
+
+  const mappedData = useMemo(() => {
+    console.log("in usememo")
+    if(guestData.eventGuests.length>0){
+      const combined: Guest [] = guestData.eventGuests
+      setGuests(combined);
+      return combined
+    }
+    return null
+  }, [guestData]); 
+
+  const filteredGuests = Array.isArray(mappedData)
+  ? mappedData.filter(
+      (guest: any) =>
+        guest.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        guest.email.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  : [];
 
   return (
     <div className="p-6 bg-gray-50 rounded-lg shadow-md">
@@ -47,8 +62,8 @@ const GuestTable: React.FC = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredGuests.length > 0 ? (
-            filteredGuests.map((guest, index) => (
+          {filteredGuests?.length > 0 ? (
+            filteredGuests?.map((guest: any, index: any) => (
               <TableRow key={index} className="hover:bg-gray-50">
                 <TableCell className="px-3 py-6">{guest.name}</TableCell>
                 <TableCell className="px-3 py-6">{guest.email}</TableCell>

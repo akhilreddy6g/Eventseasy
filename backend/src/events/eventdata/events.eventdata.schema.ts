@@ -36,6 +36,9 @@ export class Attendant {
   user: string
 
   @Prop()
+  userName: string
+
+  @Prop()
   accType: string
 
   @Prop()

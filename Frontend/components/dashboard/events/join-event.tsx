@@ -25,8 +25,8 @@ export default function JoinEvent({accType}: EventJoinee){
         if (!eventId.trim()){
             setError("Event Id code is required.");    
         }
-          setError("");
           const cookies = Cookies.get("accessToken");
+          let flag = JSON.parse(sessionStorage.getItem("eventChange") ?? "");
           if (cookies) {
             const session = JSON.parse(cookies);
             const user = session.user;
@@ -35,12 +35,20 @@ export default function JoinEvent({accType}: EventJoinee){
                 accType: accType,
                 eventId: eventId
             }
+            if (flag == 0){
+              sessionStorage.setItem("eventChange", JSON.stringify(1));
+            } else {
+              sessionStorage.setItem("eventChange", JSON.stringify(0));
+            }
             const response = (await apiUrl.post(`/events/join`, body)).data
             if (response && response.success){
                 dispatch(onAddNewEvent())
                 console.log("entry to the event granted")
+                setError("");
                 setEventId("");
             } else {
+                let sstcFlag = JSON.parse(flag);
+                sessionStorage.setItem("eventChange", sstcFlag);
                 console.error("Incorrect credentials provided")
             return
             }

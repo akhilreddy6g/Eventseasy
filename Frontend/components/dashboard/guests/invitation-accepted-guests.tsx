@@ -1,32 +1,25 @@
+"use client"
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
-interface AcceptedUser {
-  name: string;
-  email: string;
-}
+import { useAppSelector } from "@/lib/store";
+import { Guest } from "./view-guests";
 
 const InvitationAcceptedList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [acceptedUsers, setAcceptedUsers] = useState<AcceptedUser[]>([
-    { name: "John Doe", email: "john@example.com" },
-    { name: "Jane Smith", email: "jane@example.com" },
-    { name: "Michael Brown", email: "michael@example.com" },
-  ]);
-
+  const guestState = useAppSelector((state)=> state.eventGuestsSliceReducer)
+  const [acceptedUsers, setAcceptedUsers] = useState<Guest[]>(guestState.inviteAcceptedGuests);
   const filteredAcceptedUsers = acceptedUsers.filter(
     (user) =>
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
   const removeUser = (email: string) => {
     setAcceptedUsers((prev) => prev.filter((user) => user.email !== email));
     console.log(`User with email ${email} removed.`);
   };
-
   return (
     <div className="p-6 bg-gray-50 rounded-lg shadow-md">
         <div className="flex items-center gap-10">

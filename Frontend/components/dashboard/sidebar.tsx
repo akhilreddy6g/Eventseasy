@@ -42,6 +42,7 @@ export function DashboardSidebar(): ReactNode {
   const eventState = appState.eventState
   const queryClient = useQueryClient()
   const userState = useAppSelector((state)=> state.userLoginSliceReducer)
+  const initRef = useRef(true);
 
   const [events, setEvents] = useState([
     { name: "Events Hosted", action: "Host", href: "/events/hosted", flag: false, eventsData: [] },
@@ -86,19 +87,26 @@ export function DashboardSidebar(): ReactNode {
     if (data?.data) {
       dispatch(onInitialLogIn(data?.data));
     }
-  }, [data, dispatch]);
+    setEvents((prevEvents) =>
+        prevEvents.map(event => ({
+          ...event,
+          eventsData: mappedData.filter((curr: dataFormat) => curr.action === event.action)
+        }))
+    );
+  }, [data]);
 
   useEffect(()=> {
     queryClient.invalidateQueries({queryKey: ['data']})
   }, [eventState])
 
   useEffect(() => {
-    setEventSelected(path?.[3])
-    let action = ''
-    if (path?.[2] in routes){
-      action = routes[path[2] as keyof typeof routes]
-    }
-    if (mappedData.length > 0) {
+    if(initRef.current){
+      setEventSelected(path?.[3]?.split("sstc")?.[0])
+      let action = ''
+      if (path?.[2] in routes){
+        action = routes[path[2] as keyof typeof routes]
+      }
+      if (mappedData.length > 0) {
       setEvents((prevEvents) =>
         prevEvents.map(event => ({
           ...event,
@@ -106,6 +114,8 @@ export function DashboardSidebar(): ReactNode {
           eventsData: mappedData.filter((curr: dataFormat) => curr.action === event.action)
         }))
       );
+      initRef.current = false
+    }
     }
   }, [path, mappedData]);
 
@@ -118,7 +128,7 @@ export function DashboardSidebar(): ReactNode {
   };
 
   return (
-    <div className="flex flex-col w-48 border-r bg-muted/10 relative">
+    <div className="flex flex-col w-48 border-r bg-muted/10 relative h-screen overflow-scroll">
       <div className="p-6">
         <Link href="/dashboard" className="flex items-center gap-2 font-bold text-lg">
           <span className="text-2xl">EventBuzz</span>

@@ -1,11 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 import initialSliceReducer from './features/initial-slice'
 import userLoginSliceReducer from './features/user-slice'
+import eventGuestsSliceReducer from './features/guest-slice'
 import { TypedUseSelectorHook, useSelector } from 'react-redux'
 
 export const makeStore = () => {
   return configureStore({
-    reducer: {initialSliceReducer, userLoginSliceReducer},
+    reducer: {initialSliceReducer, userLoginSliceReducer, eventGuestsSliceReducer},
   })
 }
 

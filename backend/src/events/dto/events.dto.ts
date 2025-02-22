@@ -54,3 +54,9 @@ export class GetEventsQueryDto {
     @IsString()
     status?: string;
   }
+
+export class GetEventId {
+    @IsNotEmpty()
+    @IsString()
+    eventId: string
+}

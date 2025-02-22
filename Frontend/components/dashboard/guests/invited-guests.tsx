@@ -2,19 +2,13 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
-interface Invitee {
-  name: string;
-  email: string;
-}
+import { useAppSelector } from "@/lib/store";
+import { Guest } from "./view-guests";
 
 const InvitedList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [invitees, setInvitees] = useState<Invitee[]>([
-    { name: "Alice Johnson", email: "alice@example.com" },
-    { name: "Bob Smith", email: "bob@example.com" },
-    { name: "Carol White", email: "carol@example.com" },
-  ]);
+  const guestState = useAppSelector((state)=> state.eventGuestsSliceReducer)
+  const [invitees, setInvitees] =  useState<Guest[]>(guestState.inviteResponsePendingGuests);
 
   const filteredInvitees = invitees.filter(
     (invitee) =>

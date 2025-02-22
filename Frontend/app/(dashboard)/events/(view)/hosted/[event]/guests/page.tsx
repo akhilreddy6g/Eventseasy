@@ -6,9 +6,12 @@ export const metadata: Metadata = {
   description: "Manage event guests and invitations",
 }
 
-export default async function GuestsPage({ params }: { params: Promise<{ event: string }> }) {
-  const { event } = await params
-  const eventId = event?.split("sstc")?.[0];
+interface eventIdParam{
+  event: string
+}
+
+export default function GuestsPage({ params }: { params: eventIdParam }) {
+  const eventId = params?.event?.split("sstc")?.[0];
 
   return (
     <div className="space-y-6 flex-1">

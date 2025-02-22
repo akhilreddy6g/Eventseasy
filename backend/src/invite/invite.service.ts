@@ -12,7 +12,7 @@ export class InviteService{
 
     async attendantEntry(data: EmailBody){
         try {
-            const entry = await this.attendantModel.updateOne({user:data.user}, {$set: {accType:data.accType, access:data.access, eventId: data.eventId}}, {upsert: true})
+            const entry = await this.attendantModel.updateOne({user:data.user, userName:data.username, accType:data.accType, eventId: data.eventId}, {$set: { access: data.access }}, {upsert: true})
             this.logService.Logger({request: `Send Invite Service (${data.accType})`, source: "invite service -> codeEntry", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Successfully logged the attendant record in db", error: "none"});
             return {success: true, message: "Successfully logged the attendant record in db"}
         } catch (error) {
