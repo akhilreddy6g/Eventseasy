@@ -17,7 +17,7 @@ export class AuthController {
         res.cookie("accessToken", JSON.stringify({ act: response.accessToken, user: data.user }),{secure: process.env.NODE_ENV === "production",sameSite: "strict", maxAge: 900000});
         res.cookie("auth", JSON.stringify({ rft: response.refreshToken, user: data.user }), {secure: process.env.NODE_ENV === "production",sameSite: "strict", maxAge: 86400000, httpOnly: true});       
         res.setHeader("authorization", response.accessToken)
-        return res.status(HttpStatus.OK).json({user: data.user, Authenticated: true, message: response.message});
+        return res.status(HttpStatus.OK).json({user: data.user, userName: response.username, Authenticated: true, message: response.message});
       } else {
         return res.status(HttpStatus.UNAUTHORIZED).json({ Authenticated: false, message: response.message });
       }
@@ -34,7 +34,7 @@ export class AuthController {
         res.cookie("accessToken", JSON.stringify({ act: response.accessToken, user: data.user }),{secure: process.env.NODE_ENV === "production",sameSite: "strict", maxAge: 900000});
         res.cookie("auth", JSON.stringify({ rft: response.refreshToken, user: data.user }), {secure: process.env.NODE_ENV === "production",sameSite: "strict", maxAge: 86400000, httpOnly: true});        
         res.setHeader("Authorization", `Bearer ${response.accessToken}`);
-        return res.status(HttpStatus.OK).json({ user:data.user, Authenticated: true, message: response.message });
+        return res.status(HttpStatus.OK).json({ user:data.user, userName: data.username, Authenticated: true, message: response.message });
       } else {
         return res.status(HttpStatus.UNAUTHORIZED).json({ Authenticated: false, message: response.message });
       }

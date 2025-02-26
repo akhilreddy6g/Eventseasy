@@ -41,6 +41,7 @@ export class SigninResponse{
   message: string
   accessToken: string
   refreshToken: string
+  username?: string
 }
 
 export class Log{

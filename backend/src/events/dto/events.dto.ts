@@ -89,10 +89,6 @@ export class ReinviteUser {
 
     @IsNotEmpty()
     @IsString()
-    eventName: string
-
-    @IsNotEmpty()
-    @IsString()
     message: string
 
     @IsNotEmpty()

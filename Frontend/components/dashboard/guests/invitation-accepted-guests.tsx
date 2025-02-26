@@ -4,29 +4,38 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TableCell} from "@/components/ui/table";
-import { useAppSelector } from "@/lib/store";
+import { AppDispatch, useAppSelector } from "@/lib/store";
 import { Guest } from "./view-guests";
 import CommonAttendeeView from "../common/common-attendee-view";
+import { apiUrl } from "@/components/noncomponents";
+import { useDispatch } from "react-redux";
+import { onNewInvite } from "@/lib/features/guest-slice";
 
-const InvitationAcceptedList: React.FC = () => {
+const InvitationAcceptedList = (props : {eventId: string}) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const guestState = useAppSelector((state)=> state.eventGuestsSliceReducer)
   const [acceptedUsers, setAcceptedUsers] = useState<Guest[]>(guestState.inviteAcceptedGuests);
+  const dispatch = useDispatch<AppDispatch>()
   const filteredAcceptedUsers = acceptedUsers.filter(
     (user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+      user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user?.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  const removeUser = (email: string) => {
-    setAcceptedUsers((prev) => prev.filter((user) => user.email !== email));
-    console.log(`User with email ${email} removed.`);
+  const removeUser = async (email: string, eventId: string, accType: string) => {
+    const response  = await apiUrl.delete(`/events/attendee?user=${email}&eventId=${eventId}&accType=${accType}`)
+    if(response?.data?.success){
+      setAcceptedUsers((prev) => prev.filter((user) => user.email !== email));
+      dispatch(onNewInvite())
+    } else {
+      console.error(`Unable to remove user with email ${email}.`);
+    }
   };
 
   function specialComponent(guestParam: any, property: string, key:string){
     return (
       <TableCell key={"button" + key} className="flex justify-center px-3">
         <Button
-          onClick={() => removeUser(guestParam?.["email"])}
+          onClick={() => removeUser(guestParam?.["email"], props.eventId, "Attend")}
           className="text-xs font-medium bg-red-500 text-white px-3 rounded-md hover:bg-red-600"
         >
           Remove

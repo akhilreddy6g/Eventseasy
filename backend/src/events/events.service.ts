@@ -151,7 +151,7 @@ export class EventService{
       try {
         const hostCheck = await this.userModel.find({user: eventHost, _id: data.eventId})
         if(hostCheck.length>0){
-          const response = await this.inviteService.sendEmail({username: data.username, user:data.user, hostName:data.hostName, eventId:data.eventId, accType:data.accType, access:data.access, eventName: data.eventName, message: data.message, flag:true})
+          const response = await this.inviteService.sendEmail({username: data.username, user:data.user, hostName:data.hostName, eventId:data.eventId, accType:data.accType, access:data.access, eventName: hostCheck[0].event, message: data.message, flag:true})
           return response;
         }
         return {success: false, message: "Unable to reinvite the user/user doesn't have privileges"}

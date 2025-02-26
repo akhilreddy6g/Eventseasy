@@ -34,12 +34,13 @@ export function AuthForm({ type }: AuthFormProps) {
         apiUrl.defaults.headers.common["Authorization"] = sessionStorage.getItem("authorization");
       };
       if (response.data.Authenticated) {
-        dispatch(onLogIn(data.email))
+        dispatch(onLogIn({user: data.email, userName: response.data.userName}))
         sessionStorage.setItem("user", data.email);
         sessionStorage.setItem("eventChange", JSON.stringify(0));
+        sessionStorage.setItem("userName", data.userName);
         router.push(`/dashboard`);
       } else {
-        console.log("Authentication failed");
+        console.error("Authentication failed");
       }
     } catch (error) {
       console.error("An error occurred:", error);
