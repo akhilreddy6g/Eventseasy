@@ -42,7 +42,7 @@ export default function InviteUser({accType, eventId}: InviteType) {
         return;
     }
     if(userEmail!=email){
-      const body = {username: username, user: email, hostName: hostname, eventId: eventId, eventName:appState?.userData?.filter((curr)=> curr?.eventId===eventId)?.[0]?.eventData?.[0]?.event, accType: accType, access: false, message: message}
+      const body = {username: username, user: email, hostName: hostname, eventId: eventId, eventName:appState?.userData?.filter((curr)=> curr?.eventId===eventId)?.[0]?.eventData?.[0]?.event, accType: accType, access: false, message: message, flag: false}
       const response = await apiUrl.post(`/invite/send`, body)
       if(response && response.data.success){
           alert(`Invitation sent to the ${accType}!`);

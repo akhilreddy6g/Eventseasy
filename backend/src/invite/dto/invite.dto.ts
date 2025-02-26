@@ -31,4 +31,7 @@ export class EmailBody{
 
     @IsString()
     message: string
+
+    @IsBoolean()
+    flag: boolean
 }

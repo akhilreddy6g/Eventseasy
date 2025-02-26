@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Guest } from "@/components/dashboard/guests/view-guests";
+import { Manager } from "@/components/dashboard/managers/view-managers";
 
 const managerState = {
-    eventManagers: [] as Guest [],
+    eventManagers: [] as Manager [],
     managersAdded: false
   };
 
@@ -10,7 +10,7 @@ export const managerSlice = createSlice({
     name: "managers",
     initialState: managerState,
     reducers: {
-        onManagersLoad: (state, action: PayloadAction<Guest []>) => {
+        onManagersLoad: (state, action: PayloadAction<Manager []>) => {
             return {...state, eventManagers: action.payload}
         },
 

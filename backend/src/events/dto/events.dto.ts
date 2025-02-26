@@ -1,4 +1,4 @@
-import { IsDate, IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator"
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator"
 import { Types } from "mongoose";
 
 export class HostBodyData{
@@ -49,14 +49,61 @@ export class GetEventsQueryDto {
     @IsEmail()
     user: string
 
-
     @IsOptional()
     @IsString()
     status?: string;
-  }
+}
 
 export class GetEventId {
     @IsNotEmpty()
     @IsString()
     eventId: string
+}
+
+export class UserDetails {
+    @IsNotEmpty()
+    @IsEmail()
+    user: string
+
+    @IsNotEmpty()
+    @IsString()
+    eventId: string
+
+    @IsNotEmpty()
+    @IsString()
+    accType: string
+}
+
+export class ReinviteUser {
+    @IsNotEmpty()
+    @IsEmail()
+    user: string
+    
+    @IsNotEmpty()
+    @IsString()
+    username: string
+
+    @IsNotEmpty()
+    @IsString()
+    eventId: string
+
+    @IsNotEmpty()
+    @IsString()
+    eventName: string
+
+    @IsNotEmpty()
+    @IsString()
+    message: string
+
+    @IsNotEmpty()
+    @IsString()
+    accType: string
+
+    @IsNotEmpty()
+    @IsBoolean()
+    access: boolean
+
+    @IsNotEmpty()
+    @IsString()
+    hostName: string
 }
