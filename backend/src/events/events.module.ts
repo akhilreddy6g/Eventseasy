@@ -6,16 +6,19 @@ import { Attendant, AttendeeSchema, Event, EventSchema, Viewer, ViewerSchema } f
 import { MongooseModule } from "@nestjs/mongoose";
 import { RedisService } from "src/redis/redis.service";
 import { RedisModule } from "src/redis/redis.module";
+import { InviteModule } from "src/invite/invite.module";
+import { InviteService } from "src/invite/invite.service";
 
 @Module({
     controllers: [CreateEvents],
-    providers: [EventService, RedisService],
+    providers: [EventService, RedisService, InviteService],
     imports: [
         MongooseModule.forFeature([{ name: Event.name, schema: EventSchema}]), 
         MongooseModule.forFeature([{ name: Attendant.name, schema: AttendeeSchema}]),
         MongooseModule.forFeature([{ name: Viewer.name, schema: ViewerSchema}]),
         LoggerModule,
-        RedisModule
+        RedisModule,
+        InviteModule
     ]
 })
 

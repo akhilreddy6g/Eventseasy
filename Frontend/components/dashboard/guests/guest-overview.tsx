@@ -21,7 +21,7 @@ export interface GuestInvite {
   eventId: string
 }
 
-export interface GuestStrucuture {
+export interface GuestStructure {
   user: string
   userName: string
   accType: string
@@ -57,9 +57,9 @@ export function GuestList({eventId}: GuestInvite ) {
     queryClient.invalidateQueries({queryKey: ['guests']})
   }, [newInviteState])
 
-  const separateEventGuests = (guestlist: GuestStrucuture []) => {
-    const invited: GuestStrucuture [] = []
-    const attending: GuestStrucuture [] = []
+  const separateEventGuests = (guestlist: GuestStructure []) => {
+    const invited: GuestStructure [] = []
+    const attending: GuestStructure [] = []
     guestlist.forEach(element => {
       if (element.access){
         attending.push(element)
@@ -73,8 +73,8 @@ export function GuestList({eventId}: GuestInvite ) {
   const mappedData: MappedDataStrcuture = useMemo(() => {
     if(data?.success){
       const separatedEvents = separateEventGuests(data?.data);
-      const invited: Guest [] = separatedEvents?.invited?.map((curr: GuestStrucuture) => ({name: curr.userName ?? "none", email: curr.user, status: "Invited"}))
-      const attending: Guest [] = separatedEvents?.attending?.map((curr: any) => ({name: "none", email: curr.user, status: "Accepted"}))     
+      const invited: Guest [] = separatedEvents?.invited?.map((curr: GuestStructure) => ({name: curr.userName ?? "Missing", email: curr.user, status: "Invited"}))
+      const attending: Guest [] = separatedEvents?.attending?.map((curr: any) => ({name: curr.userName ?? "Missing", email: curr.user, status: "Accepted"}))     
       const combined: Guest [] = [...invited, ...attending]
       return {invited: invited, attending: attending, combined: combined, totalIAGuests: attending?.length, totalIRPGuests: invited?.length}
     }
@@ -117,10 +117,10 @@ export function GuestList({eventId}: GuestInvite ) {
             <GuestTable eventId={eventId} ></GuestTable>
           </TabsContent>
           <TabsContent value="accepted" className="mt-4">
-            <InvitationAcceptedList></InvitationAcceptedList>
+            <InvitationAcceptedList eventId = {eventId}></InvitationAcceptedList>
           </TabsContent>
           <TabsContent value="invited" className="mt-4">
-            <InvitedList></InvitedList>
+            <InvitedList eventId = {eventId}></InvitedList>
           </TabsContent>
           <TabsContent value="invite" className="mt-4">
             <InviteUser accType="Attend" eventId={eventId}></InviteUser>

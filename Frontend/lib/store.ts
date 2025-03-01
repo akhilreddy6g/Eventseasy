@@ -1,22 +1,15 @@
-import { configureStore } from "@reduxjs/toolkit";
-import initialSliceReducer from "./features/initial-slice";
-import userLoginSliceReducer from "./features/user-slice";
-import eventGuestsSliceReducer from "./features/guest-slice";
-import eventManagersSliceReducer from "./features/manager-slice";
-import chatMessageReducer from "./features/chat-slice";
-import { TypedUseSelectorHook, useSelector } from "react-redux";
+import { configureStore } from '@reduxjs/toolkit'
+import initialSliceReducer from './features/initial-slice'
+import userLoginSliceReducer from './features/user-slice'
+import eventGuestsSliceReducer from './features/guest-slice'
+import eventManagersSliceReducer from './features/manager-slice'
+import { TypedUseSelectorHook, useSelector } from 'react-redux'
 
 export const makeStore = () => {
   return configureStore({
-    reducer: {
-      initialSliceReducer,
-      userLoginSliceReducer,
-      eventGuestsSliceReducer,
-      eventManagersSliceReducer,
-      chatMessageReducer,
-    },
-  });
-};
+    reducer: {initialSliceReducer, userLoginSliceReducer, eventGuestsSliceReducer, eventManagersSliceReducer},
+  })
+}
 
 export type AppStore = ReturnType<typeof makeStore>;
 export type RootState = ReturnType<AppStore["getState"]>;

@@ -63,8 +63,8 @@ const ManagersOverview = ({eventId}: ManagerInvite) => {
   const mappedData: MappedDataStrcuture = useMemo(() => {
     if(data?.success){
       const separatedEvents = separateEventManagers(data?.data);
-      const invited: Manager [] = separatedEvents?.invited?.map((curr: ManagerStructure) => ({name: curr.userName ?? "none", email: curr.user, status: "Invited"}))
-      const attending: Manager [] = separatedEvents?.attending?.map((curr: any) => ({name: "none", email: curr.user, status: "Accepted"}))     
+      const invited: Manager [] = separatedEvents?.invited?.map((curr: ManagerStructure) => ({name: curr.userName ?? "Missing", email: curr.user, status: "Invited"}))
+      const attending: Manager [] = separatedEvents?.attending?.map((curr: any) => ({name: curr.userName ?? "Missing", email: curr.user, status: "Accepted"}))     
       const combined: Manager [] = [...invited, ...attending]
       return {combined: combined}
     }
@@ -78,7 +78,7 @@ const ManagersOverview = ({eventId}: ManagerInvite) => {
   return (
     <Card>
         <CardHeader>
-        <CardTitle>Managers List</CardTitle>
+        <CardTitle>Manager List</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="allmanagers">
@@ -97,7 +97,7 @@ const ManagersOverview = ({eventId}: ManagerInvite) => {
             </TabsTrigger>
           </TabsList>
         <TabsContent value="allmanagers" className="mt-4">
-            <ManagerList></ManagerList>
+            <ManagerList eventId={eventId}></ManagerList>
         </TabsContent>
         <TabsContent value="requests" className="mt-4">
             <ManagerRequests></ManagerRequests>

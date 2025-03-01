@@ -1,10 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { LogInfoService } from "src/auth/logger/logger.service";
-import { GetEventId, GetEventsQueryDto, HostBodyData, JoineeBodyData } from "./dto";
+import { GetEventId, GetEventsQueryDto, HostBodyData, JoineeBodyData, ReinviteUser, UserDetails } from "./dto";
 import { Attendant, AttendeeDocument, Event, EventDocument, Viewer, ViewerDocument } from "./eventdata/events.eventdata.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { RedisService } from "src/redis/redis.service";
+import { InviteService } from "src/invite/invite.service";
+
 
 @Injectable()
 export class EventService{
@@ -14,7 +16,8 @@ export class EventService{
       @InjectModel(Event.name) private userModel: Model<EventDocument>, 
       @InjectModel(Attendant.name) private attendantModel: Model <AttendeeDocument>,
       @InjectModel(Viewer.name) private viewerModel: Model <ViewerDocument>,
-      private readonly redisService: RedisService
+      private readonly redisService: RedisService,
+      private readonly inviteService: InviteService
       ){}
 
     async hostEvent(data: HostBodyData){
@@ -125,6 +128,36 @@ export class EventService{
       } catch (error) {
         this.logService.Logger({request: "Host Event Insertion Service", source: "events service -> insertEvent", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error inserting a host event", error: error})
         return {success: false, message: null}
+      }
+    }
+
+    async deleteUserFromEvent(data: UserDetails, eventHost: string){
+      try {
+        const hostCheck = await this.userModel.find({user: eventHost, _id: data.eventId})
+        if(hostCheck.length>0){
+          const result = await this.attendantModel.deleteOne({user: data.user, eventId: data.eventId, accType: data.accType})
+          const result1 = await this.viewerModel.deleteOne({user: data.user, eventId: data.eventId, accType: data.accType})
+          if (result.deletedCount>0 && result1.deletedCount>0){
+            return {success: true, message: "Succeessfully deleted the user from the event"}
+          }
+        }
+        return {success: false, message: "Unable to delete the user from one of the documents/user doesn't have privileges"}
+      } catch (error) {
+        this.logService.Logger({request: "Event User Deletion Service", source: "events service -> deleteUserFromEvent", timestamp: new Date(), queryParams: true, bodyParams: false, response: "Error removing the user from the event", error: error})
+      }
+    }
+
+    async reInviteUser(data: ReinviteUser, eventHost: string){
+      try {
+        const hostCheck = await this.userModel.find({user: eventHost, _id: data.eventId})
+        if(hostCheck.length>0){
+          const response = await this.inviteService.sendEmail({username: data.username, user:data.user, hostName:data.hostName, eventId:data.eventId, accType:data.accType, access:data.access, eventName: hostCheck[0].event, message: data.message, flag:true})
+          return response;
+        }
+        return {success: false, message: "Unable to reinvite the user/user doesn't have privileges"}
+      } catch (error) {
+        this.logService.Logger({request: "Reinvite User Service", source: "events service -> reInviteUser", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error reinviting the user to the event", error: error})
+        return {success: false, message: "Error reinviting user to the event"}
       }
     }
 

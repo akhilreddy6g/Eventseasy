@@ -14,14 +14,13 @@ export class UsersService {
   async findUser(data: UserData): Promise<User | null> {
     try {
       const user = await this.userModel.findOne({ user: data.user }).lean().exec();
-      if(!user){
+      if(user){
         this.logService.Logger({request: "User Search", source: "users service -> findUser", timestamp: new Date(), queryParams: false, bodyParams: true, response: "User does not exist", error: "none"})
       } else {
         this.logService.Logger({request: "User Search", source: "users service -> findUser", timestamp: new Date(), queryParams: false, bodyParams: true, response: "User exists", error: "none"})
       }
       return user;
     } catch (error) {
-      console.error("Error finding the User:", error);
       this.logService.Logger({request: "User Search", source: "users service -> findUser", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error searching User", error: error})
       return null;
     }
@@ -71,7 +70,7 @@ export class UsersService {
       const token = this.sessionService.genToken({user: data.user, password: data.password});
       if(token.accessToken && token.refreshToken){
         this.logService.Logger({request: "User Signin", source: "users service -> signin", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Signin successful", error: "none"})
-        return { message: "Signin successful", authneticated: true, accessToken: token.accessToken, refreshToken: token.refreshToken}
+        return { message: "Signin successful", authneticated: true, accessToken: token.accessToken, refreshToken: token.refreshToken, username: user.username}
       } else {
         this.logService.Logger({request: "User Signin", source: "users service -> signin", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Token generation failed", error: "none"})
         return { message: "Token generation failed", authneticated: false, accessToken: null, refreshToken: null};
@@ -93,7 +92,7 @@ export class UsersService {
       const token = this.sessionService.genToken({user: data.user, password: data.password});
       if(token.accessToken && token.refreshToken){
         this.logService.Logger({request: "User Signup", source: "users service -> signup", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Signup successful", error: "none"})
-        return { message: "Account setup successful", authneticated: true, accessToken: token.accessToken, refreshToken: token.refreshToken}
+        return { message: "Account setup successful", authneticated: true, accessToken: token.accessToken, refreshToken: token.refreshToken, username: data.username}
       } else {
         this.logService.Logger({request: "User Signup", source: "users service -> signup", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Token generation failed", error: "none"})
         return { message: "Failed to create account - Token generation failed", authneticated: false, accessToken: null, refreshToken: null};

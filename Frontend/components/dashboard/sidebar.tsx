@@ -156,14 +156,14 @@ export function DashboardSidebar(): ReactNode {
         <div className="mt-1">
             {events?.map((event, eventIndex) => (
               <div key={`event-group-${eventIndex}`}>
-              <div key={`event-container-${event?.action}`} className="flex pl-1 items-center">
+              <div key={`event-container-${event?.action}`} className="flex-1 pl-1 items-center">
                 <button className="flex pt-1 hover:bg-muted w-40 rounded-lg" key={`button-${event.action}`} onClick={()=>{changeFlag(eventIndex)}}><ChevronRight/> <p className="pl-2">{event.name}</p></button>
               </div>
               { event?.flag && 
                 <div>
                   {event?.eventsData?.length > 0 && event?.eventsData?.map((curr: dataFormat) => (
                     <Link key={curr?.eventId} href={`${event?.href}/${curr?.eventId}sstc${sessionStorage.getItem("eventChange")}`} onClick={()=>{setEventSelected(curr?.eventId)}}>
-                      <p className={`flex w-28 ml-7 px-2 py-1 gap-1 text-muted-foreground rounded-md overflow-scroll ${eventSelected===curr?.eventId ? 'bg-primary text-white rounded-md' : 'hover:bg-muted'}`}>{curr.eventName}</p>
+                      <p className={`flex gap-1 w-28 ml-7 px-2 py-1 overflow-x-scroll text-muted-foreground rounded-md ${eventSelected===curr?.eventId ? 'bg-primary text-white rounded-md' : 'hover:bg-muted'}`}>{curr.eventName}</p>
                     </Link>
                   ))}
                   <Link key={`sub-link-${event?.action}`}  href={`/events/${event?.action?.toLocaleLowerCase()}`} onClick={()=>{setEventSelected(event?.action)}}>

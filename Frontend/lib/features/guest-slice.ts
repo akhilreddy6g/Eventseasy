@@ -10,7 +10,7 @@ const guestState = {
 
 export const guestSlice = createSlice({
     name: "guests",
-    initialState: guestState,
+    initialState: guestState, 
     reducers: {
         onGuestsLoad: (state, action: PayloadAction<Guest []>) => {
             return {...state, eventGuests: action.payload}
@@ -24,11 +24,11 @@ export const guestSlice = createSlice({
             return {...state, inviteResponsePendingGuests: action.payload}
         },
 
-        onNewInvite: (state) => {
+        onNewGuestInvite: (state) => {
             return {...state, guestsAdded: !state.guestsAdded}
         }
     }
 });
 
-export const {onGuestsLoad, onInvitedGuestsLoad, onInviteResponsePendingGuestsLoad, onNewInvite} = guestSlice.actions
+export const {onGuestsLoad, onInvitedGuestsLoad, onInviteResponsePendingGuestsLoad, onNewGuestInvite} = guestSlice.actions
 export default guestSlice.reducer

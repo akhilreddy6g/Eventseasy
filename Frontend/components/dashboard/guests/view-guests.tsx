@@ -29,8 +29,8 @@ const GuestTable = ({eventId}: GuestInvite) => {
   const filteredGuests = Array.isArray(mappedData)
   ? mappedData.filter(
       (guest: any) =>
-        guest.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        guest.email.toLowerCase().includes(searchTerm.toLowerCase())
+        guest?.name?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+        guest?.email?.toLowerCase()?.includes(searchTerm.toLowerCase())
     )
   : [];
 

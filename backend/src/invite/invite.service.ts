@@ -41,7 +41,10 @@ export class InviteService{
 
     async sendEmail(data: EmailBody){
         try {
-            const response = await this.attendantEntry(data);
+            let response = {success: true, message: "null"}
+            if(!data.flag){
+                response = await this.attendantEntry(data);
+            }
             if(response.success){
                 try {
                     const html = `<h1> Hey ${data.username} </h1>`

@@ -1,15 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const userState = {
-    user: ""
+    user: "",
+    userName: ""
   };
 
 export const userSlice = createSlice({
     name: "userCredentials",
     initialState: userState,
     reducers: {
-        onLogIn: (state, action: PayloadAction<string>) => {
-            return {...state, user: action.payload}
+        onLogIn: (state, action: PayloadAction<{user: string, userName: string}>) => {
+            return {...state, user: action.payload.user, userName: action.payload.userName}
         }
     }
 });
