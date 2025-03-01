@@ -9,7 +9,7 @@ import { Guest } from "./view-guests";
 import CommonAttendeeView from "../common/common-attendee-view";
 import { apiUrl } from "@/components/noncomponents";
 import { useDispatch } from "react-redux";
-import { onNewInvite } from "@/lib/features/guest-slice";
+import { onNewGuestInvite } from "@/lib/features/guest-slice";
 
 const InvitationAcceptedList = (props : {eventId: string}) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -25,7 +25,7 @@ const InvitationAcceptedList = (props : {eventId: string}) => {
     const response  = await apiUrl.delete(`/events/attendee?user=${email}&eventId=${eventId}&accType=${accType}`)
     if(response?.data?.success){
       setAcceptedUsers((prev) => prev.filter((user) => user.email !== email));
-      dispatch(onNewInvite())
+      dispatch(onNewGuestInvite())
     } else {
       console.error(`Unable to remove user with email ${email}.`);
     }

@@ -21,7 +21,6 @@ export class UsersService {
       }
       return user;
     } catch (error) {
-      console.error("Error finding the User:", error);
       this.logService.Logger({request: "User Search", source: "users service -> findUser", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error searching User", error: error})
       return null;
     }

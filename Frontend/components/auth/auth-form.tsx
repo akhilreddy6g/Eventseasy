@@ -37,7 +37,7 @@ export function AuthForm({ type }: AuthFormProps) {
         dispatch(onLogIn({user: data.email, userName: response.data.userName}))
         sessionStorage.setItem("user", data.email);
         sessionStorage.setItem("eventChange", JSON.stringify(0));
-        sessionStorage.setItem("userName", data.userName);
+        sessionStorage.setItem("userName", response.data.userName);
         router.push(`/dashboard`);
       } else {
         console.error("Authentication failed");

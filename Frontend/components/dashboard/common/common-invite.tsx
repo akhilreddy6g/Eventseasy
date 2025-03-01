@@ -10,7 +10,8 @@ import { apiUrl } from "@/components/noncomponents";
 import { useAppSelector } from "@/lib/store";
 import { useDispatch} from "react-redux";
 import { AppDispatch } from "@/lib/store"
-import { onNewInvite } from "@/lib/features/guest-slice";
+import { onNewGuestInvite } from "@/lib/features/guest-slice";
+import { onNewManagerInvite } from "@/lib/features/manager-slice";
 
 interface InviteType{
     accType: "Manage" | "Attend";
@@ -23,8 +24,7 @@ export default function InviteUser({accType, eventId}: InviteType) {
   const [message, setMessage] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string>("");
-  const [hostname, setHostname] = useState<string>("");
-  const user = accType.charAt(0).toUpperCase() + accType.slice(1).toLowerCase()
+  const user = accType=="Attend"? "Guest": "Manager"
   const appState = useAppSelector((state)=> state.initialSliceReducer)
   const userEmail = sessionStorage.getItem("user");
   const dispatch = useDispatch<AppDispatch>();
@@ -37,28 +37,24 @@ export default function InviteUser({accType, eventId}: InviteType) {
     } if (!username.trim()) {
         setError("Username cannot be empty.");
         return;
-    } if (!hostname.trim()) {
-        setError("Your name cannot be empty.");
-        return;
     }
     if(userEmail!=email){
-      const body = {username: username, user: email, hostName: hostname, eventId: eventId, eventName:appState?.userData?.filter((curr)=> curr?.eventId===eventId)?.[0]?.eventData?.[0]?.event, accType: accType, access: false, message: message, flag: false}
+      const body = {username: username, user: email, hostName: sessionStorage.getItem("userName") ?? "someone who you might know", eventId: eventId, eventName:appState?.userData?.filter((curr)=> curr?.eventId===eventId)?.[0]?.eventData?.[0]?.event, accType: accType, access: false, message: message, flag: false}
       const response = await apiUrl.post(`/invite/send`, body)
       if(response && response.data.success){
-          alert(`Invitation sent to the ${accType}!`);
-          dispatch(onNewInvite())
+          alert(`Invitation sent to the ${user}!`);
+          accType=="Attend" ? dispatch(onNewGuestInvite()) : dispatch(onNewManagerInvite())
       } else {
-          alert(`Unable to send an invite to the ${accType}`)
+          alert(`Unable to send an invite to the ${user}`)
       }
       setError("");
       setEmail("");
       setUsername("");
       setMessage("");
-      setHostname("");
       setFile(null);
     } else {
-      setError(`${accType=="Attend"? "Guest" : "Manager"} email must not be the same as yours`);
-      console.error("Guest email must not be the same as yours")
+      setError(`${user} email must not be the same as yours`);
+      console.error(`${user} email must not be the same as yours`)
     }
   };
 
@@ -98,24 +94,6 @@ export default function InviteUser({accType, eventId}: InviteType) {
         {error && !username.trim() && (
             <p className="mt-1 text-sm text-red-500">Username cannot be empty.</p>
         )}
-      </div>
-
-    {/* Host Name */}
-       <div className="mb-4">
-        <Label htmlFor="hostname" className="block mb-2 text-sm font-medium">
-          Your Name <span className="text-red-600">*</span>
-        </Label>
-        <Input
-          id="hostname"
-          type="text"
-          placeholder="Enter your Name"
-          value={hostname}
-          onChange={(e) => setHostname(e.target.value)}
-          className={cn(
-            "w-full p-3 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-primary",
-            error && !validateInput(email) ? "border-red-500" : "border-gray-300"
-          )}
-        />
       </div>
 
     {/* Email */}
@@ -179,7 +157,7 @@ export default function InviteUser({accType, eventId}: InviteType) {
       <Button
         type="submit"
         className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-        disabled={!email || !username || !hostname}
+        disabled={!email || !username}
       >
         Submit
       </Button>

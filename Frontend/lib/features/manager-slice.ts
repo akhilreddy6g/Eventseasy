@@ -14,11 +14,11 @@ export const managerSlice = createSlice({
             return {...state, eventManagers: action.payload}
         },
 
-        onNewInvite: (state) => {
+        onNewManagerInvite: (state) => {
             return {...state, managersAdded: !state.managersAdded}
         }
     }
 });
 
-export const {onManagersLoad, onNewInvite} = managerSlice.actions
+export const {onManagersLoad, onNewManagerInvite} = managerSlice.actions
 export default managerSlice.reducer

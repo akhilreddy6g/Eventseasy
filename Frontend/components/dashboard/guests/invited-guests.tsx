@@ -8,7 +8,6 @@ import { useAppSelector } from "@/lib/store";
 import { Guest } from "./view-guests";
 import CommonAttendeeView from "../common/common-attendee-view";
 import { apiUrl } from "@/components/noncomponents";
-import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const InvitedList = (props: {eventId: string}) => {
@@ -22,8 +21,8 @@ const InvitedList = (props: {eventId: string}) => {
 
   const filteredInvitees = invitees.filter(
     (invitee) =>
-      invitee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      invitee.email.toLowerCase().includes(searchTerm.toLowerCase())
+      invitee?.name?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+      invitee?.email?.toLowerCase()?.includes(searchTerm.toLowerCase())
   );
 
   const setEventUserInfo = async (email: string, name: string) => {
@@ -33,7 +32,7 @@ const InvitedList = (props: {eventId: string}) => {
   };
 
   async function resendInvite(){
-    const data = {user: eventUser.current.email, username: eventUser.current.name, eventId: props.eventId, message: message, accType: "Attend", access: false, hostName: userDetails.userName}
+    const data = {user: eventUser.current.email, username: eventUser.current.name, eventId: props.eventId, message: message, accType: "Attend", access: false, hostName: userDetails.userName || sessionStorage.getItem("userName")}
     await apiUrl.post("/events/reinvite", data)
     setResendFlag(!resendFlag)
     console.info(`Invite resent to ${eventUser.current.email}`);
@@ -56,18 +55,17 @@ const InvitedList = (props: {eventId: string}) => {
     <>
       {resendFlag && 
         <Dialog open={resendFlag} onOpenChange={setResendFlag}>
-          <DialogContent className="w-96 p-6 bg-white rounded-lg shadow-lg">
+          <DialogContent aria-description="Message" className="w-96 p-6 bg-white rounded-lg shadow-lg">
             <DialogHeader>
               <DialogTitle className="text-center">Enter Your Message</DialogTitle>
             </DialogHeader>
             <DialogDescription>
-              Please enter your message before resending the invite.
+              Please Include an Invitation.
             </DialogDescription>
             <div className="flex flex-col gap-4">
-              <Label htmlFor="message">Message</Label>
               <Input
                 id="message"
-                placeholder="Message"
+                placeholder="Message (Optional)"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 className="w-full"
