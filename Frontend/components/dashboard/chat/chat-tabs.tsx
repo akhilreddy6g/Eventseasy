@@ -1,11 +1,17 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { MessageSquare, History, Calendar } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MessageSquare, History, Calendar } from "lucide-react";
+import ChatInput from "./chat-input";
+import { useEffect, useState } from "react";
+import { ChatHistory } from "./chat-history";
 
 export function ChatTabs() {
+  const [chatHistory, setChatHistory] = useState([]);
+  useEffect(() => {}, [chatHistory]);
+
   return (
     <Card className="flex-1">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -35,7 +41,8 @@ export function ChatTabs() {
             {/* List past chats */}
           </TabsContent>
           <TabsContent value="current" className="mt-4">
-            {/* List current chats */}
+            <ChatHistory></ChatHistory>
+            <ChatInput></ChatInput>
           </TabsContent>
           <TabsContent value="upcoming" className="mt-4">
             {/* List upcoming chats */}
@@ -43,5 +50,5 @@ export function ChatTabs() {
         </Tabs>
       </CardContent>
     </Card>
-  )
+  );
 }

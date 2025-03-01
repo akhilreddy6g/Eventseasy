@@ -32,7 +32,7 @@ export function ManagerList(props: {eventId: string}){
             manager.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             manager.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
+  
     const setEventUserInfo = async (email: string, name: string) => {
       eventUser.current.email = email;
       eventUser.current.name = name;

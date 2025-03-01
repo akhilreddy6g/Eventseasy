@@ -95,7 +95,7 @@ export default function InviteUser({accType, eventId}: InviteType) {
             <p className="mt-1 text-sm text-red-500">Username cannot be empty.</p>
         )}
       </div>
-
+      
     {/* Email */}
       <div className="mb-4">
         <Label htmlFor="email-phone" className="block mb-2 text-sm font-medium">
