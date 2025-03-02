@@ -38,6 +38,7 @@ export default function ChatInput() {
     if (socketConn) {
       socketConn.send(message);
     }
+    setMessage("");
   };
 
   useEffect(() => {
@@ -52,16 +53,16 @@ export default function ChatInput() {
     }
   }, []);
   return (
-    <div className="flex justify-between gap-2">
+    <div className="flex p-2 w-full"> 
       <Input
         id="message-id"
         type="text"
-        placeholder="Enter your message"
+        placeholder="Type a message..."
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         className="flex-1"
       ></Input>
-      <Button
+      <Button className="ml-2" 
         onClick={(e) => {
           sendMessage();
         }}

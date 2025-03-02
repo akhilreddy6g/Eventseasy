@@ -7,6 +7,7 @@ import { MessageSquare, History, Calendar } from "lucide-react";
 import ChatInput from "./chat-input";
 import { useEffect, useState } from "react";
 import { ChatHistory } from "./chat-history";
+import LiveChat from "./chat-window";
 
 export function ChatTabs() {
   const [chatHistory, setChatHistory] = useState([]);
@@ -23,26 +24,27 @@ export function ChatTabs() {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="current">
-          <TabsList>
-            <TabsTrigger value="past">
-              <History className="mr-2 h-4 w-4" />
+          <TabsList className="w-full flex-1">
+            <TabsTrigger value="past" className="w-1/3">
+              <History className="mr-2 h-4"/>
               Past Chats
             </TabsTrigger>
-            <TabsTrigger value="current">
-              <MessageSquare className="mr-2 h-4 w-4" />
+            <TabsTrigger value="current" className="w-1/3">
+              <MessageSquare className="mr-2 h-4" />
               Current Chats
             </TabsTrigger>
-            <TabsTrigger value="upcoming">
-              <Calendar className="mr-2 h-4 w-4" />
+            <TabsTrigger value="upcoming" className="w-1/3">
+              <Calendar className="mr-2 h-4" />
               Upcoming Chats
             </TabsTrigger>
           </TabsList>
           <TabsContent value="past" className="mt-4">
             {/* List past chats */}
           </TabsContent>
-          <TabsContent value="current" className="mt-4">
-            <ChatHistory></ChatHistory>
-            <ChatInput></ChatInput>
+          <TabsContent value="current" className="mt-4 flex justify-center">
+            {/* <ChatHistory></ChatHistory>
+            <ChatInput></ChatInput> */}
+            <LiveChat></LiveChat>
           </TabsContent>
           <TabsContent value="upcoming" className="mt-4">
             {/* List upcoming chats */}
