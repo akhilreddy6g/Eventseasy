@@ -10,7 +10,7 @@ import { onNewMessage, onChatCompRender } from "@/lib/features/chat-slice";
 export interface ChatHistoryType {
   chatHistory: [];
 }
-export default function ChatInput() {
+export default function ChatInput({eventId}:{eventId: string}) {
   const [message, setMessage] = useState("");
   const dispatch = useDispatch<AppDispatch>();
   const [socketConn, setSocketConn] = useState<WebSocket>();
@@ -53,7 +53,7 @@ export default function ChatInput() {
     }
   }, []);
   return (
-    <div className="flex p-2 w-full"> 
+    <div key={"ChatInput"+eventId} className="flex w-full"> 
       <Input
         id="message-id"
         type="text"

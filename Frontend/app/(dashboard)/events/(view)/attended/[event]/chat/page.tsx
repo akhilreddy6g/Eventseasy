@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 }
 
 export default function ChatPage() {
-  return <ChatTabs />
+  return <ChatTabs accType="Attend"/>
 }
