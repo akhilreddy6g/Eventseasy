@@ -1,4 +1,4 @@
-export const chatData = [
+export const mockChat = [
     {
       eventId: "Ajjs-4j43j-aiaj",
       eventName: "Introduction",
@@ -270,5 +270,100 @@ export const chatData = [
           timestamp: "01:10 PM",
         },
       ],
+    },
+    {
+      eventId: "team-meeting-202",
+      eventName: "Weekly Team Meeting",
+      members: 5,
+      messages: [
+        {
+          messageId: "t1",
+          username: "Sarah",
+          message: "Let's start with our weekly updates.",
+          timestamp: "10:00 AM",
+        },
+        {
+          messageId: "t2",
+          username: "David",
+          message: "Marketing campaign is seeing great engagement.",
+          timestamp: "10:05 AM",
+        },
+        {
+          messageId: "t3",
+          username: "Emily",
+          message: "Engineering team is on track for the next release.",
+          timestamp: "10:10 AM",
+        },
+        {
+          messageId: "t4",
+          username: "Michael",
+          message: "Finance team has finalized the Q1 budget.",
+          timestamp: "10:15 AM",
+        },
+        {
+          messageId: "t5",
+          username: "Alex",
+          message: "Any blockers we should address?",
+          timestamp: "10:20 AM",
+        },
+      ],
+    },
+    {
+      eventId: "hackathon-2025",
+      eventName: "Hackathon Brainstorm",
+      members: 3,
+      messages: [
+        {
+          messageId: "h1",
+          username: "Kevin",
+          message: "What ideas do we have for this year's hackathon?",
+          timestamp: "03:00 PM",
+        },
+        {
+          messageId: "h2",
+          username: "Sophia",
+          message: "AI-driven automation sounds interesting!",
+          timestamp: "03:05 PM",
+        },
+        {
+          messageId: "h3",
+          username: "Liam",
+          message: "We can explore an AI chatbot for mental health support.",
+          timestamp: "03:10 PM",
+        },
+      ],
+    },
+    {
+      eventId: "dev-meet-007",
+      eventName: "DevOps Discussion",
+      members: 4,
+      messages: [
+        {
+          messageId: "d1",
+          username: "Raj",
+          message: "CI/CD pipeline improvements are needed.",
+          timestamp: "02:30 PM",
+        },
+        {
+          messageId: "d2",
+          username: "Priya",
+          message: "We should optimize deployment time.",
+          timestamp: "02:35 PM",
+        },
+        {
+          messageId: "d3",
+          username: "Amir",
+          message: "Kubernetes config can be enhanced for better scaling.",
+          timestamp: "02:40 PM",
+        },
+        {
+          messageId: "d4",
+          username: "Elena",
+          message: "Let's review the action items in the next meeting.",
+          timestamp: "02:45 PM",
+        },
+      ],
     }
 ]
+
+export const mockUsers = ["Akhil", "Hemanth", "Rohith", "Jaideep", "John", "Doe", "Alice", "Bob"];

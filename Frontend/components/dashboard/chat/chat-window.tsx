@@ -1,15 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatHistory } from './chat-history';
 import ChatInput from './chat-input';
-import { Badge } from "@/components/ui/badge"
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip"
-import { chatData } from '@/public/mockData';
+import { mockChat } from '@/public/mockData';
+import MessageCard from './message-card';
 
 export interface Message {
   messageId: string;
@@ -25,59 +23,7 @@ export interface EventChat {
   messages: Message[];
 }
 
-export const chatMockData: EventChat[] = chatData
-
-export function MessageCard({
-  containerKey,
-  username,
-  message,
-  timestamp,
-  orientation
-}: {
-  containerKey: string
-  username: string;
-  message: string;
-  timestamp: string;
-  orientation: number
-}) {
-  return (
-    <div key={"MessageCardContainer"+containerKey} className={`flex ${orientation=== 0 ? "justify-start" : "justify-end"} w-full`}>
-    { orientation === 0 ?
-        <div key={"MessageCard"+containerKey} className="flex items-center space-x-3 w-3/4 justify-start">
-          <div className="flex-shrink-0 bg-gray-300 h-10 w-10 rounded-full flex items-center justify-center text-gray-700 font-bold">
-            {username.charAt(0).toUpperCase()}
-          </div>
-          <div>
-            <div className="flex flex-col w-fit items-start justify-start">
-              <p className="mt-3 p-2 w-fit text-gray-700 bg-white shadow-lg rounded-2xl border border-gray-200 text-justify">{message}</p>
-              <div className='flex justify-between w-full p-2'>
-                <h4 className="font-semibold text-gray-800 min-w-min">{username}</h4>
-                <p className="text-sm text-gray-500">{timestamp}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        : 
-        <div key={"MessageCard"+containerKey} className="flex items-center space-x-3 w-3/4 justify-end">
-          <div>
-          <div className="flex flex-col w-fit items-end justify-end">
-            <p className="mt-3 p-2 w-fit text-gray-700 bg-white shadow-lg rounded-2xl border border-gray-200 text-justify">
-              {message}
-            </p>
-            <div className="flex justify-between w-full p-2">
-              <p className="text-sm text-gray-500">{timestamp}</p>
-              <h4 className="font-semibold text-gray-800 min-w-min">{username}</h4>
-            </div>
-          </div>
-          </div>
-          <div className="flex-shrink-0 bg-gray-300 h-10 w-10 rounded-full flex items-center justify-center text-gray-700 font-bold">
-            {username.charAt(0).toUpperCase()}
-          </div>
-        </div>
-    }
-    </div>
-  );
-}
+export const chatMockData: EventChat[] = mockChat
 
 export function chatOptions(num: number) {
   return (
@@ -98,57 +44,60 @@ export function chatOptions(num: number) {
 }
 
 export const LiveChat = () => {
-  const [chatExpand, setChatExpand] = useState(false)
-  const [expandedChats, setExpandedChats] = useState<Record<string, boolean>>({});
-  const toggleExpand = (chatId: string) => {
-    setExpandedChats((prev) => ({
-      ...prev,
-      [chatId]: !prev[chatId],
-    }));
+  const [selectedChat, setSelectedChat] = useState<string>(chatMockData[0].eventId);
+  const changeSelectedChat = (chatId: string) => {
+    setSelectedChat(chatId);
   };
 
-function ChatHeader({ chatHeading, toggleExpand, containerKey, memberCount }: { chatHeading: string; toggleExpand: () => void, containerKey: string, memberCount: number }) {
-  return (
-    <div key={"chatHeader"+containerKey} className={`h-10 rounded-t-xl ${expandedChats[containerKey] ? '' : 'rounded-b-xl'} flex justify-between items-center bg-white shadow-md text-white px-4 mx-2`}>
-      <button className="flex-1 clear" onClick={toggleExpand}>
-        <p className="text-left text-black overflow-ellipsis">{chatHeading}</p>
-      </button>
-      {chatOptions(memberCount)}
-    </div>
-  );
-}
+  function ChatHeader({ chatHeading, changeChatView, containerKey, memberCount }: { chatHeading: string; changeChatView: any, containerKey: string, memberCount: number }) {
+    return (
+      <div key={"chatHeader"+containerKey} className={`h-10 rounded-t-lg rounded-b-lg w-48 overflow-scroll flex justify-between shadow-md text-white px-4 mx-2 ${selectedChat === containerKey ? "bg-black" : "bg-white"}`}>
+        <button className="flex-1 clear" onClick={()=>{changeChatView(containerKey)}}>
+          <p className={`text-left ${selectedChat === containerKey ? "text-white" : "text-black"}`}>{chatHeading}</p>
+        </button>
+        {/* {chatOptions(memberCount)} */}
+      </div>
+    );
+  }
+
+  function InfoTab({message}:{message: string}){
+    return (
+      <div className="flex flex-1 justify-center bg-white text-sm w-full sticky top-0 z-10 py-2 px-4 border-b-[1px]">{message}</div>
+    )
+  }
 
   return (
-    <div className="flex-1 flex-col bg-gray-50 rounded-md shadow-md h-fit max-h-96 overflow-scroll">
-    {chatMockData.map((chat) => (
-      <div key={chat.eventId} className="my-4">
-        <ChatHeader
-          chatHeading={chat.eventName}
-          toggleExpand={() => toggleExpand(chat.eventId)}
-          containerKey={chat.eventId}
-          memberCount={chat.members}
-        />
-        {expandedChats[chat.eventId] && (
-          <Card key={`ChatCard_${chat.eventId}`} className="flex flex-col h-[450px] shadow-lg rounded-t-none rounded-b-md overflow-hidden px-4 mx-2 border-x-0">
-            <ScrollArea key={`ScrollArea_${chat.eventId}`} className="flex-1 p-2 space-y-2 overflow-y-auto">
-              {chat.messages.map((message, index) => (
-                <MessageCard
-                  key={`Message_${message.messageId}`}
-                  containerKey={`Message_${message.messageId}`}
-                  username={message.username}
-                  message={message.message}
-                  timestamp={message.timestamp}
-                  orientation={index % 2}
-                />
-              ))}
-            </ScrollArea>
-            <div key={`ChatInput_${chat.eventId}`} className="p-2 flex items-center">
-              <ChatInput eventId={chat.eventId}/>
-            </div>
-          </Card>
-        )}
+    <div className="flex flex-1 bg-gray-50 rounded-md shadow-md">
+      <div className='flex flex-col items-center my-2 overflow-scroll max-h-[450px]'>
+        {chatMockData.map((chat) => (
+        <div key={chat.eventId} className="my-1">
+          <ChatHeader
+            chatHeading={chat.eventName}
+            changeChatView={changeSelectedChat}
+            containerKey={chat.eventId}
+            memberCount={chat.members}
+          />
+        </div>
+      ))}
       </div>
-    ))}
+      <Card key={`ChatCard_${selectedChat}`} className="flex flex-1 flex-col shadow-lg rounded-t-md rounded-b-md overflow-hidden my-2 mr-2 max-h-[450px]">
+          <ScrollArea key={`ScrollArea_${selectedChat}`} className="flex flex-1 pb-2 overflow-y-auto">
+              <InfoTab message='Info Tab' key={`InfoTab_${selectedChat}`}></InfoTab>
+              {(chatMockData.find((chat) => chat.eventId === selectedChat)?.messages ?? []).map((message, index) => (
+              <MessageCard
+                key={`Message_${message.messageId}`}
+                containerKey={`Message_${message.messageId}`}
+                username={message.username}
+                message={message.message}
+                timestamp={message.timestamp}
+                orientation={index % 2}
+              />
+            ))}
+          </ScrollArea>
+          <div key={`ChatInput_${selectedChat}`} className="p-2 flex items-center ">
+            <ChatInput eventId={selectedChat}/>
+          </div>
+      </Card>
   </div>
   );
 };
