@@ -10,18 +10,53 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { SearchUser } from "./search-user";
 import { mockUsers } from "@/public/mockData";
+import { apiUrl } from "@/components/noncomponents";
+import { useAppDispatch } from "@/lib/hooks";
+import { AppDispatch } from "@/lib/store";
+import { onNewChat } from "@/lib/features/chat-info-slice";
 
-export default function ChatForm({newFutureChat}:{newFutureChat: boolean}) {
+export default function ChatForm({newFutureChat, eventId}:{newFutureChat: boolean, eventId: string}) {
   const [chatName, setChatName] = useState("");
-  const [chatInfo, setChatInfo] = useState("");
+  const [chatDescription, setchatDescription] = useState("");
   const [chatDate, setChatDate] = useState<Date>(new Date());
   const [chatStartTime, setChatStartTime] = useState<Date>(new Date());
   const [chatEndTime, setChatEndTime] = useState<Date>(new Date(new Date().setHours(23, 59, 59, 999)));
   const [restrictedUsers, setRestrictedUsers] = useState<string[]>([]);
+  const dispatch = useAppDispatch<AppDispatch>()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const formattedTime = (date: Date) => { 
+    const formattedTime =date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  })
+  return formattedTime
+};
+
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ chatName, chatInfo, chatDate, chatStartTime, chatEndTime, restrictedUsers });
+    const chatType = newFutureChat? "future" : "present";
+    const data = {}
+    try {
+      const data = { eventId, chatName, chatDescription, chatType, chatDate: chatDate instanceof Date ? chatDate.toISOString().split('T')[0] : undefined, chatStartTime: formattedTime(chatStartTime), chatEndTime: formattedTime(chatEndTime), chatStatus: false, restrictedUsers };
+      const response = await apiUrl.post("/chats/create", data)
+      if(response?.data?.success){
+        console.log("Chat created successfully");
+        setChatName("");
+        setchatDescription("");
+        setChatDate(new Date());
+        setChatStartTime(new Date());
+        setChatEndTime(new Date(new Date().setHours(23, 59, 59, 999)));
+        setRestrictedUsers([]);
+        dispatch(onNewChat())
+      } else {
+        console.log("Failed to create a new chat");
+      }
+    } catch (error) {
+      console.error("Error creating chat:", error);
+    }
+
   };
 
   return (
@@ -35,7 +70,7 @@ export default function ChatForm({newFutureChat}:{newFutureChat: boolean}) {
           
           <div className="px-1">
             <Label className="block mb-2 text-sm font-medium">Chat Description</Label>
-            <Input value={chatInfo} className="w-full p-2 text-sm border border-gray-300 rounded-md" onChange={(e) => setChatInfo(e.target.value)} placeholder="Enter chat description" />
+            <Input value={chatDescription} className="w-full p-2 text-sm border border-gray-300 rounded-md" onChange={(e) => setchatDescription(e.target.value)} placeholder="Enter chat description" />
           </div>
 
           {newFutureChat && <div className="px-1">

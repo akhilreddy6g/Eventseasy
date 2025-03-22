@@ -4,14 +4,46 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MessageSquare, History, Calendar } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LiveChat from "./chat-window";
 import ChatForm from "./chat-form";
+import { apiUrl } from "@/components/noncomponents";
+import { useDispatch } from "react-redux";
+import { AppDispatch, useAppSelector } from "@/lib/store";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ChatInfo, onNewEventChatsFetch } from "@/lib/features/chat-info-slice";
 
-export function ChatTabs({accType}:{accType: string}) {
+export function ChatTabs({accType, eventId}:{accType: string, eventId: string}) {
   const [newChat, toggleNewChat] = useState(false);
   const [newFutureChat, toggleNewFutureChat] = useState(false);
   const [activeTab, setActiveTab] = useState("current");
+  const dispatch = useDispatch<AppDispatch>()
+  const queryClient = useQueryClient()
+  const eventState = useAppSelector((state=>state.chatsInfoReducer))
+  const newChatState = eventState.newChat
+
+  const fetchData = async () => {
+    try {
+      const res = await apiUrl.get(`/chats/data?eventId=${eventId}`);
+      const data : ChatInfo[] = res.data.message ?? []
+      return data
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return []
+    }
+  };
+
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["chats", newChatState],
+    queryFn: fetchData,
+    retry: false
+  })
+
+  useEffect(()=> {
+    if(data?? []?.length>eventState.chats.length){
+      dispatch(onNewEventChatsFetch([{eventId:eventId, details: data as ChatInfo []}]));
+    }
+  }, [data])
 
   const toggleForm = (num: number) => {
     if (num === 0) {
@@ -59,15 +91,15 @@ export function ChatTabs({accType}:{accType: string}) {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="current" className="my-4 flex justify-center items-center">
-            <LiveChat></LiveChat>
+            <LiveChat eventId={eventId}></LiveChat>
           </TabsContent>
           <TabsContent value="past" className="mt-4">
           </TabsContent>
           <TabsContent value="upcoming" className="mt-4">
           </TabsContent>
         </Tabs>
-        {newChat && <ChatForm newFutureChat={false}></ChatForm>}
-        {newFutureChat && <ChatForm newFutureChat={true}></ChatForm>}
+        {newChat && <ChatForm newFutureChat={false} eventId={eventId}></ChatForm>}
+        {newFutureChat && <ChatForm newFutureChat={true} eventId={eventId}></ChatForm>}
       </CardContent>
     </Card>
   );

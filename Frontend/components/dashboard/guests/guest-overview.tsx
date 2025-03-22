@@ -29,7 +29,7 @@ export interface GuestStructure {
   eventId: string
 }
 
-export interface MappedDataStrcuture {
+export interface MappedDataStructure {
   invited: Guest []
   attending: Guest []
   combined: Guest []
@@ -70,7 +70,7 @@ export function GuestList({eventId}: GuestInvite ) {
     return {invited: invited, attending: attending}
   }
 
-  const mappedData: MappedDataStrcuture = useMemo(() => {
+  const mappedData: MappedDataStructure = useMemo(() => {
     if(data?.success){
       const separatedEvents = separateEventGuests(data?.data);
       const invited: Guest [] = separatedEvents?.invited?.map((curr: GuestStructure) => ({name: curr.userName ?? "Missing", email: curr.user, status: "Invited"}))

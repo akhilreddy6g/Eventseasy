@@ -31,7 +31,7 @@ export function SearchUser({ users, selectedUsers, setSelectedUsers }: {users: a
       />
     <div className= "relative">
         {charCount > 3 && filteredUsers.length > 0 && (
-        <div className="relative top-0 z-50">
+        <div className="relative top-0">
             <ul className="max-h-32 overflow-y-auto bg-white border rounded p-2 mb-3 w-full shadow-lg">
             {filteredUsers.map((user: string) => (
                 <li 
@@ -44,7 +44,7 @@ export function SearchUser({ users, selectedUsers, setSelectedUsers }: {users: a
             </ul>
         </div>
         )}
-        <div className="flex flex-wrap gap-2 relative top-0 z-0">
+        <div className="flex flex-wrap gap-2 relative top-0">
             {selectedUsers.length > 0 ? (
             selectedUsers.map((user: string) => (
                 <button 

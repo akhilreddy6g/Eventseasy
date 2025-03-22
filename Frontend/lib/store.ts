@@ -4,11 +4,12 @@ import userLoginSliceReducer from './features/user-slice'
 import eventGuestsSliceReducer from './features/guest-slice'
 import eventManagersSliceReducer from './features/manager-slice'
 import chatMessageReducer from './features/chat-slice'
+import chatsInfoReducer from './features/chat-info-slice'
 import { TypedUseSelectorHook, useSelector } from 'react-redux'
 
 export const makeStore = () => {
   return configureStore({
-    reducer: {initialSliceReducer, userLoginSliceReducer, eventGuestsSliceReducer, eventManagersSliceReducer, chatMessageReducer},
+    reducer: {initialSliceReducer, userLoginSliceReducer, eventGuestsSliceReducer, eventManagersSliceReducer, chatMessageReducer, chatsInfoReducer},
   })
 }
 

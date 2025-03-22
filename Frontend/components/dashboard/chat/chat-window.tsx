@@ -3,11 +3,12 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ChatHistory } from './chat-history';
 import ChatInput from './chat-input';
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip"
-import { mockChat } from '@/public/mockData';
+import { mockChat2 } from '@/public/mockData';
 import MessageCard from './message-card';
+import { useAppSelector } from '@/lib/store';
+import { ChatInfo } from '@/lib/features/chat-info-slice';
 
 export interface Message {
   messageId: string;
@@ -17,13 +18,13 @@ export interface Message {
 }
 
 export interface EventChat {
-  eventId: string;
-  eventName: string;
+  chatId: string;
+  chatName: string;
   members: number;
   messages: Message[];
 }
 
-export const chatMockData: EventChat[] = mockChat
+export const chatMockData: EventChat[] = mockChat2
 
 export function chatOptions(num: number) {
   return (
@@ -43,8 +44,9 @@ export function chatOptions(num: number) {
   )
 }
 
-export const LiveChat = () => {
-  const [selectedChat, setSelectedChat] = useState<string>(chatMockData[0].eventId);
+export const LiveChat = ({eventId}: {eventId: string}) => {
+  const [selectedChat, setSelectedChat] = useState<string>(chatMockData[0].chatId);
+  const chatInfo = useAppSelector((state)=>state.chatsInfoReducer).chats.filter(chat=> chat.eventId===eventId)
   const changeSelectedChat = (chatId: string) => {
     setSelectedChat(chatId);
   };
@@ -69,13 +71,13 @@ export const LiveChat = () => {
   return (
     <div className="flex flex-1 bg-gray-50 rounded-md shadow-md">
       <div className='flex flex-col items-center my-2 overflow-scroll max-h-[450px]'>
-        {chatMockData.map((chat) => (
-        <div key={chat.eventId} className="my-1">
+        {chatInfo?.[0]?.details?.map((chat: ChatInfo, index) => (
+        <div key={chat?.chatId} className="my-1">
           <ChatHeader
-            chatHeading={chat.eventName}
+            chatHeading={chat?.chatName}
             changeChatView={changeSelectedChat}
-            containerKey={chat.eventId}
-            memberCount={chat.members}
+            containerKey={chat?.chatId}
+            memberCount={4}
           />
         </div>
       ))}
@@ -83,7 +85,7 @@ export const LiveChat = () => {
       <Card key={`ChatCard_${selectedChat}`} className="flex flex-1 flex-col shadow-lg rounded-t-md rounded-b-md overflow-hidden my-2 mr-2 max-h-[450px]">
           <ScrollArea key={`ScrollArea_${selectedChat}`} className="flex flex-1 pb-2 overflow-y-auto">
               <InfoTab message='Info Tab' key={`InfoTab_${selectedChat}`}></InfoTab>
-              {(chatMockData.find((chat) => chat.eventId === selectedChat)?.messages ?? []).map((message, index) => (
+              {(chatMockData.find((chat) => chat.chatId === selectedChat)?.messages ?? []).map((message, index) => (
               <MessageCard
                 key={`Message_${message.messageId}`}
                 containerKey={`Message_${message.messageId}`}

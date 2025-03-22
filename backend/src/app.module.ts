@@ -6,6 +6,7 @@ import { LogInfoService } from './auth/logger/logger.service';
 import { ConfigModule} from '@nestjs/config';
 import { InviteModule } from './invite/invite.module';
 import { RedisModule } from './redis/redis.module';
+import { ChatsModule } from './chats/chats.module';
 
 
 @Module({
@@ -15,7 +16,8 @@ import { RedisModule } from './redis/redis.module';
   ConfigModule.forRoot({
     isGlobal: true,
   }),
-  RedisModule
+  RedisModule,
+  ChatsModule
   ],
   providers: [AuthMiddleware, LogInfoService],
 })
