@@ -36,7 +36,7 @@ export default function ChatForm({newFutureChat, eventId}:{newFutureChat: boolea
 
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
-    const chatType = newFutureChat? "future" : "present";
+    const chatType = newFutureChat? "upcoming" : "current";
     const data = {}
     try {
       const data = { eventId, chatName, chatDescription, chatType, chatDate: chatDate instanceof Date ? chatDate.toISOString().split('T')[0] : undefined, chatStartTime: formattedTime(chatStartTime), chatEndTime: formattedTime(chatEndTime), chatStatus: false, restrictedUsers };
@@ -60,7 +60,7 @@ export default function ChatForm({newFutureChat, eventId}:{newFutureChat: boolea
   };
 
   return (
-    <Card className="max-w-md mx-auto p-2 shadow-lg max-h-[450px]">
+    <Card className="max-w-md mx-auto p-2 shadow-lg max-h-[450px] mt-4">
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4 max-h-[400px] overflow-scroll">
           <div className="px-1">

@@ -38,14 +38,10 @@ const ManagersOverview = ({eventId}: ManagerInvite) => {
   };
   const newInviteState = useAppSelector((state)=> state.eventManagersSliceReducer).managersAdded
   const { data, error, isLoading } = useQuery({
-    queryKey: ["managers"],
+    queryKey: ["managers", newInviteState],
     queryFn: fetchData,
     retry: false
   })
-
-  useEffect(()=> {
-    queryClient.invalidateQueries({queryKey: ['managers']})
-  }, [newInviteState])
 
   const separateEventManagers = (managerlist: ManagerStructure []) => {
     const invited: ManagerStructure [] = []

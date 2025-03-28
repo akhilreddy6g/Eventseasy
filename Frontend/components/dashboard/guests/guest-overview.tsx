@@ -48,14 +48,10 @@ export function GuestList({eventId}: GuestInvite ) {
   };
   const newInviteState = useAppSelector((state)=> state.eventGuestsSliceReducer).guestsAdded
   const { data, error, isLoading } = useQuery({
-    queryKey: ["guests"],
+    queryKey: ["guests", newInviteState],
     queryFn: fetchData,
     retry: false
   })
-
-  useEffect(()=> {
-    queryClient.invalidateQueries({queryKey: ['guests']})
-  }, [newInviteState])
 
   const separateEventGuests = (guestlist: GuestStructure []) => {
     const invited: GuestStructure [] = []

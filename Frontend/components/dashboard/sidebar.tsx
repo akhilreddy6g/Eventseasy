@@ -70,7 +70,7 @@ export function DashboardSidebar(): ReactNode {
   };
 
   const { data , error, isLoading } = useQuery({
-    queryKey: ["data"],
+    queryKey: ["data", eventState],
     queryFn: fetchData,
     retry: false
   })
@@ -83,6 +83,14 @@ export function DashboardSidebar(): ReactNode {
     })) || [];
   }, [data]); 
 
+  const changeFlag = (idx: number) => {
+    setEvents((prevEvents) =>
+      prevEvents?.map((event, index) =>
+        index === idx ? { ...event, flag: !event?.flag } : event
+      )
+    );
+  };
+
   useEffect(() => {
     if (data?.data) {
       dispatch(onInitialLogIn(data?.data));
@@ -94,10 +102,6 @@ export function DashboardSidebar(): ReactNode {
         }))
     );
   }, [data]);
-
-  useEffect(()=> {
-    queryClient.invalidateQueries({queryKey: ['data']})
-  }, [eventState])
 
   useEffect(() => {
     if(initRef.current){
@@ -117,15 +121,7 @@ export function DashboardSidebar(): ReactNode {
       initRef.current = false
     }
     }
-  }, [path, mappedData]);
-
-  const changeFlag = (idx: number) => {
-    setEvents((prevEvents) =>
-      prevEvents?.map((event, index) =>
-        index === idx ? { ...event, flag: !event?.flag } : event
-      )
-    );
-  };
+  }, [path, data]);
 
   return (
     <div className="flex flex-col w-48 border-r bg-muted/10 relative h-screen overflow-scroll">
