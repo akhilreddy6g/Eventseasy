@@ -28,7 +28,7 @@ export class ChatsService {
     async createChat(data: ChatBodyData, eventUser: string) {
         try {
             const userCheck = await this.findUserInEvent(eventUser, data.eventId)
-            if(userCheck.success && (userCheck.message[0].accType === "Manage" || userCheck.message[0].accType === "Host")){
+            if(userCheck.success){
                 const response = await this.chatModel.create(data)
                 this.logService.Logger({request: "Chat Creation Service", source: "chats service -> createChat", timestamp: new Date(), queryParams: false, bodyParams: true, response: "User verified, and new chat created successfully", error: "none"})
                 return {success: true, message: "Successfully created the chat"}

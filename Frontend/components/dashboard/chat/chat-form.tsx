@@ -14,6 +14,7 @@ import { apiUrl } from "@/components/noncomponents";
 import { useAppDispatch } from "@/lib/hooks";
 import { AppDispatch } from "@/lib/store";
 import { onNewChat } from "@/lib/features/chat-info-slice";
+import { calcTime } from "./chat-window";
 
 export default function ChatForm({newFutureChat, eventId}:{newFutureChat: boolean, eventId: string}) {
   const [chatName, setChatName] = useState("");
@@ -43,9 +44,10 @@ export default function ChatForm({newFutureChat, eventId}:{newFutureChat: boolea
       const response = await apiUrl.post("/chats/create", data)
       if(response?.data?.success){
         console.log("Chat created successfully");
+        const date = calcTime(-4)
         setChatName("");
         setchatDescription("");
-        setChatDate(new Date());
+        setChatDate(date);
         setChatStartTime(new Date());
         setChatEndTime(new Date(new Date().setHours(23, 59, 59, 999)));
         setRestrictedUsers([]);

@@ -86,27 +86,27 @@ export function ChatTabs({accType, eventId}:{accType: string, eventId: string}) 
       <CardContent>
         <Tabs value={newChat || newFutureChat ? "" : activeTab} onValueChange={setActiveTab}>
           <TabsList className="w-full flex-1" onClick={()=> {toggleForm(2)}}>
-            <TabsTrigger value="current" className="w-1/3">
-              <MessageSquare className="mr-2 h-4" />
-              Current Chats
-            </TabsTrigger>
             <TabsTrigger value="past" className="w-1/3">
               <History className="mr-2 h-4"/>
               Past Chats
+            </TabsTrigger>
+            <TabsTrigger value="current" className="w-1/3">
+              <MessageSquare className="mr-2 h-4" />
+              Current Chats
             </TabsTrigger>
             <TabsTrigger value="upcoming" className="w-1/3">
               <Calendar className="mr-2 h-4" />
               Upcoming Chats
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="current" className="my-4">
-            <GeneralChat eventId={eventId} selectedChat={selectedChat} setSelectedChat={setSelectedChat} chatTab="current"></GeneralChat>
-          </TabsContent>
           <TabsContent value="past" className="my-4">
-            <GeneralChat eventId={eventId} selectedChat={selectedChat} setSelectedChat={setSelectedChat} chatTab="past"></GeneralChat>
+            <GeneralChat eventId={eventId} selectedChat={selectedChat} setSelectedChat={setSelectedChat} chatTab="past" accType={accType}></GeneralChat>
+          </TabsContent>
+          <TabsContent value="current" className="my-4">
+            <GeneralChat eventId={eventId} selectedChat={selectedChat} setSelectedChat={setSelectedChat} chatTab="current" accType={accType}></GeneralChat>
           </TabsContent>
           <TabsContent value="upcoming" className="my-4">
-            <GeneralChat eventId={eventId} selectedChat={selectedChat} setSelectedChat={setSelectedChat} chatTab="upcoming"></GeneralChat>
+            <GeneralChat eventId={eventId} selectedChat={selectedChat} setSelectedChat={setSelectedChat} chatTab="upcoming" accType={accType}></GeneralChat>
           </TabsContent>
         </Tabs>
         {newChat && <ChatForm newFutureChat={false} eventId={eventId}></ChatForm>}

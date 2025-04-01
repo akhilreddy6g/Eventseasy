@@ -420,7 +420,7 @@ export const mochChat1 = {
     {
         "chatName": "Future Event",
         "chatDescription": "Do discuss about what you wanna do in future",
-        "chatType": "future",
+        "chatType": "upcoming",
         "chatDate": "2025-03-23",
         "chatStartTime": "19:30:00",
         "chatEndTime": "23:59:59",
@@ -433,7 +433,7 @@ export const mochChat1 = {
     {
         "chatName": "Test Chat",
         "chatDescription": "Testing chat version",
-        "chatType": "present",
+        "chatType": "current",
         "chatDate": "2025-03-21",
         "chatStartTime": "19:12:44",
         "chatEndTime": "23:59:59",
@@ -446,7 +446,7 @@ export const mochChat1 = {
     {
         "chatName": "Samurai Chat",
         "chatDescription": "Its all about samurai",
-        "chatType": "present",
+        "chatType": "current",
         "chatDate": "2025-03-22",
         "chatStartTime": "00:10:16",
         "chatEndTime": "23:59:59",
@@ -459,7 +459,7 @@ export const mochChat1 = {
     {
         "chatName": "Samurai",
         "chatDescription": "Samurai Description",
-        "chatType": "present",
+        "chatType": "current",
         "chatDate": "2025-03-22",
         "chatStartTime": "00:11:41",
         "chatEndTime": "23:59:59",

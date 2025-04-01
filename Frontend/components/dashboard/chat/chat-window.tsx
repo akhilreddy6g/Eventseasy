@@ -10,7 +10,7 @@ import MessageCard from './message-card';
 import { useAppSelector } from '@/lib/store';
 import { ChatInfo } from '@/lib/features/chat-info-slice';
 import { chatTypes, EventSelectedInChatTab } from './chat-tabs';
-import { CirclePlay, FileUser, Plus } from 'lucide-react';
+import { CirclePlay, Plus } from 'lucide-react';
 import { InfoCircle } from '@mynaui/icons-react';
 
 export interface Message {
@@ -47,14 +47,21 @@ export function chatOptions(num: number) {
   )
 }
 
-export function DefaultChat({chatId, userInChat}: {chatId: string, userInChat: boolean}){
+export function DefaultChat({chatId, userInChat, accType, chatStatus, chatTab}: {chatId: string, userInChat: boolean, accType: string, chatStatus: boolean, chatTab: string}){
   return (
     <div className='w-full h-full flex flex-col justify-center items-center gap-2'>
-      <button className='flex gap-2 pl-16 text-md bg-red-600 text-white rounded-sm p-[1px] w-64 items-center shadow-md'><Plus className='w-7 h-7 pl-2 pr-1'></Plus> Join Chat</button>
-      <button className='flex gap-2 pl-16 text-md bg-red-600 text-white rounded-sm p-[1px] w-64 items-center shadow-md'><CirclePlay className='w-7 h-7 pl-2 pr-1'/> Start Chat</button>
-      <button className='flex gap-2 pl-16 text-md bg-gray-500 text-white rounded-sm p-[1px] w-64 items-center shadow-md'><InfoCircle className='w-7 h-7 pl-2 pr-1'/> View Details</button>
+      {accType === "Attend" && chatTab==="current" && !userInChat && <button className='flex gap-2 pl-16 text-md bg-green-600 text-white rounded-sm p-[1px] w-64 items-center shadow-md'><Plus className='w-7 h-7 pl-2 pr-1'></Plus>Join Chat</button>}
+      {(accType === "Host" ||  accType === "Manage") && chatTab==="current" && !userInChat && <button className='flex gap-2 pl-16 text-md bg-green-600 text-white rounded-sm p-[1px] w-64 items-center shadow-md'><CirclePlay className='w-7 h-7 pl-2 pr-1'/>Start Chat</button>}
+      <button className='flex gap-2 pl-16 text-md bg-gray-500 text-white rounded-sm p-[1px] w-64 items-center shadow-md'><InfoCircle className='w-7 h-7 pl-2 pr-1'/>View Details</button>
+      {(!chatStatus || chatTab=="upcoming") && <p className='italic text-muted-foreground'>Chat Not Live Yet! Stay Tuned</p>}
     </div>
   )
+}
+
+export function calcTime(offset: number): Date {
+  const d = new Date();
+  const utc = d.getTime() + d.getTimezoneOffset() * 60000;
+  return new Date(utc + 3600000 * offset);
 }
 
 export function InfoTab({message}:{message: string}){
@@ -63,7 +70,7 @@ export function InfoTab({message}:{message: string}){
   )
 }
 
-export function ChatHeader({ chatHeading, changeChatView, containerKey, memberCount, selectedChat, chatTab }: { chatHeading: string; changeChatView: any, containerKey: string, memberCount: number, selectedChat: EventSelectedInChatTab, chatTab: chatTypes }) {
+export function ChatHeader({ chatHeading, changeChatView, containerKey, memberCount, selectedChat, chatTab, index }: { chatHeading: string; changeChatView: any, containerKey: string, memberCount: number, selectedChat: EventSelectedInChatTab, chatTab: chatTypes, index: number }) {
   return (
     <div key={"chatHeader"+containerKey} className={`h-10 rounded-t-lg rounded-b-lg w-48 overflow-scroll flex justify-between shadow-md text-white px-4 mx-2 ${selectedChat[chatTab] === containerKey ? "bg-black" : "bg-white"}`}>
       <button className="flex-1 clear" onClick={()=>{changeChatView(containerKey)}}>
@@ -75,7 +82,7 @@ export function ChatHeader({ chatHeading, changeChatView, containerKey, memberCo
 }
 
 
-export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat}: {eventId: string, chatTab: chatTypes, selectedChat: EventSelectedInChatTab, setSelectedChat: React.Dispatch<React.SetStateAction<EventSelectedInChatTab>>}) => {
+export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, accType}: {eventId: string, chatTab: chatTypes, selectedChat: EventSelectedInChatTab, setSelectedChat: React.Dispatch<React.SetStateAction<EventSelectedInChatTab>>, accType: string}) => {
   const chatInfo = useAppSelector((state)=>state.chatsInfoReducer).chats.filter(chat=> chat.eventId===eventId)
   const chatData = chatMockData.find((chat) => chat.chatId === selectedChat[chatTab])?.messages ?? []
 
@@ -85,22 +92,16 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat}: {
   };
   const [userName, setUserName] = useState<string | null>(useAppSelector((state)=> state.userLoginSliceReducer).userName);
 
-  function calcTime(offset: number): Date {
-    const d = new Date();
-    const utc = d.getTime() + d.getTimezoneOffset() * 60000;
-    return new Date(utc + 3600000 * offset);
-  }
+  const estDate = calcTime(-4)
 
-  const estDay = calcTime(-4).getDate()
-
-  function chatTypeCheck(chatType: string, record: ChatInfo){
-    const recordDay = new Date(record.chatDate + "T00:00:00-04:00").getDate()
-    if (chatType === "past"){
-      return recordDay < estDay
+  function chatTypeCheck(chatType: string, chatInfo: ChatInfo){
+    const chatDate = new Date(chatInfo.chatDate + "T00:00:00-04:00")
+    if(chatType === "past"){
+      return chatDate < estDate
     } else if(chatType === "current"){
-      return recordDay === estDay
-    } else if (chatType === "future"){
-      return recordDay > estDay
+      return chatType === chatInfo.chatType && chatDate.toDateString() === estDate.toDateString()
+    } else if (chatType === "upcoming"){
+      return chatType === chatInfo.chatType && chatDate > estDate
     }
   }
 
@@ -130,6 +131,7 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat}: {
                 memberCount={4}
                 selectedChat={selectedChat}
                 chatTab={chatTab}
+                index={index}
               />
             </div>
           ))}
@@ -150,6 +152,7 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat}: {
                 last={index===chatData.length-1}
               />
               ))}
+              {chatTab !== "past" && <DefaultChat chatId={"xyz"} userInChat={false} accType={accType} chatStatus={false} chatTab={chatTab}></DefaultChat>}
           </ScrollArea>
           {chatTab === "current" && <div key={`ChatInput_${selectedChat[chatTab]}`} className="p-2 flex items-center ">
             <ChatInput eventId={selectedChat[chatTab]}/>
