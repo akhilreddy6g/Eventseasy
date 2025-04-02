@@ -46,7 +46,52 @@ export class ChatsService {
             const userCheck = await this.findUserInEvent(eventUser, query.eventId)
             if(userCheck.success && userCheck.message.length > 0){
                 this.logService.Logger({request: "Chat Info Retrieval Service", source: "chats service -> getChats", timestamp: new Date(), queryParams: true, bodyParams: false, response: "User verified successfully", error: "none"})
-                const data = await this.chatModel.aggregate([ {$match: {eventId: query.eventId}}, {$project: {_id: false, chatId: "$_id", chatName: true, chatDescription: true, chatType: true, chatDate: true, chatStartTime: true, chatEndTime: true, chatStatus: true, restrictedUsers:true}}])
+                const data = await this.chatModel.aggregate([
+                    { 
+                      $match: { eventId: query.eventId } 
+                    },
+                    {
+                      $lookup: {
+                        from: "event_chat_sessions",
+                        let: { chatId: {$toString:'$_id'}, user: eventUser }, 
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $and: [
+                                  { $eq: ["$chatId", "$$chatId"] }, 
+                                  { $eq: ["$user", "$$user"] }   
+                                ]
+                              }
+                            }
+                          }
+                        ],
+                        as: "matchingRecords"
+                      }
+                    },
+                    {
+                      $set: {
+                        userInChat: { $gt: [{ $size: "$matchingRecords" }, 0] } 
+                      }
+                    },{
+                      $unset: "matchingRecords" 
+                    },
+                    {
+                      $project: {
+                        _id: false,
+                        chatId: "$_id", 
+                        chatName: true,
+                        chatDescription: true,
+                        chatType: true,
+                        chatDate: true,
+                        chatStartTime: true,
+                        chatEndTime: true,
+                        chatStatus: true,
+                        restrictedUsers: true,
+                        userInChat: true,  
+                      }
+                    }
+                  ]);
                 if(data.length>0){
                     return {success: true, message: data}
                 }

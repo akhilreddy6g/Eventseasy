@@ -19,7 +19,7 @@ import { calcTime } from "./chat-window";
 export default function ChatForm({newFutureChat, eventId}:{newFutureChat: boolean, eventId: string}) {
   const [chatName, setChatName] = useState("");
   const [chatDescription, setchatDescription] = useState("");
-  const [chatDate, setChatDate] = useState<Date>(new Date());
+  const [chatDate, setChatDate] = useState<Date>(calcTime(-8));
   const [chatStartTime, setChatStartTime] = useState<Date>(new Date());
   const [chatEndTime, setChatEndTime] = useState<Date>(new Date(new Date().setHours(23, 59, 59, 999)));
   const [restrictedUsers, setRestrictedUsers] = useState<string[]>([]);
@@ -43,11 +43,9 @@ export default function ChatForm({newFutureChat, eventId}:{newFutureChat: boolea
       const data = { eventId, chatName, chatDescription, chatType, chatDate: chatDate instanceof Date ? chatDate.toISOString().split('T')[0] : undefined, chatStartTime: formattedTime(chatStartTime), chatEndTime: formattedTime(chatEndTime), chatStatus: false, restrictedUsers };
       const response = await apiUrl.post("/chats/create", data)
       if(response?.data?.success){
-        console.log("Chat created successfully");
-        const date = calcTime(-4)
         setChatName("");
         setchatDescription("");
-        setChatDate(date);
+        setChatDate(calcTime(-8));
         setChatStartTime(new Date());
         setChatEndTime(new Date(new Date().setHours(23, 59, 59, 999)));
         setRestrictedUsers([]);

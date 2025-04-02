@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MessageSquare, History, Calendar } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import GeneralChat from "./chat-window";
+import { useEffect, useState } from "react";
+import GeneralChat, { calcTime, chatTypeCheck } from "./chat-window";
 import ChatForm from "./chat-form";
 import { apiUrl } from "@/components/noncomponents";
 import { useDispatch } from "react-redux";
@@ -34,7 +34,7 @@ export function ChatTabs({accType, eventId}:{accType: string, eventId: string}) 
   const fetchData = async () => {
     try {
       const res = await apiUrl.get(`/chats/data?eventId=${eventId}`);
-      const data : ChatInfo[] = res.data.message ?? []
+      const data : ChatInfo[] = res.data.success ? res.data.message : []
       return data
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -43,14 +43,24 @@ export function ChatTabs({accType, eventId}:{accType: string, eventId: string}) 
   };
 
   const { data, error, isLoading } = useQuery({
-    queryKey: ["chats", newChatState],
+    queryKey: ["chats", newChatState, eventId],
     queryFn: fetchData,
     retry: false
   })
 
   useEffect(()=> {
-    if(data?? []?.length>eventState.chats.length){
+    if(Array.isArray(data) && data.length > 0){
+      console.log("entered into useffect, after checking array length is greater than 0")
       dispatch(onNewEventChatsFetch([{eventId:eventId, details: data as ChatInfo []}]));
+      const estDate = calcTime(-4);
+      const pastInitialChat = data.filter((chat: ChatInfo) => chatTypeCheck(estDate, "past", chat))?.[0]?.chatId || "";
+      const currentInitialChat = data.filter((chat: ChatInfo) => chatTypeCheck(estDate, "current", chat))?.[0]?.chatId || "";
+      const upcomingInitialChat = data.filter((chat: ChatInfo) => chatTypeCheck(estDate, "upcoming", chat))?.[0]?.chatId || "";
+      setSelectedChat({
+        past: pastInitialChat,
+        current: currentInitialChat,
+        upcoming: upcomingInitialChat,
+      });
     }
   }, [data])
 

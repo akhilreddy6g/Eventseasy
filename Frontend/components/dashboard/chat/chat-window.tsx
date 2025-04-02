@@ -47,15 +47,43 @@ export function chatOptions(num: number) {
   )
 }
 
-export function DefaultChat({chatId, userInChat, accType, chatStatus, chatTab}: {chatId: string, userInChat: boolean, accType: string, chatStatus: boolean, chatTab: string}){
+export function DefaultChat({ chatId, userInChat, accType, chatStatus, chatTab, empty }: 
+  { chatId: string, userInChat: boolean, accType: string, chatStatus: boolean, chatTab: string, empty: boolean }) {
   return (
-    <div className='w-full h-full flex flex-col justify-center items-center gap-2'>
-      {accType === "Attend" && chatTab==="current" && !userInChat && <button className='flex gap-2 pl-16 text-md bg-green-600 text-white rounded-sm p-[1px] w-64 items-center shadow-md'><Plus className='w-7 h-7 pl-2 pr-1'></Plus>Join Chat</button>}
-      {(accType === "Host" ||  accType === "Manage") && chatTab==="current" && !userInChat && <button className='flex gap-2 pl-16 text-md bg-green-600 text-white rounded-sm p-[1px] w-64 items-center shadow-md'><CirclePlay className='w-7 h-7 pl-2 pr-1'/>Start Chat</button>}
-      <button className='flex gap-2 pl-16 text-md bg-gray-500 text-white rounded-sm p-[1px] w-64 items-center shadow-md'><InfoCircle className='w-7 h-7 pl-2 pr-1'/>View Details</button>
-      {(!chatStatus || chatTab=="upcoming") && <p className='italic text-muted-foreground'>Chat Not Live Yet! Stay Tuned</p>}
+    <div className="w-full h-full flex flex-col justify-center items-center gap-2">
+      {empty ? (
+        <>
+        {chatTab === "past" && <button className="flex gap-2 pl-16 text-md bg-gray-500 text-white rounded-sm p-[1px] w-64 items-center shadow-md">
+        <InfoCircle className="w-7 h-7 pl-2 pr-1" /> View Details
+      </button>}
+        <p className="italic text-muted-foreground">
+          {chatTab === "current" ? "No Messages Yet" : chatTab === "past" ? "No Messages to Show" : ""}
+        </p>
+        </>
+      ) : (
+        <>
+          {accType === "Attend" && chatTab === "current" && !userInChat && chatStatus && (
+            <button className="flex gap-2 pl-16 text-md bg-green-600 text-white rounded-sm p-[1px] w-64 items-center shadow-md">
+              <Plus className="w-7 h-7 pl-2 pr-1" /> Join Chat
+            </button>
+          )}
+          {(accType === "Host" || accType === "Manage") && chatTab === "current" && !userInChat && (
+            <button className="flex gap-2 pl-16 text-md bg-green-600 text-white rounded-sm p-[1px] w-64 items-center shadow-md">
+              <CirclePlay className="w-7 h-7 pl-2 pr-1" /> Start Chat
+            </button>
+          )}
+          <button className="flex gap-2 pl-16 text-md bg-gray-500 text-white rounded-sm p-[1px] w-64 items-center shadow-md">
+            <InfoCircle className="w-7 h-7 pl-2 pr-1" /> View Details
+          </button>
+          {(!chatStatus || chatTab === "upcoming") && (
+            <p className="italic text-muted-foreground">
+              {accType === "Host" || accType === "Manage" ? (<>Hit <span className="font-extrabold">Start Chat</span> to begin the Live Session</>) : (<>Chat <span className='font-extrabold'>Not Live Yet!</span> Stay Tuned</>)}
+            </p>
+          )}
+        </>
+      )}
     </div>
-  )
+  );
 }
 
 export function calcTime(offset: number): Date {
@@ -81,29 +109,28 @@ export function ChatHeader({ chatHeading, changeChatView, containerKey, memberCo
   );
 }
 
+export function chatTypeCheck(estDate: Date, chatType: string, chatInfo: ChatInfo){
+  const chatDate = new Date(chatInfo.chatDate + "T00:00:00-04:00")
+  if(chatType === "past"){
+    return chatDate.toDateString() !== estDate.toDateString() && chatDate < estDate
+  } else if(chatType === "current"){
+    return chatDate.toDateString() === estDate.toDateString()
+  } else if (chatType === "upcoming"){
+    return chatType === chatInfo.chatType && chatDate > estDate
+  }
+}
+
 
 export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, accType}: {eventId: string, chatTab: chatTypes, selectedChat: EventSelectedInChatTab, setSelectedChat: React.Dispatch<React.SetStateAction<EventSelectedInChatTab>>, accType: string}) => {
   const chatInfo = useAppSelector((state)=>state.chatsInfoReducer).chats.filter(chat=> chat.eventId===eventId)
+  const chatSelected = chatInfo[0]?.details?.filter((chat: ChatInfo)=>chat.chatId===selectedChat[chatTab])[0]
   const chatData = chatMockData.find((chat) => chat.chatId === selectedChat[chatTab])?.messages ?? []
-
   const initRef = useRef(true);
   const changeSelectedChat = (chatId: string) => {
     setSelectedChat((prev: EventSelectedInChatTab)=>({...prev, [chatTab] : chatId}));
   };
   const [userName, setUserName] = useState<string | null>(useAppSelector((state)=> state.userLoginSliceReducer).userName);
-
   const estDate = calcTime(-4)
-
-  function chatTypeCheck(chatType: string, chatInfo: ChatInfo){
-    const chatDate = new Date(chatInfo.chatDate + "T00:00:00-04:00")
-    if(chatType === "past"){
-      return chatDate < estDate
-    } else if(chatType === "current"){
-      return chatType === chatInfo.chatType && chatDate.toDateString() === estDate.toDateString()
-    } else if (chatType === "upcoming"){
-      return chatType === chatInfo.chatType && chatDate > estDate
-    }
-  }
 
   useEffect(() => {
     if (typeof window !== 'undefined' && !userName && initRef.current) {
@@ -117,11 +144,11 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
 
   return (
     <div className="flex flex-1 bg-gray-50 rounded-md shadow-md">
-      {Array.isArray(chatInfo?.[0]?.details) && chatInfo[0].details.length > 0 && chatInfo?.[0]?.details?.some((record: ChatInfo)=> chatTypeCheck(chatTab, record))?
+      {Array.isArray(chatInfo?.[0]?.details) && chatInfo[0].details.length > 0 && chatInfo?.[0]?.details?.some((record: ChatInfo)=> chatTypeCheck(estDate, chatTab, record))?
       <>
        <div className='flex flex-col items-center my-2 overflow-scroll max-h-[450px]'>
         {chatInfo[0].details
-          .filter((chat: ChatInfo) => chatTypeCheck(chatTab, chat))
+          .filter((chat: ChatInfo) => chatTypeCheck(estDate, chatTab, chat))
           .map((chat: ChatInfo, index) => (
             <div key={chat.chatId ?? `fallback-key-${index}`} className="my-1">
               <ChatHeader
@@ -139,8 +166,9 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
       <Card key={`ChatCard_${selectedChat[chatTab]}`} className="flex flex-1 flex-col shadow-lg rounded-t-md rounded-b-md overflow-hidden my-2 mr-2 h-[450px]">
          <>
           <ScrollArea key={`ScrollArea_${selectedChat[chatTab]}`} className="flex flex-1 pb-2 overflow-y-auto">
-              <InfoTab message='Info Tab' key={`InfoTab_${selectedChat[chatTab]}`}></InfoTab>
-              {chatData.map((message, index) => (
+              {chatTab !== "upcoming" && chatSelected?.userInChat && chatSelected?.chatStatus && <InfoTab message='Info Tab' key={`InfoTab_${selectedChat[chatTab]}`}></InfoTab>}
+              {chatTab === "past" || chatSelected?.userInChat && chatSelected?.chatStatus ? chatData.length > 0 ?
+              (chatData.map((message, index) => (
               <MessageCard
                 key={`Message_${message.messageId}`}
                 containerKey={`Message_${message.messageId}`}
@@ -151,10 +179,10 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
                 prev={index==0? false: message.username===chatData[index-1].username}
                 last={index===chatData.length-1}
               />
-              ))}
-              {chatTab !== "past" && <DefaultChat chatId={"xyz"} userInChat={false} accType={accType} chatStatus={false} chatTab={chatTab}></DefaultChat>}
+              ))) : <DefaultChat chatId={chatSelected?.chatId} userInChat={false} accType={accType} chatStatus={chatSelected?.chatStatus} chatTab={chatTab} empty={true}></DefaultChat>
+               : <DefaultChat chatId={chatSelected?.chatId} userInChat={false} accType={accType} chatStatus={chatSelected?.chatStatus} chatTab={chatTab} empty={false}></DefaultChat>}
           </ScrollArea>
-          {chatTab === "current" && <div key={`ChatInput_${selectedChat[chatTab]}`} className="p-2 flex items-center ">
+          {chatTab === "current" && chatSelected?.userInChat && chatSelected?.chatStatus && <div key={`ChatInput_${selectedChat[chatTab]}`} className="p-2 flex items-center ">
             <ChatInput eventId={selectedChat[chatTab]}/>
           </div>}
         </>
