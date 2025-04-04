@@ -27,7 +27,7 @@ git clone https://github.com/akhilreddy6g/Eventseasy.git
 cd Eventseasy
 ```
 #### 3. Install Dependencies
-##### Navigate to frontend directory
+3.1. Navigate to frontend directory
 ```
 cd Frontend
 ```
@@ -35,8 +35,7 @@ Install Frontend Dependencies
 ```
 npm i
 ```
-Build 
-##### Navigate to backend directory
+3.2. Navigate to backend directory
 ```
 cd backend
 ```
@@ -48,7 +47,7 @@ npm i
 Download and Install <a href = "https://www.mongodb.com/try/download/atlascli"> MongoDB Atlas</a>, which is a fully managed cloud database used in this project 
 for secure, scalable, and efficient data storage, with built-in monitoring and automation across cloud providers.
 #### 5. Run the Application
-##### Navigate to frontend directory
+3.1. Navigate to frontend directory
 ```
 cd Frontend
 ```
@@ -60,7 +59,7 @@ Start Frontend Server
 ```
 npm run start
 ```
-##### Navigate to backend directory
+3.2. Navigate to backend directory
 ```
 cd backend
 ```
