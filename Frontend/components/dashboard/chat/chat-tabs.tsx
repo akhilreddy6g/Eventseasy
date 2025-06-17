@@ -50,7 +50,6 @@ export function ChatTabs({accType, eventId}:{accType: string, eventId: string}) 
 
   useEffect(()=> {
     if(Array.isArray(data) && data.length > 0){
-      console.log("entered into useffect, after checking array length is greater than 0")
       dispatch(onNewEventChatsFetch([{eventId:eventId, details: data as ChatInfo []}]));
       const estDate = calcTime(-4);
       const pastInitialChat = data.filter((chat: ChatInfo) => chatTypeCheck(estDate, "past", chat))?.[0]?.chatId || "";
