@@ -7,6 +7,7 @@ import { ConfigModule} from '@nestjs/config';
 import { InviteModule } from './invite/invite.module';
 import { RedisModule } from './redis/redis.module';
 import { ChatsModule } from './chats/chats.module';
+import { MessageModule } from './message/message.module';
 
 
 @Module({
@@ -17,7 +18,8 @@ import { ChatsModule } from './chats/chats.module';
     isGlobal: true,
   }),
   RedisModule,
-  ChatsModule
+  ChatsModule,
+  MessageModule
   ],
   providers: [AuthMiddleware, LogInfoService],
 })
