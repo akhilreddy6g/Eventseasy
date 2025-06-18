@@ -8,6 +8,7 @@ import { InviteModule } from './invite/invite.module';
 import { RedisModule } from './redis/redis.module';
 import { ChatsModule } from './chats/chats.module';
 import { MessageModule } from './message/message.module';
+import { KafkaModule } from './kafka/kafka.module'; 
 
 
 @Module({
@@ -19,7 +20,8 @@ import { MessageModule } from './message/message.module';
   }),
   RedisModule,
   ChatsModule,
-  MessageModule
+  MessageModule,
+  KafkaModule
   ],
   providers: [AuthMiddleware, LogInfoService],
 })

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { MessageBody, NewWsConnBody } from "./dto/message.dto";
 import { LogInfoService } from "src/auth/logger/logger.service";
-import { kafka } from "kafka/kafka-client";
+import { kafka } from "src/kafka/kafka-client";
 import { Producer } from 'kafkajs'
 
 @Injectable()
