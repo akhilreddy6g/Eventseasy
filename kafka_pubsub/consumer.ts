@@ -1,14 +1,20 @@
 // consumer.ts
-import { kafka } from './kafka-client'
+import { kafka } from './kafka-client' // ✅ make sure you're importing from the new kafka.ts
 
-const consumer = kafka.consumer({ groupId: 'eventseasy-group' })
+const consumer = kafka.consumer({ groupId: 'eventseasy-group2' })
 
 const run = async () => {
+  console.log('🔌 Connecting consumer...')
   await consumer.connect()
-  await consumer.subscribe({ topic: 'test-topic', fromBeginning: true })
+
+  console.log('📬 Subscribing to topic...')
+  await consumer.subscribe({ topic: 'chat-message', fromBeginning: true })
+
+  console.log('👂 Listening for messages...')
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
       console.log({
+        topic,
         partition,
         offset: message.offset,
         value: message.value?.toString(),
@@ -17,4 +23,6 @@ const run = async () => {
   })
 }
 
-run().catch(console.error)
+run().catch((e) => {
+  console.error('❌ Error in consumer:', e)
+})
