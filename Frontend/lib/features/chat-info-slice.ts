@@ -9,7 +9,6 @@ export interface ChatInfo {
     chatStartTime: string
     chatEndTime: string
     chatStatus: boolean
-    userInChat: boolean
     restrictedUsers: string []
 }
 export interface EventChats {

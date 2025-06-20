@@ -211,4 +211,13 @@ export class EventService{
         return {success: false, data: null};
       }
     }
+
+    async eventUsers(eventId: string) {
+      try {
+        const restrictedUsers = await this.attendantModel.find({eventId: eventId}, {user:1, userName:1, accType:1})
+        return {success: true, data: restrictedUsers}
+      } catch (error) {
+        return {success: false, data: null};
+      }
+    }
 }

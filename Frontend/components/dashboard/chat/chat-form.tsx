@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -16,14 +16,22 @@ import { AppDispatch } from "@/lib/store";
 import { onNewChat } from "@/lib/features/chat-info-slice";
 import { calcTime } from "./chat-window";
 
+export interface UserInfo {
+  user: string;
+  userName: string;
+  accType: string;
+}
+
 export default function ChatForm({newFutureChat, eventId}:{newFutureChat: boolean, eventId: string}) {
   const [chatName, setChatName] = useState("");
   const [chatDescription, setchatDescription] = useState("");
   const [chatDate, setChatDate] = useState<Date>(calcTime(-8));
   const [chatStartTime, setChatStartTime] = useState<Date>(new Date());
   const [chatEndTime, setChatEndTime] = useState<Date>(new Date(new Date().setHours(23, 59, 59, 999)));
-  const [restrictedUsers, setRestrictedUsers] = useState<string[]>([]);
+  const [initialUsers, setInitialUsers] = useState<UserInfo[]>([]);
+  const [restrictedUsers, setRestrictedUsers] = useState<UserInfo[]>([]);
   const dispatch = useAppDispatch<AppDispatch>()
+  const initRef = useRef(true);
 
   const formattedTime = (date: Date) => { 
     const formattedTime =date.toLocaleTimeString("en-US", {
@@ -33,7 +41,23 @@ export default function ChatForm({newFutureChat, eventId}:{newFutureChat: boolea
     hour12: false,
   })
   return formattedTime
-};
+  };
+
+  useEffect(() => {
+    const fetchRestrictedUsers = async () => {
+      try {
+        const response = await apiUrl.get(`events/users?eventId=${eventId}`);
+        const fetchedRestrictedUsers = response.data.success ? response.data.data : [];
+        setInitialUsers(fetchedRestrictedUsers);
+      } catch (error) {
+        console.error("Error fetching restricted users:", error);
+      }
+    };
+    if (initRef.current) {
+      fetchRestrictedUsers();
+      initRef.current = false;
+    }
+  }, [eventId]);
 
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
@@ -110,7 +134,7 @@ export default function ChatForm({newFutureChat, eventId}:{newFutureChat: boolea
 
           <div className="px-1">
             <Label className="block mb-2 text-sm font-medium">Restrict Users</Label>
-            <SearchUser users={mockUsers} selectedUsers={restrictedUsers} setSelectedUsers={setRestrictedUsers} />
+            <SearchUser users={initialUsers} selectedUsers={restrictedUsers} setSelectedUsers={setRestrictedUsers} />
           </div>
 
           <Button type="submit" className="w-full sticky bottom-0 mt-2 z-10">Create Chat</Button>

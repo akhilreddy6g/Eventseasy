@@ -11,15 +11,11 @@ export class MessageBody {
 
     @IsNotEmpty()
     @IsString()
-    userId: string;
+    user: string;
 
     @IsNotEmpty()
     @IsString()
     username: string;
-
-    @IsNotEmpty()
-    @IsString()
-    messageId: string;
 
     @IsNotEmpty()
     @IsString()

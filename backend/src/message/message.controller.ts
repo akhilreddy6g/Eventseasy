@@ -8,10 +8,9 @@ export class MessageController {
     constructor(private msgService: MessageService){}
     @Post("/new-ws-conn")
     async establishNewWSConnection(@Body() data: NewWsConnBody){
-
     }
 
-    @Get('active-subs')
+    @Get('/active-subs')
     async getAllSubscribers(){
         return await this.msgService.getAllSubscribers()
     }

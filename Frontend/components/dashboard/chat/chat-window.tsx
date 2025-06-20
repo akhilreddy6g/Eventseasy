@@ -12,6 +12,7 @@ import { ChatInfo } from '@/lib/features/chat-info-slice';
 import { chatTypes, EventSelectedInChatTab } from './chat-tabs';
 import { CirclePlay, Plus } from 'lucide-react';
 import { InfoCircle } from '@mynaui/icons-react';
+import { apiUrl } from '@/components/noncomponents';
 
 export interface Message {
   messageId: string;
@@ -47,8 +48,22 @@ export function chatOptions(num: number) {
   )
 }
 
-export function DefaultChat({ chatId, userInChat, accType, chatStatus, chatTab, empty }: 
-  { chatId: string, userInChat: boolean, accType: string, chatStatus: boolean, chatTab: string, empty: boolean }) {
+export async function startChat(eventId: string, chatId: string) {
+  console.log(" starting chat, eventId:", eventId, "chatId:", chatId)
+  try {
+    const response = await apiUrl.post(`/chats/start?eventId=${eventId}&chatId=${chatId}`)
+    if(response.data.success){
+      alert("Chat Started Successfully")
+    } else {
+      alert("Unable to start chat")
+    }
+  } catch (error) {
+    alert("Error while starting chat")
+  }
+} 
+
+export function DefaultChat({eventId, chatId, accType, chatStatus, chatTab, empty }: 
+  { eventId: string, chatId: string, accType: string, chatStatus: boolean, chatTab: string, empty: boolean }) {
   return (
     <div className="w-full h-full flex flex-col justify-center items-center gap-2">
       {empty ? (
@@ -62,13 +77,13 @@ export function DefaultChat({ chatId, userInChat, accType, chatStatus, chatTab, 
         </>
       ) : (
         <>
-          {accType === "Attend" && chatTab === "current" && !userInChat && chatStatus && (
+          {/* {accType === "Attend" && chatTab === "current" && chatStatus && (
             <button className="flex gap-2 pl-16 text-md bg-green-600 text-white rounded-sm p-[1px] w-64 items-center shadow-md">
               <Plus className="w-7 h-7 pl-2 pr-1" /> Join Chat
             </button>
-          )}
-          {(accType === "Host" || accType === "Manage") && chatTab === "current" && !userInChat && (
-            <button className="flex gap-2 pl-16 text-md bg-green-600 text-white rounded-sm p-[1px] w-64 items-center shadow-md">
+          )} */}
+          {(accType === "Host" || accType === "Manage") && chatTab === "current" && (
+            <button className="flex gap-2 pl-16 text-md bg-green-600 text-white rounded-sm p-[1px] w-64 items-center shadow-md" onClick={() => {startChat(eventId, chatId)}}>
               <CirclePlay className="w-7 h-7 pl-2 pr-1" /> Start Chat
             </button>
           )}
@@ -166,8 +181,8 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
       <Card key={`ChatCard_${selectedChat[chatTab]}`} className="flex flex-1 flex-col shadow-lg rounded-t-md rounded-b-md overflow-hidden my-2 mr-2 h-[450px]">
          <>
           <ScrollArea key={`ScrollArea_${selectedChat[chatTab]}`} className="flex flex-1 pb-2 overflow-y-auto">
-              {chatTab !== "upcoming" && chatSelected?.userInChat && chatSelected?.chatStatus && <InfoTab message='Info Tab' key={`InfoTab_${selectedChat[chatTab]}`}></InfoTab>}
-              {chatTab === "past" || chatSelected?.userInChat && chatSelected?.chatStatus ? chatData.length > 0 ?
+              {chatTab !== "upcoming" && chatSelected?.chatStatus && <InfoTab message='Info Tab' key={`InfoTab_${selectedChat[chatTab]}`}></InfoTab>}
+              {chatTab === "past" || chatSelected?.chatStatus ? chatData.length > 0 ?
               (chatData.map((message, index) => (
               <MessageCard
                 key={`Message_${message.messageId}`}
@@ -179,11 +194,11 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
                 prev={index==0? false: message.username===chatData[index-1].username}
                 last={index===chatData.length-1}
               />
-              ))) : <DefaultChat chatId={chatSelected?.chatId} userInChat={false} accType={accType} chatStatus={chatSelected?.chatStatus} chatTab={chatTab} empty={true}></DefaultChat>
-               : <DefaultChat chatId={chatSelected?.chatId} userInChat={false} accType={accType} chatStatus={chatSelected?.chatStatus} chatTab={chatTab} empty={false}></DefaultChat>}
+              ))) : <DefaultChat eventId={eventId} chatId={chatSelected?.chatId} accType={accType} chatStatus={chatSelected?.chatStatus} chatTab={chatTab} empty={true}></DefaultChat>
+               : <DefaultChat eventId={eventId} chatId={chatSelected?.chatId} accType={accType} chatStatus={chatSelected?.chatStatus} chatTab={chatTab} empty={false}></DefaultChat>}
           </ScrollArea>
-          {chatTab === "current" && chatSelected?.userInChat && chatSelected?.chatStatus && <div key={`ChatInput_${selectedChat[chatTab]}`} className="p-2 flex items-center ">
-            <ChatInput eventId={selectedChat[chatTab]}/>
+          {chatTab === "current" && chatSelected?.chatStatus && <div key={`ChatInput_${selectedChat[chatTab]}`} className="p-2 flex items-center ">
+            <ChatInput eventId={eventId} chatId={chatSelected?.chatId}/>
           </div>}
         </>
       </Card>

@@ -1,44 +1,44 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { X } from "@mynaui/icons-react";
+import { UserInfo } from "./chat-form";
 
-export function SearchUser({ users, selectedUsers, setSelectedUsers }: {users: any, selectedUsers: any, setSelectedUsers: any}) {
+export function SearchUser({ users, selectedUsers, setSelectedUsers }: {users: UserInfo [], selectedUsers: UserInfo [], setSelectedUsers: any}) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [charCount, setCharCount] = useState(0)
 
-  const filteredUsers = users.filter(
-    (user: string) =>
-      user.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      !selectedUsers.includes(user)
-  );
-
-  const addUser = (user: string) => {
-    setSelectedUsers([...selectedUsers, user]);
+  const addUser = (data: UserInfo) => {
+    setSelectedUsers([...selectedUsers, data]);
     setSearchTerm("");
   };
 
-  const removeRestrictedUser = (user: string) => {
-    setSelectedUsers(selectedUsers.filter((u: string) => u !== user));
+  const removeRestrictedUser = (data: UserInfo) => {
+    setSelectedUsers(selectedUsers.filter((selData: UserInfo) => selData.user !== data.user));
   };
+
+  const filteredUsers = users.length>0 ? users.filter(
+    (data: UserInfo) =>
+      data.userName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      !selectedUsers.some((selData: UserInfo) => selData.user === data.user)
+  ): [];
 
   return (
     <div className="space-y-2 my-2">
       <Input
         placeholder="Search users..."
         value={searchTerm}
-        onChange={(e) => {setSearchTerm(e.target.value); setCharCount(e.target.value.length)}}
+        onChange={(e) => {setSearchTerm(e.target.value)}}
         className="mb-4"
       />
     <div className= "relative">
-        {charCount > 3 && filteredUsers.length > 0 && (
+        {searchTerm.length > 2 && filteredUsers.length > 0 && (
         <div className="relative top-0">
             <ul className="max-h-32 overflow-y-auto bg-white border rounded p-2 mb-3 w-full shadow-lg">
-            {filteredUsers.map((user: string) => (
+            {filteredUsers.map((data: UserInfo) => (
                 <li 
-                key={user} 
+                key={data.user} 
                 className="cursor-pointer p-1 hover:bg-gray-200" 
-                onClick={() => { addUser(user); setCharCount(0); }}>
-                {user}
+                onClick={() => { addUser(data)}}>
+                {data.userName}
                 </li>
             ))}
             </ul>
@@ -46,13 +46,13 @@ export function SearchUser({ users, selectedUsers, setSelectedUsers }: {users: a
         )}
         <div className="flex flex-wrap gap-2 relative top-0">
             {selectedUsers.length > 0 ? (
-            selectedUsers.map((user: string) => (
+            selectedUsers.map((data: UserInfo) => (
                 <button 
-                key={user} 
+                key={data.user} 
                 className="flex gap-2 items-center text-sm bg-red-200 px-2 py-1 rounded"
-                onClick={() => removeRestrictedUser(user)}
+                onClick={() => removeRestrictedUser(data)}
                 >
-                <X /> {user}
+                <X /> {data.userName}
                 </button>
             ))
             ) : (

@@ -40,14 +40,28 @@ export class ChatBodyData {
     chatStatus: boolean
 
     /** Array of restricted users */
-    @IsNotEmpty()
     @IsArray()
-    @IsString({ each: true })  // Ensures every item in the array is a string
-    restrictedUsers: string[];
+    restrictedUsers: UserInfo[] | string[];
 }
 
-export class ChatQueryData {
+export interface UserInfo {
+    user: string;
+    userName: string;
+    accType: string;
+}
+
+export class EventInfoQueryParams {
     @IsNotEmpty()
     @IsString()
     eventId: string
+}
+
+export class ChatStartQueryParams {
+    @IsNotEmpty()
+    @IsString()
+    eventId: string
+
+    @IsNotEmpty()
+    @IsString()
+    chatId: string
 }

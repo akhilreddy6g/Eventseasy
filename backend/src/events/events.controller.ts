@@ -44,4 +44,9 @@ export class CreateEvents{
         const eventHost = JSON.parse(req.cookies.auth)?.user
         return this.eService.reInviteUser(data, eventHost)
     }
+
+    @Get("/users")
+    eventUsers(@Query() query: GetEventId){
+        return this.eService.eventUsers(query.eventId);
+    }
 }

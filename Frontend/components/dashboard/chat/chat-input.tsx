@@ -6,15 +6,17 @@ import { AppDispatch, useAppSelector } from "@/lib/store";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { onNewMessage, onChatCompRender } from "@/lib/features/chat-slice";
+import { apiUrl } from "@/components/noncomponents";
 
 export interface ChatHistoryType {
   chatHistory: [];
 }
-export default function ChatInput({eventId}:{eventId: string}) {
+export default function ChatInput({eventId, chatId}:{eventId: string, chatId: string}) {
   const [message, setMessage] = useState("");
   const dispatch = useDispatch<AppDispatch>();
   const [socketConn, setSocketConn] = useState<WebSocket>();
   const chatMessages = useAppSelector((state) => state.chatMessageReducer);
+  const userInfo = useAppSelector((state)=> state.userLoginSliceReducer);
   const socketInitFlag = chatMessages.connectionFlag;
   const localFlag = useRef(true);
 
@@ -34,7 +36,8 @@ export default function ChatInput({eventId}:{eventId: string}) {
   }
 
   let sendMessage = () => {
-    console.log("Sending message:", message);
+    const data = {eventId: eventId, chatId: chatId, user: userInfo.userName || sessionStorage.getItem("user"), username: userInfo.userName || sessionStorage.getItem("userName"), message: message, timestamp: new Date()}
+    apiUrl.post('/message/push-msg', data)
     if (socketConn) {
       socketConn.send(message);
     }

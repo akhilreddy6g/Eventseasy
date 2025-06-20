@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
 import { HydratedDocument } from "mongoose"
 
 export type ChatDocument = HydratedDocument<Chat>
+export type Chat_Restricted_UserDocument = HydratedDocument<Chat_Restricted_User>
 
 @Schema({versionKey: false})
 export class Chat {
@@ -29,8 +30,21 @@ export class Chat {
     @Prop({required: true})
     chatStatus: boolean
     
-    @Prop({ required: true, type: [String], default: [] })
+    @Prop({ required: true, default: [] })
     restrictedUsers: string []
 }
 
+@Schema({versionKey: false})
+export class Chat_Restricted_User {
+    @Prop({required: true})
+    eventId: string
+
+    @Prop({required: true})
+    chatId: string
+
+    @Prop({required: true})
+    user: string
+}
+
 export const ChatSchema = SchemaFactory.createForClass(Chat)
+export const Chat_Restricted_UserSchema = SchemaFactory.createForClass(Chat_Restricted_User)

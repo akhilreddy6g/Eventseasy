@@ -29,6 +29,21 @@ import { KafkaModule } from './kafka/kafka.module';
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(AuthMiddleware).forRoutes(
-      { path: 'events/data', method: RequestMethod.ALL }
+      { 
+        path: 'events/*', 
+        method: RequestMethod.ALL 
+      },
+      {
+        path: 'chats/*',
+        method: RequestMethod.ALL,
+      },
+      {
+        path: 'invite/*',
+        method: RequestMethod.ALL,
+      },
+      {
+        path: 'message/*',
+        method: RequestMethod.ALL,
+      }
     );}
 }
