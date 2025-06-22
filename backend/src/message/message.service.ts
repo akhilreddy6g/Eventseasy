@@ -13,7 +13,8 @@ export class MessageService {
     private producer: Producer
     private isConnected = false
 
-    constructor(private logService: LogInfoService, 
+    constructor(
+      private logService: LogInfoService, 
       @InjectModel(Chat_Servers.name) private chatServersModel: Model<Chat_Servers>
     ) {
         this.producer = kafka.producer()
@@ -27,31 +28,35 @@ export class MessageService {
     }
 
     async getNewWsConn(data: NewWsConnBody){
-       try {
-          const allSubs = await this.getAllSubscribers()
-          const partition = this.computePartition(data.eventId, data.chatId, allSubs.output.length)
-          const targetClientID = allSubs.output.filter((item: {clientId: string, partition: number}) => item.partition === partition)[0].clientId
-          const targetServerApi = (await this.chatServersModel.findOne({csClientId: targetClientID})).csApiUrl
-          return {success: true, data: targetServerApi}
-       } catch (error) {
-          return {success: false, message: `Error while getting connection string: ${error.message}`}
-       }
+      try {
+        const allSubs = await this.getAllSubscribers()
+        const partition = this.computePartition(data.eventId, data.chatId, allSubs.output.length)
+        const targetClientID = allSubs.output.filter((item: {clientId: string, partition: number}) => item.partition === partition)[0].clientId
+        const targetServerApi = (await this.chatServersModel.findOne({csClientId: targetClientID})).csApiUrl
+        this.logService.Logger({request: "Websocket Connection Service", source: "message service -> getNewWsConn", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Successfully retrieved go server api url to establish websocket connection", error: "none"})
+        return {success: true, data: targetServerApi}
+      } catch (error) {
+        this.logService.Logger({request: "Websocket Connection Service", source: "message service -> getNewWsConn", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while getting go server api url", error: error})
+        return {success: false, message: `Error while getting connection string: ${error.message}`}
+      }
     }
 
     async pushMsgToQueue(data: MessageBody){
-        try {
-            if (!this.isConnected) {
-              await this.producer.connect()
-              this.isConnected = true
-            }
-            await this.producer.send({
-              topic: 'chat-message',
-              messages: [{ value: JSON.stringify(data), partition: this.computePartition(data.eventId, data.chatId, 6)}],
-            })
-            return { success: true, message: 'Message pushed successfully to the queue' }
-        } catch (error) {
-            return { success: false, message: `Error while pushing message to the queue: ${error.message}` }
-        }
+      try {
+          if (!this.isConnected) {
+            await this.producer.connect()
+            this.isConnected = true
+          }
+          await this.producer.send({
+            topic: 'chat-message',
+            messages: [{ value: JSON.stringify(data), partition: this.computePartition(data.eventId, data.chatId, 6)}],
+          })
+          this.logService.Logger({request: "Message Service", source: "message service -> pushMsgToQueue", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Message successfully pushed to the queue", error: "none"})
+          return { success: true, message: 'Message pushed successfully to the queue' }
+      } catch (error) {
+        this.logService.Logger({request: "Message Service", source: "message service -> pushMsgToQueue", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while pushing message to the queue", error: error})
+        return { success: false, message: `Error while pushing message to the queue: ${error.message}` }
+      }
     }
 
     async getAllSubscribers() {
@@ -59,7 +64,6 @@ export class MessageService {
         const admin = kafka.admin();
         await admin.connect();
         const { groups } = await admin.describeGroups(['go-consumer-group']);
-    
         const output = [];
     
         for (const group of groups) {
@@ -93,16 +97,11 @@ export class MessageService {
         }        
     
         await admin.disconnect();
-        return {
-          success: true,
-          message: 'Active Kafka consumers and their partitions',
-          output,
-        };
+        this.logService.Logger({request: "Kafka Subscriber Info Service", source: "message service -> getAllSubscribers", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Successfully fetched info of all kafka consumers", error: "none"})
+        return { success: true, message: 'Active Kafka consumers and their partitions', output};
       } catch (error) {
-        return {
-          success: false,
-          message: `Error while fetching consumers: ${error.message}`,
-        };
+        this.logService.Logger({request: "Kafka Subscriber Info Service", source: "message service -> getAllSubscribers", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Error while fetching kafka consumers info", error: error})
+        return { success: false, message: `Error while fetching consumers: ${error.message}`};
       }
     }
     

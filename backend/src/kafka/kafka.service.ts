@@ -1,21 +1,21 @@
 // backend/src/kafka/kafka.service.ts
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { kafka } from './kafka-client'
+import { LogInfoService } from 'src/auth/logger/logger.service'
 
 @Injectable()
 export class KafkaService implements OnModuleInit {
+  constructor(
+    private logService: LogInfoService
+  ){}
   async onModuleInit() {
     await this.createKafkaTopic()
   }
 
   private async createKafkaTopic() {
     const admin = kafka.admin()
-
     try {
-      console.log('Connecting to Kafka admin...')
       await admin.connect()
-
-      console.log('Creating topic...')
       const result = await admin.createTopics({
         topics: [
           {
@@ -27,15 +27,14 @@ export class KafkaService implements OnModuleInit {
       })
 
       if (result) {
-        console.log('✅ Topic "chat-message" created successfully with 6 partitions.')
+        this.logService.Logger({request: "Kafka Topic Creation Service", source: "kafka service -> createKafkaTopic", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Topic chat-message created successfully with 6 partitions", error: "none"})
       } else {
-        console.log('ℹ️ Topic "chat-message" already exists. No changes made.')
+        this.logService.Logger({request: "Kafka Topic Creation Service", source: "kafka service -> createKafkaTopic", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Topic chat-message already exists. No changes made", error: "none"})
       }
     } catch (error) {
-      console.error('❌ Error creating topic:', error)
+      this.logService.Logger({request: "Kafka Topic Creation Service", source: "kafka service -> createKafkaTopic", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Error creating topic", error: error})
     } finally {
       await admin.disconnect()
-      console.log('Disconnected from Kafka admin.')
     }
   }
 }
