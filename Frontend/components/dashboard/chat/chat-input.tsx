@@ -20,6 +20,11 @@ export default function ChatInput({eventId, chatId}:{eventId: string, chatId: st
   const socketInitFlag = chatMessages.connectionFlag;
   const localFlag = useRef(true);
 
+  async function getConnStr (eventId: string, chatId: string) {
+    const data = await apiUrl.post(`/message/new-ws-conn?eventId=${eventId}&chatId=${chatId}`)
+    return data.data
+  }  
+
   if (socketConn) {
     socketConn.onmessage = (event: any) => {
       console.log("Message form Web socket:", event.data);
@@ -36,23 +41,27 @@ export default function ChatInput({eventId, chatId}:{eventId: string, chatId: st
   }
 
   let sendMessage = () => {
-    const data = {eventId: eventId, chatId: chatId, user: userInfo.userName || sessionStorage.getItem("user"), username: userInfo.userName || sessionStorage.getItem("userName"), message: message, timestamp: new Date()}
+    const data = {eventId: eventId, chatId: chatId, user: userInfo.user || sessionStorage.getItem("user"), username: userInfo.userName || sessionStorage.getItem("userName"), message: message, timestamp: new Date()}
     apiUrl.post('/message/push-msg', data)
-    if (socketConn) {
-      socketConn.send(message);
-    }
     setMessage("");
   };
 
   useEffect(() => {
     if (socketInitFlag && localFlag.current) {
-      const socket = new WebSocket("ws://localhost:4001/ws");
-      setSocketConn(socket);
-      socket.onopen = (event) => {
-        console.log("WebSocket connection opened");
-      };
-      dispatch(onChatCompRender());
-      localFlag.current = false;
+      (async () => {
+        try {
+          const data: {success: string, data: string} = await getConnStr(eventId, chatId); 
+          const socket = new WebSocket(`ws://${data.success? data.data.split('//')[1] : "localhost:4001"}/ws`); 
+          setSocketConn(socket);
+          socket.onopen = () => {
+            console.log("WebSocket connection opened");
+          };
+          dispatch(onChatCompRender());
+          localFlag.current = false;
+        } catch (error) {
+          console.error("Error fetching connection string or initializing socket:", error);
+        }
+      })();
     }
   }, []);
   return (

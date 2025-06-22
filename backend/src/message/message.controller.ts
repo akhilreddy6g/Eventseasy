@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query } from "@nestjs/common";
 import { MessageBody, NewWsConnBody } from "./dto/message.dto";
 import { MessageService } from "./message.service";
 
@@ -7,7 +7,8 @@ import { MessageService } from "./message.service";
 export class MessageController {
     constructor(private msgService: MessageService){}
     @Post("/new-ws-conn")
-    async establishNewWSConnection(@Body() data: NewWsConnBody){
+    async getNewWsConn(@Query() data: NewWsConnBody){
+        return await this.msgService.getNewWsConn(data)
     }
 
     @Get('/active-subs')

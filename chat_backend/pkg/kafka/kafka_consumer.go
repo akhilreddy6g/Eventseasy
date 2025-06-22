@@ -1,6 +1,7 @@
-package main
+package kafka_consumer
 
 import (
+	"chat_server/pkg/websocket"
 	"context"
 	"fmt"
 	"log"
@@ -8,8 +9,11 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-func main() {
+func StartKafkaConsumer(pool *websocket.Pool, client string) {
 	r := kafka.NewReader(kafka.ReaderConfig{
+		Dialer: &kafka.Dialer{
+			ClientID: client,
+		},
 		Brokers: []string{"localhost:9092"},
 		Topic:   "chat-message",
 		GroupID: "go-consumer-group",
@@ -22,6 +26,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("error while reading: %v", err)
 		}
-		fmt.Printf("Received message at offset %d: %s\n", msg.Offset, string(msg.Value))
+		message := fmt.Sprintf("Kafka -> offset: %d, value: %s", msg.Offset, string(msg.Value))
+		fmt.Println("📨 Broadcasting:", message)
 	}
 }

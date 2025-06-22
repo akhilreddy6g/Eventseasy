@@ -49,7 +49,7 @@ export function AuthForm({ type }: AuthFormProps) {
       }
       if (response.data.Authenticated) {
         dispatch(
-          onLogIn({ user: data.email, userName: response.data.userName })
+          onLogIn({ user: data.user, userName: response.data.userName })
         );
         sessionStorage.setItem("user", data.email);
         sessionStorage.setItem("eventChange", JSON.stringify(0));
