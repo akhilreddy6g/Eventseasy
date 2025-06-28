@@ -14,7 +14,7 @@ export class AuthController {
     try {
       const response = await this.authService.signin(data);
       if (response.authneticated) {
-        res.cookie("accessToken", JSON.stringify({ act: response.accessToken, user: data.user }),{secure: process.env.NODE_ENV === "production",sameSite: "strict", maxAge: 900000});
+        res.cookie("accessToken", JSON.stringify({ act: response.accessToken, user: data.user }),{secure: process.env.NODE_ENV === "production",sameSite: "strict", maxAge: 7200000});
         res.cookie("auth", JSON.stringify({ rft: response.refreshToken, user: data.user }), {secure: process.env.NODE_ENV === "production",sameSite: "strict", maxAge: 86400000, httpOnly: true});       
         res.setHeader("authorization", response.accessToken)
         return res.status(HttpStatus.OK).json({user: data.user, userName: response.username, Authenticated: true, message: response.message});
@@ -31,7 +31,7 @@ export class AuthController {
     try {
       const response = await this.authService.signup(data);
       if (response.authneticated) {
-        res.cookie("accessToken", JSON.stringify({ act: response.accessToken, user: data.user }),{secure: process.env.NODE_ENV === "production",sameSite: "strict", maxAge: 900000});
+        res.cookie("accessToken", JSON.stringify({ act: response.accessToken, user: data.user }),{secure: process.env.NODE_ENV === "production",sameSite: "strict", maxAge: 7200000});
         res.cookie("auth", JSON.stringify({ rft: response.refreshToken, user: data.user }), {secure: process.env.NODE_ENV === "production",sameSite: "strict", maxAge: 86400000, httpOnly: true});        
         res.setHeader("Authorization", `Bearer ${response.accessToken}`);
         return res.status(HttpStatus.OK).json({ user:data.user, userName: data.username, Authenticated: true, message: response.message });
@@ -48,7 +48,7 @@ export class AuthController {
     try {
       const response = this.sessionService.refreshAccessToken(req);
       if (response.accessToken && response.refreshToken) {
-        res.cookie("accessToken", JSON.stringify({ act: response.accessToken, user: response.user }),{secure: process.env.NODE_ENV === "production",sameSite: "strict", maxAge: 900000});
+        res.cookie("accessToken", JSON.stringify({ act: response.accessToken, user: response.user }),{secure: process.env.NODE_ENV === "production",sameSite: "strict", maxAge: 7200000});
         res.setHeader("authorization", response.accessToken)
         res.cookie("auth", JSON.stringify({ rft: response.refreshToken, user: response.user }), {secure: process.env.NODE_ENV === "production",sameSite: "strict", maxAge: 86400000, httpOnly: true});        
         return res.status(HttpStatus.OK).json({user: response.user, Authenticated: true, message: "Successfully regenerated access token"});

@@ -31,7 +31,8 @@ export class MessageService {
       try {
         const allSubs = await this.getAllSubscribers()
         const partition = this.computePartition(data.eventId, data.chatId, allSubs.output.length)
-        const targetClientID = allSubs.output.filter((item: {clientId: string, partition: number}) => item.partition === partition)[0].clientId
+        const targetClient = allSubs.output.filter((item: {clientId: string, partition: number}) => item.partition === partition)
+        const targetClientID = targetClient[0].clientId
         const targetServerApi = (await this.chatServersModel.findOne({csClientId: targetClientID})).csApiUrl
         this.logService.Logger({request: "Websocket Connection Service", source: "message service -> getNewWsConn", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Successfully retrieved go server api url to establish websocket connection", error: "none"})
         return {success: true, data: targetServerApi}
@@ -47,9 +48,11 @@ export class MessageService {
             await this.producer.connect()
             this.isConnected = true
           }
-          await this.producer.send({
-            topic: 'chat-message',
+          const ans = await this.producer.send({
+            topic: 'chat-messages-1',
             messages: [{ value: JSON.stringify(data), partition: this.computePartition(data.eventId, data.chatId, 6)}],
+          }).catch((error) => {
+            console.log("error while pushing message: ",error)
           })
           this.logService.Logger({request: "Message Service", source: "message service -> pushMsgToQueue", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Message successfully pushed to the queue", error: "none"})
           return { success: true, message: 'Message pushed successfully to the queue' }
@@ -63,7 +66,7 @@ export class MessageService {
       try {
         const admin = kafka.admin();
         await admin.connect();
-        const { groups } = await admin.describeGroups(['go-consumer-group']);
+        const { groups } = await admin.describeGroups(['go-consumer-group-1']);
         const output = [];
     
         for (const group of groups) {

@@ -11,7 +11,7 @@ export class SessionService {
     constructor(private logService: LogInfoService){}
     genToken(data: UserData): Tokens {
         try {
-            const accessToken = jwt.sign({user: data.user}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m', issuer: process.env.ACCESS_ISSUER });
+            const accessToken = jwt.sign({user: data.user}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2h', issuer: process.env.ACCESS_ISSUER });
             const refreshToken = jwt.sign({user: data.user}, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '30d', issuer: process.env.REFRESH_ISSUER });
             this.logService.Logger({request: "Token Generation Service", source: "session service -> genToken ", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Tokens generated", error: "none"})
             return { accessToken: accessToken, refreshToken: refreshToken };
@@ -40,7 +40,7 @@ export class SessionService {
                 const truth = jwt.verify(refreshToken.rft, process.env.REFRESH_TOKEN_SECRET)
                 const {user} = truth as jwt.JwtPayload;
                 if(truth){
-                    const accessToken = jwt.sign({user: user}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m', issuer: process.env.ACCESS_ISSUER })
+                    const accessToken = jwt.sign({user: user}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2h', issuer: process.env.ACCESS_ISSUER })
                     this.logService.Logger({request: "Access Token Regeneration Service", source: "session service -> refreshAccessToken", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Successfully generated a new access token", error: "none"})
                     return {accessToken:accessToken, refreshToken:refreshToken, user: user}
                 }
