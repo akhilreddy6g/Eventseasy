@@ -3,6 +3,7 @@ package kafka_consumer
 import (
 	"chat_server/pkg/websocket"
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -15,8 +16,8 @@ func StartKafkaConsumer(pool *websocket.Pool, client string) {
 			ClientID: client,
 		},
 		Brokers: []string{"localhost:9092"},
-		Topic:   "chat-message",
-		GroupID: "go-consumer-group",
+		Topic:   "chat-messages-1",
+		GroupID: "go-consumer-group-1",
 	})
 
 	fmt.Println("👂 Listening for messages...")
@@ -26,7 +27,12 @@ func StartKafkaConsumer(pool *websocket.Pool, client string) {
 		if err != nil {
 			log.Fatalf("error while reading: %v", err)
 		}
-		message := fmt.Sprintf("Kafka -> offset: %d, value: %s", msg.Offset, string(msg.Value))
-		fmt.Println("📨 Broadcasting:", message)
+		// 🔄 Deserialize Kafka message into WebSocket message
+		var wsMessage websocket.Body
+		if err := json.Unmarshal(msg.Value, &wsMessage); err != nil {
+			fmt.Println("❌ Failed to parse Kafka message:", err)
+			continue
+		}
+		pool.Broadcast <- wsMessage
 	}
 }

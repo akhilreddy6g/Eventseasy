@@ -14,13 +14,24 @@ func serveWS(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("Read err:", err)
 	}
+
+	eventId := r.URL.Query().Get("eventId")
+	chatId := r.URL.Query().Get("chatId")
+	user := r.URL.Query().Get("user")
+
+	fmt.Println("eventId:", eventId)
+	fmt.Println("chatId:", chatId)
+	fmt.Println("user:", user)
+
 	client := &websocket.Client{
-		Conn: conn,
-		Pool: pool,
+		EventId: eventId,
+		ChatId:  chatId,
+		User:    user,
+		Conn:    conn,
+		Pool:    pool,
 	}
 
 	pool.Register <- client
-	client.Read()
 }
 
 func main() {
