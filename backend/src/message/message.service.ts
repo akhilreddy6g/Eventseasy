@@ -49,7 +49,7 @@ export class MessageService {
             this.isConnected = true
           }
           const ans = await this.producer.send({
-            topic: 'chat-messages-1',
+            topic: 'cm-1',
             messages: [{ value: JSON.stringify(data), partition: this.computePartition(data.eventId, data.chatId, 6)}],
           }).catch((error) => {
             console.log("error while pushing message: ",error)
@@ -66,7 +66,7 @@ export class MessageService {
       try {
         const admin = kafka.admin();
         await admin.connect();
-        const { groups } = await admin.describeGroups(['go-consumer-group-1']);
+        const { groups } = await admin.describeGroups(['cg-1']);
         const output = [];
     
         for (const group of groups) {

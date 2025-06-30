@@ -17,7 +17,7 @@ export default function ChatInput({eventId, chatId}:{eventId: string, chatId: st
   const [socketConn, setSocketConn] = useState<WebSocket>();
   const chatMessages = useAppSelector((state) => state.chatMessageReducer);
   const userInfo = useAppSelector((state)=> state.userLoginSliceReducer);
-  const socketInitFlag = chatMessages.connectionFlag;
+  // const socketInitFlag = chatMessages.connectionFlag;
   const localFlag = useRef(true);
 
   async function getConnStr (eventId: string, chatId: string) {
@@ -27,7 +27,7 @@ export default function ChatInput({eventId, chatId}:{eventId: string, chatId: st
 
   if (socketConn) {
     socketConn.onmessage = (event: any) => {
-      console.log("Message form Web socket:", event.data);
+      console.log("Message from Web socket:", event.data);
       dispatch(onNewMessage(event.data));
     };
 
@@ -47,11 +47,11 @@ export default function ChatInput({eventId, chatId}:{eventId: string, chatId: st
   };
 
   useEffect(() => {
-    if (socketInitFlag && localFlag.current) {
+    if (localFlag.current) {
       (async () => {
         try {
           const data: {success: string, data: string} = await getConnStr(eventId, chatId); 
-          const socket = new WebSocket(`ws://${data.success? data.data.split('//')[1] : "localhost:4001"}/ws`); 
+          const socket = new WebSocket(`ws://${data.success? data.data.split('//')[1] : "localhost:4001"}/ws?eventId=${eventId}&chatId=${chatId}&user=${userInfo.user || sessionStorage.getItem("user")}`);
           setSocketConn(socket);
           socket.onopen = () => {
             console.log("WebSocket connection opened");
@@ -63,7 +63,7 @@ export default function ChatInput({eventId, chatId}:{eventId: string, chatId: st
         }
       })();
     }
-  }, []);
+  }, [eventId, chatId]);
   return (
     <div key={"ChatInput"+eventId} className="flex w-full"> 
       <Input

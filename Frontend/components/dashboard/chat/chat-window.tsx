@@ -48,59 +48,6 @@ export function chatOptions(num: number) {
   )
 }
 
-export async function startChat(eventId: string, chatId: string) {
-  console.log(" starting chat, eventId:", eventId, "chatId:", chatId)
-  try {
-    const response = await apiUrl.post(`/chats/start?eventId=${eventId}&chatId=${chatId}`)
-    if(response.data.success){
-      alert("Chat Started Successfully")
-    } else {
-      alert("Unable to start chat")
-    }
-  } catch (error) {
-    alert("Error while starting chat")
-  }
-} 
-
-export function DefaultChat({eventId, chatId, accType, chatStatus, chatTab, empty }: 
-  { eventId: string, chatId: string, accType: string, chatStatus: boolean, chatTab: string, empty: boolean }) {
-  return (
-    <div className="w-full h-full flex flex-col justify-center items-center gap-2">
-      {empty ? (
-        <>
-        {chatTab === "past" && <button className="flex gap-2 pl-16 text-md bg-gray-500 text-white rounded-sm p-[1px] w-64 items-center shadow-md">
-        <InfoCircle className="w-7 h-7 pl-2 pr-1" /> View Details
-      </button>}
-        <p className="italic text-muted-foreground">
-          {chatTab === "current" ? "No Messages Yet" : chatTab === "past" ? "No Messages to Show" : ""}
-        </p>
-        </>
-      ) : (
-        <>
-          {/* {accType === "Attend" && chatTab === "current" && chatStatus && (
-            <button className="flex gap-2 pl-16 text-md bg-green-600 text-white rounded-sm p-[1px] w-64 items-center shadow-md">
-              <Plus className="w-7 h-7 pl-2 pr-1" /> Join Chat
-            </button>
-          )} */}
-          {(accType === "Host" || accType === "Manage") && chatTab === "current" && (
-            <button className="flex gap-2 pl-16 text-md bg-green-600 text-white rounded-sm p-[1px] w-64 items-center shadow-md" onClick={() => {startChat(eventId, chatId)}}>
-              <CirclePlay className="w-7 h-7 pl-2 pr-1" /> Start Chat
-            </button>
-          )}
-          <button className="flex gap-2 pl-16 text-md bg-gray-500 text-white rounded-sm p-[1px] w-64 items-center shadow-md">
-            <InfoCircle className="w-7 h-7 pl-2 pr-1" /> View Details
-          </button>
-          {(!chatStatus || chatTab === "upcoming") && (
-            <p className="italic text-muted-foreground">
-              {accType === "Host" || accType === "Manage" ? (<>Hit <span className="font-extrabold">Start Chat</span> to begin the Live Session</>) : (<>Chat <span className='font-extrabold'>Not Live Yet!</span> Stay Tuned</>)}
-            </p>
-          )}
-        </>
-      )}
-    </div>
-  );
-}
-
 export function calcTime(offset: number): Date {
   const d = new Date();
   const utc = d.getTime() + d.getTimezoneOffset() * 60000;
@@ -141,11 +88,61 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
   const chatSelected = chatInfo[0]?.details?.filter((chat: ChatInfo)=>chat.chatId===selectedChat[chatTab])[0]
   const chatData = chatMockData.find((chat) => chat.chatId === selectedChat[chatTab])?.messages ?? []
   const initRef = useRef(true);
+  const [startChatFlag, setStartChatFlag] = useState<boolean>(false)
   const changeSelectedChat = (chatId: string) => {
     setSelectedChat((prev: EventSelectedInChatTab)=>({...prev, [chatTab] : chatId}));
   };
   const [userName, setUserName] = useState<string | null>(useAppSelector((state)=> state.userLoginSliceReducer).userName);
   const estDate = calcTime(-4)
+
+  async function startChat(eventId: string, chatId: string) {
+    console.log(" starting chat, eventId:", eventId, "chatId:", chatId)
+    try {
+      const response = await apiUrl.post(`/chats/start?eventId=${eventId}&chatId=${chatId}`)
+      if(response.data.success){
+        alert("Chat Started Successfully")
+        setStartChatFlag((prev: boolean)=> !prev)
+      } else {
+        alert("Unable to start chat")
+      }
+    } catch (error) {
+      alert("Error while starting chat")
+    }
+  } 
+  
+  function DefaultChat({eventId, chatId, accType, chatStatus, chatTab, empty }: 
+    { eventId: string, chatId: string, accType: string, chatStatus: boolean, chatTab: string, empty: boolean }) {
+    return (
+      <div className="w-full h-full flex flex-col justify-center items-center gap-2">
+        {empty ? (
+          <>
+          {chatTab === "past" && <button className="flex gap-2 pl-16 text-md bg-gray-500 text-white rounded-sm p-[1px] w-64 items-center shadow-md">
+          <InfoCircle className="w-7 h-7 pl-2 pr-1" /> View Details
+        </button>}
+          <p className="italic text-muted-foreground">
+            {chatTab === "current" ? "No Messages Yet" : chatTab === "past" ? "No Messages to Show" : ""}
+          </p>
+          </>
+        ) : (
+          <>
+            {(accType === "Host" || accType === "Manage") && chatTab === "current" && (
+              <button className="flex gap-2 pl-16 text-md bg-green-600 text-white rounded-sm p-[1px] w-64 items-center shadow-md" onClick={() => {startChat(eventId, chatId)}}>
+                <CirclePlay className="w-7 h-7 pl-2 pr-1" /> Start Chat
+              </button>
+            )}
+            <button className="flex gap-2 pl-16 text-md bg-gray-500 text-white rounded-sm p-[1px] w-64 items-center shadow-md">
+              <InfoCircle className="w-7 h-7 pl-2 pr-1" /> View Details
+            </button>
+            {(!chatStatus || chatTab === "upcoming") && (
+              <p className="italic text-muted-foreground">
+                {accType === "Host" || accType === "Manage" ? (<>Hit <span className="font-extrabold">Start Chat</span> to begin the Live Session</>) : (<>Chat <span className='font-extrabold'>Not Live Yet!</span> Stay Tuned</>)}
+              </p>
+            )}
+          </>
+        )}
+      </div>
+    );
+  }
 
   useEffect(() => {
     if (typeof window !== 'undefined' && !userName && initRef.current) {
@@ -181,8 +178,8 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
       <Card key={`ChatCard_${selectedChat[chatTab]}`} className="flex flex-1 flex-col shadow-lg rounded-t-md rounded-b-md overflow-hidden my-2 mr-2 h-[450px]">
          <>
           <ScrollArea key={`ScrollArea_${selectedChat[chatTab]}`} className="flex flex-1 pb-2 overflow-y-auto">
-              {chatTab !== "upcoming" && chatSelected?.chatStatus && <InfoTab message='Info Tab' key={`InfoTab_${selectedChat[chatTab]}`}></InfoTab>}
-              {chatTab === "past" || chatSelected?.chatStatus ? chatData.length > 0 ?
+              {((chatTab !== "upcoming" && chatSelected?.chatStatus) || startChatFlag ) && <InfoTab message='Info Tab' key={`InfoTab_${selectedChat[chatTab]}`}></InfoTab>}
+              {chatTab === "past" || chatSelected?.chatStatus || startChatFlag ? chatData.length > 0 ?
               (chatData.map((message, index) => (
               <MessageCard
                 key={`Message_${message.messageId}`}
@@ -197,7 +194,7 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
               ))) : <DefaultChat eventId={eventId} chatId={chatSelected?.chatId} accType={accType} chatStatus={chatSelected?.chatStatus} chatTab={chatTab} empty={true}></DefaultChat>
                : <DefaultChat eventId={eventId} chatId={chatSelected?.chatId} accType={accType} chatStatus={chatSelected?.chatStatus} chatTab={chatTab} empty={false}></DefaultChat>}
           </ScrollArea>
-          {chatTab === "current" && chatSelected?.chatStatus && <div key={`ChatInput_${selectedChat[chatTab]}`} className="p-2 flex items-center ">
+          {chatTab === "current" && (chatSelected?.chatStatus || startChatFlag) && <div key={`ChatInput_${selectedChat[chatTab]}`} className="p-2 flex items-center ">
             <ChatInput eventId={eventId} chatId={chatSelected?.chatId}/>
           </div>}
         </>

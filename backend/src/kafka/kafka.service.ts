@@ -19,7 +19,7 @@ export class KafkaService implements OnModuleInit {
       const result = await admin.createTopics({
         topics: [
           {
-            topic: 'chat-messages-1',
+            topic: 'cm-1',
             numPartitions: 6,
             replicationFactor: 1,
           },

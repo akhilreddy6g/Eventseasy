@@ -16,8 +16,8 @@ func StartKafkaConsumer(pool *websocket.Pool, client string) {
 			ClientID: client,
 		},
 		Brokers: []string{"localhost:9092"},
-		Topic:   "chat-messages-1",
-		GroupID: "go-consumer-group-1",
+		Topic:   "cm-1",
+		GroupID: "cg-1",
 	})
 
 	fmt.Println("👂 Listening for messages...")
