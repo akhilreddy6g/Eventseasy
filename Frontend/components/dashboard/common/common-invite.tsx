@@ -18,12 +18,17 @@ interface InviteType{
     eventId: string;
 }
 
+interface ErrorMessage {
+  userNameError: string;
+  emailError: string;
+}
+
 export default function InviteUser({accType, eventId}: InviteType) {
   const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<ErrorMessage>({userNameError: "", emailError: ""});
   const user = accType=="Attend"? "Guest": "Manager"
   const appState = useAppSelector((state)=> state.initialSliceReducer)
   const userEmail = sessionStorage.getItem("user");
@@ -31,13 +36,18 @@ export default function InviteUser({accType, eventId}: InviteType) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    let flag = true;
     if (!validateInput(email)) {
-        setError("Please enter a valid email");
-        return;
+        setError((prev)=> ({...prev, emailError: "Please enter a valid email"}));
+        flag = false;
     } if (!username.trim()) {
-        setError("Username cannot be empty.");
-        return;
+        setError((prev)=> ({...prev, userNameError: "Username cannot be empty"}));
+        flag = false;
+    } if (username.trim().length < 3){ 
+        setError((prev)=> ({...prev, userNameError: "Username must be at least 3 characters long"}));
+        flag = false;
     }
+    if (!flag) return;
     if(userEmail!=email){
       const body = {username: username, user: email, hostName: sessionStorage.getItem("userName") ?? "someone who you might know", eventId: eventId, eventName:appState?.userData?.filter((curr)=> curr?.eventId===eventId)?.[0]?.eventData?.[0]?.event, accType: accType, access: false, message: message, flag: false}
       const response = await apiUrl.post(`/invite/send`, body)
@@ -47,13 +57,13 @@ export default function InviteUser({accType, eventId}: InviteType) {
       } else {
           alert(`Unable to send an invite to the ${user}`)
       }
-      setError("");
+      setError({userNameError: "", emailError: ""});
       setEmail("");
       setUsername("");
       setMessage("");
       setFile(null);
     } else {
-      setError(`${user} email must not be the same as yours`);
+      setError((prev)=> ({...prev, emailError: `${user} email must not be the same as yours`}));
       console.error(`${user} email must not be the same as yours`)
     }
   };
@@ -88,11 +98,11 @@ export default function InviteUser({accType, eventId}: InviteType) {
             onChange={(e) => setUsername(e.target.value)}
             className={cn(
             "w-full p-3 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-primary",
-            error && !username.trim() ? "border-red-500" : "border-gray-300"
+            error.userNameError && (!username.trim() || username.trim().length < 3) ? "border-red-500" : "border-gray-300"
             )}
         />
-        {error && !username.trim() && (
-            <p className="mt-1 text-sm text-red-500">Username cannot be empty.</p>
+        {error.userNameError && (
+            <p className="p-1 text-sm text-red-500">{error.userNameError}</p>
         )}
       </div>
       
@@ -109,11 +119,11 @@ export default function InviteUser({accType, eventId}: InviteType) {
           onChange={(e) => setEmail(e.target.value)}
           className={cn(
             "w-full p-3 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-primary",
-            error && !validateInput(email) ? "border-red-500" : "border-gray-300"
+            error.emailError && !validateInput(email) ? "border-red-500" : "border-gray-300"
           )}
         />
-        {error && !validateInput(email) && (
-          <p className="mt-1 text-sm text-red-500">{error}</p>
+        {error.emailError && !validateInput(email) && (
+          <p className="p-1 text-sm text-red-500">{error.emailError}</p>
         )}
       </div>
 

@@ -83,8 +83,16 @@ export class EventService{
 
     async insertIntoViewers(data: HostBodyData | JoineeBodyData, eventId: Types.ObjectId){
       try {
-        const result = await this.viewerModel.create({user: data.user, accType:data.accType, eventId:eventId})
-        return {success: true, message: "Successfully inserted the event into viewers"}
+        const result = await this.viewerModel.findOneAndUpdate(
+          { user: data.user, accType: data.accType, eventId: eventId,},
+          { $setOnInsert: { user: data.user, accType: data.accType, eventId: eventId,}},
+          { upsert: true, new: true }
+        );
+        if (result) {
+          return { success: true, message: result.createdAt ? "New viewer added successfully" : "Viewer already exists; no insertion needed", data: result,};
+        } else {
+          return { success: false, message: "Failed to insert or fetch the viewer"};
+        }
       } catch (error) {
         this.logService.Logger({request: "Insert into Viewers Service", source: "events service -> insertIntoViewers", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while inserting the event into viewers", error: error})
         return {success: false, message: "Error while inserting the event into viewers"}

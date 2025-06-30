@@ -48,7 +48,7 @@ export class Attendant {
   eventId: string
 }
 
-@Schema({ versionKey: false})
+@Schema({ versionKey: false, timestamps: true })
 export class Viewer {
 
   @Prop()
@@ -59,6 +59,9 @@ export class Viewer {
 
   @Prop()
   eventId: string
+
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
