@@ -24,7 +24,7 @@ export const chatSlice = createSlice({
     },
 
     onNewMessage: (state, action: PayloadAction<MessageBody>) => {
-      const { eventId, chatId, username, messageId, message, isUser, timestamp } = action.payload;
+      const { eventId, chatId, username, messageId, message, user, timestamp } = action.payload;
       let event = state.msgHistory.find((prev) => prev.eventId === eventId);
 
       if (!event) {
@@ -34,7 +34,7 @@ export const chatSlice = createSlice({
             {
               chatId,
               messages: [
-                { username, messageId, message, isUser, timestamp }
+                { username, messageId, message, user, timestamp }
               ]
             }
           ]
@@ -45,11 +45,11 @@ export const chatSlice = createSlice({
           event.chats.push({
             chatId,
             messages: [
-              { username, messageId, message, isUser, timestamp }
+              { username, messageId, message, user, timestamp }
             ]
           });
         } else {
-          chat.messages.push({ username, messageId, message, isUser, timestamp });
+          chat.messages.push({ username, messageId, message, user, timestamp });
         }
       }
     },

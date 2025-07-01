@@ -21,7 +21,7 @@ export interface EventChat {
   messages: Message[];
 }
 
-export const chatMockData: EventChat[] = mockChat2
+// export const chatMockData: EventChat[] = mockChat2
 
 export function chatOptions(num: number) {
   return (
@@ -88,6 +88,7 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
     setSelectedChat((prev: EventSelectedInChatTab)=>({...prev, [chatTab] : chatId}));
   };
   const [userName, setUserName] = useState<string | null>(useAppSelector((state)=> state.userLoginSliceReducer).userName);
+  const [user, setUser] = useState<string | null>(useAppSelector((state)=> state.userLoginSliceReducer).user);
   const estDate = calcTime(-4)
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -141,10 +142,12 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
   }
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && !userName && initRef.current) {
+    if (typeof window !== 'undefined' && !userName && !user && initRef.current) {
       const storedUserName = sessionStorage.getItem('userName');
-      if (storedUserName) {
+      const storedUser = sessionStorage.getItem('user');
+      if (storedUserName && storedUser) {
         setUserName(storedUserName);
+        setUser(storedUser);
         initRef.current = false;
       }
     }
@@ -191,13 +194,9 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
                       username={message.username}
                       message={message.message}
                       timestamp={message.timestamp}
-                      orientation={Boolean(message?.isUser) ? 1 : 0}
-                      prev={
-                        index === 0
-                          ? false
-                          : Boolean(message?.isUser && chatData[index - 1]?.isUser)
-                      }
-                      last={index === chatData.length - 1}
+                      orientation={message.user === user ? 1 : 0}
+                      prev={index==0? false: message.user===chatData[index-1].user}
+                      last={index===chatData.length-1}
                     />
                   ))}
                   <div ref={bottomRef} />

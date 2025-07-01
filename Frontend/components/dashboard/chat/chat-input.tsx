@@ -9,10 +9,10 @@ import { onNewMessage, onChatCompRender } from "@/lib/features/chat-slice";
 import { apiUrl } from "@/components/noncomponents";
 
 export interface Message {
-  messageId: string,
-  username: string,
-  message: string,
-  isUser?: boolean
+  messageId: string
+  username: string
+  user: string
+  message: string
   timestamp: string
 }
 
@@ -31,9 +31,9 @@ export interface MessageBody {
   chatId: string,
   messageId: string,
   username: string,
+  user: string,
   message: string,
   timestamp: string,
-  isUser?: boolean
 }
 
 export interface ServerMessageBody {
@@ -86,7 +86,7 @@ export default function ChatInput({eventId, chatId}:{eventId: string, chatId: st
       username: userInfo.userName || sessionStorage.getItem("userName") || "",
       message: message,
       timestamp: data.timestamp.toISOString(),
-      isUser: true
+      user:( userInfo.user || sessionStorage.getItem("user")) ?? ""
     }
     if (response.data.success){
       dispatch(onNewMessage(copy))

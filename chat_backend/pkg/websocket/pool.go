@@ -15,6 +15,7 @@ type FinalBody struct {
 	EventId   string `json:"eventId"`
 	ChatId    string `json:"chatId"`
 	MessageId string `json:"messageId"`
+	User      string `json:"user"`
 	Username  string `json:"username"`
 	Message   string `json:"message"`
 	Timestamp string `json:"timestamp"`
@@ -65,6 +66,7 @@ func (pool *Pool) Start() {
 				EventId:   body.EventId,
 				ChatId:    body.ChatId,
 				MessageId: body.MessageId,
+				User:      body.User,
 				Username:  body.Username,
 				Message:   body.Message,
 				Timestamp: body.Timestamp,
