@@ -11,6 +11,15 @@ type Pool struct {
 	Broadcast  chan Body
 }
 
+type FinalBody struct {
+	EventId   string `json:"eventId"`
+	ChatId    string `json:"chatId"`
+	MessageId string `json:"messageId"`
+	Username  string `json:"username"`
+	Message   string `json:"message"`
+	Timestamp string `json:"timestamp"`
+}
+
 func NewPool() *Pool {
 	return &Pool{
 		Register:   make(chan *Client),
@@ -52,10 +61,18 @@ func (pool *Pool) Start() {
 			fmt.Println("👥 Total clients in pool:", len(pool.Clients))
 		case body := <-pool.Broadcast:
 			fmt.Println("📢 Broadcasting:", body)
+			finalBody := FinalBody{
+				EventId:   body.EventId,
+				ChatId:    body.ChatId,
+				MessageId: body.MessageId,
+				Username:  body.Username,
+				Message:   body.Message,
+				Timestamp: body.Timestamp,
+			}
 			for key, client := range pool.Clients {
 				if client.EventId == body.EventId && client.ChatId == body.ChatId && client.User != body.User {
 					client.mu.Lock()
-					err := client.Conn.WriteJSON(body)
+					err := client.Conn.WriteJSON(finalBody)
 					client.mu.Unlock()
 					if err != nil {
 						fmt.Println("❌ Error sending:", err)

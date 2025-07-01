@@ -3,23 +3,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import ChatInput from './chat-input';
+import ChatInput, { Chats, Events, Message } from './chat-input';
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip"
 import { mockChat2 } from '@/public/mockData';
 import MessageCard from './message-card';
 import { useAppSelector } from '@/lib/store';
 import { ChatInfo } from '@/lib/features/chat-info-slice';
 import { chatTypes, EventSelectedInChatTab } from './chat-tabs';
-import { CirclePlay, Plus } from 'lucide-react';
+import { CirclePlay } from 'lucide-react';
 import { InfoCircle } from '@mynaui/icons-react';
 import { apiUrl } from '@/components/noncomponents';
-
-export interface Message {
-  messageId: string;
-  username: string;
-  message: string;
-  timestamp: string;
-}
 
 export interface EventChat {
   chatId: string;
@@ -86,7 +79,9 @@ export function chatTypeCheck(estDate: Date, chatType: string, chatInfo: ChatInf
 export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, accType}: {eventId: string, chatTab: chatTypes, selectedChat: EventSelectedInChatTab, setSelectedChat: React.Dispatch<React.SetStateAction<EventSelectedInChatTab>>, accType: string}) => {
   const chatInfo = useAppSelector((state)=>state.chatsInfoReducer).chats.filter(chat=> chat.eventId===eventId)
   const chatSelected = chatInfo[0]?.details?.filter((chat: ChatInfo)=>chat.chatId===selectedChat[chatTab])[0]
-  const chatData = chatMockData.find((chat) => chat.chatId === selectedChat[chatTab])?.messages ?? []
+  // const chatData = chatMockData.find((chat) => chat.chatId === selectedChat[chatTab])?.messages ?? []
+  const chatData = useAppSelector((state) => state.chatMessageReducer)?.msgHistory.filter((Events: Events)=> Events.eventId === eventId)[0]?.chats.filter((Chats: Chats)=> Chats.chatId === selectedChat[chatTab])[0]?.messages ?? []
+  console.log("chatData", useAppSelector((state) => state.chatMessageReducer)?.msgHistory)
   const initRef = useRef(true);
   const [startChatFlag, setStartChatFlag] = useState<boolean>(false)
   const changeSelectedChat = (chatId: string) => {
@@ -94,6 +89,7 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
   };
   const [userName, setUserName] = useState<string | null>(useAppSelector((state)=> state.userLoginSliceReducer).userName);
   const estDate = calcTime(-4)
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   async function startChat(eventId: string, chatId: string) {
     console.log(" starting chat, eventId:", eventId, "chatId:", chatId)
@@ -154,6 +150,12 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
     }
   }, []);
 
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatData.length]);
+
   return (
     <div className="flex flex-1 bg-gray-50 rounded-md shadow-md">
       {Array.isArray(chatInfo?.[0]?.details) && chatInfo[0].details.length > 0 && chatInfo?.[0]?.details?.some((record: ChatInfo)=> chatTypeCheck(estDate, chatTab, record))?
@@ -180,18 +182,28 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
           <ScrollArea key={`ScrollArea_${selectedChat[chatTab]}`} className="flex flex-1 pb-2 overflow-y-auto">
               {((chatTab !== "upcoming" && chatSelected?.chatStatus) || startChatFlag ) && <InfoTab message='Info Tab' key={`InfoTab_${selectedChat[chatTab]}`}></InfoTab>}
               {chatTab === "past" || chatSelected?.chatStatus || startChatFlag ? chatData.length > 0 ?
-              (chatData.map((message, index) => (
-              <MessageCard
-                key={`Message_${message.messageId}`}
-                containerKey={`Message_${message.messageId}`}
-                username={message.username}
-                message={message.message}
-                timestamp={message.timestamp}
-                orientation={message.username === userName ? 1: 0}
-                prev={index==0? false: message.username===chatData[index-1].username}
-                last={index===chatData.length-1}
-              />
-              ))) : <DefaultChat eventId={eventId} chatId={chatSelected?.chatId} accType={accType} chatStatus={chatSelected?.chatStatus} chatTab={chatTab} empty={true}></DefaultChat>
+              (
+                <>
+                  {chatData.map((message, index) => (
+                    <MessageCard
+                      key={`Message_${message.messageId}`}
+                      containerKey={`Message_${message.messageId}`}
+                      username={message.username}
+                      message={message.message}
+                      timestamp={message.timestamp}
+                      orientation={Boolean(message?.isUser) ? 1 : 0}
+                      prev={
+                        index === 0
+                          ? false
+                          : Boolean(message?.isUser && chatData[index - 1]?.isUser)
+                      }
+                      last={index === chatData.length - 1}
+                    />
+                  ))}
+                  <div ref={bottomRef} />
+                </>
+              )
+               : <DefaultChat eventId={eventId} chatId={chatSelected?.chatId} accType={accType} chatStatus={chatSelected?.chatStatus} chatTab={chatTab} empty={true}></DefaultChat>
                : <DefaultChat eventId={eventId} chatId={chatSelected?.chatId} accType={accType} chatStatus={chatSelected?.chatStatus} chatTab={chatTab} empty={false}></DefaultChat>}
           </ScrollArea>
           {chatTab === "current" && (chatSelected?.chatStatus || startChatFlag) && <div key={`ChatInput_${selectedChat[chatTab]}`} className="p-2 flex items-center ">

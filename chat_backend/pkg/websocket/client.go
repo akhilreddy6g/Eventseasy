@@ -19,6 +19,7 @@ type Client struct {
 type Body struct {
 	EventId   string
 	ChatId    string
+	MessageId string
 	User      string
 	Username  string
 	Message   string

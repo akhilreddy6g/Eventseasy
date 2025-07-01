@@ -7,6 +7,7 @@ import * as crypto from 'crypto';
 import { InjectModel } from "@nestjs/mongoose";
 import { Chat_Servers } from "./messagedata/message.eventdata.schema";
 import { Model } from "mongoose";
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class MessageService {
@@ -42,20 +43,26 @@ export class MessageService {
       }
     }
 
+    genUuid(){
+      const id = uuidv4();
+      return id
+    }
+
     async pushMsgToQueue(data: MessageBody){
       try {
           if (!this.isConnected) {
             await this.producer.connect()
             this.isConnected = true
           }
+          data['messageId'] = this.genUuid()
           const ans = await this.producer.send({
-            topic: 'cm-1',
+            topic: 'cm-2',
             messages: [{ value: JSON.stringify(data), partition: this.computePartition(data.eventId, data.chatId, 6)}],
           }).catch((error) => {
             console.log("error while pushing message: ",error)
           })
           this.logService.Logger({request: "Message Service", source: "message service -> pushMsgToQueue", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Message successfully pushed to the queue", error: "none"})
-          return { success: true, message: 'Message pushed successfully to the queue' }
+          return { success: true, message: 'Message pushed successfully to the queue', messageId: data.messageId }
       } catch (error) {
         this.logService.Logger({request: "Message Service", source: "message service -> pushMsgToQueue", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while pushing message to the queue", error: error})
         return { success: false, message: `Error while pushing message to the queue: ${error.message}` }
@@ -66,7 +73,7 @@ export class MessageService {
       try {
         const admin = kafka.admin();
         await admin.connect();
-        const { groups } = await admin.describeGroups(['cg-1']);
+        const { groups } = await admin.describeGroups(['cg-2']);
         const output = [];
     
         for (const group of groups) {
@@ -112,5 +119,5 @@ export class MessageService {
         if (this.isConnected) {
           await this.producer.disconnect()
         }
-      }
+    }
 }
