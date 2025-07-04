@@ -1,8 +1,11 @@
 package main
 
 import (
-	kafka_consumer "chat_server/pkg/kafka"
+	"chat_server/pkg/config"
+	"chat_server/pkg/kafka"
+	"chat_server/pkg/mongodb"
 	"chat_server/pkg/websocket"
+	"context"
 	"flag"
 	"fmt"
 	"net/http"
@@ -36,6 +39,13 @@ func serveWS(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	fmt.Println("Go's server started.")
+	config.LoadEnv()
+	mongoClient := mongodb.InitMongoDB()
+	defer func() {
+		if err := mongoClient.Disconnect(context.Background()); err != nil {
+			fmt.Println("❌ MongoDB disconnect error:", err)
+		}
+	}()
 	port := flag.String("port", "4001", "Port to run the WebSocket server on")
 	clientID := flag.String("clientid", "go-api-server", "Client ID to use when connecting to Kafka")
 	flag.Parse() // Parse command-line flags
@@ -44,7 +54,7 @@ func main() {
 	go pool.Start()
 
 	// Start Kafka consumer and pass WebSocket pool
-	go kafka_consumer.StartKafkaConsumer(pool, *clientID)
+	go kafka.StartKafkaConsumer(pool, *clientID)
 
 	// Setup HTTP routes
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
