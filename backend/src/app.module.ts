@@ -7,7 +7,6 @@ import { ConfigModule} from '@nestjs/config';
 import { InviteModule } from './invite/invite.module';
 import { RedisModule } from './redis/redis.module';
 import { ChatsModule } from './chats/chats.module';
-import { MessageModule } from './message/message.module';
 import { KafkaModule } from './kafka/kafka.module'; 
 
 
@@ -20,7 +19,6 @@ import { KafkaModule } from './kafka/kafka.module';
   }),
   RedisModule,
   ChatsModule,
-  MessageModule,
   KafkaModule
   ],
   providers: [AuthMiddleware, LogInfoService],

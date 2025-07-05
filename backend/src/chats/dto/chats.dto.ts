@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsDateString, IsArray, IsBoolean } from 'class-validator';
+import { IsNotEmpty, IsString, IsDateString, IsArray, IsBoolean, IsOptional } from 'class-validator';
 
 export class ChatBodyData {
     /** Unique ID of the event */
@@ -50,13 +50,13 @@ export interface UserInfo {
     accType: string;
 }
 
-export class EventInfoQueryParams {
+export class EventIdQueryParams {
     @IsNotEmpty()
     @IsString()
     eventId: string
 }
 
-export class ChatStartQueryParams {
+export class EventIdChatIdQueryParams {
     @IsNotEmpty()
     @IsString()
     eventId: string
@@ -64,4 +64,47 @@ export class ChatStartQueryParams {
     @IsNotEmpty()
     @IsString()
     chatId: string
+}
+
+export class MessageBody {
+    @IsNotEmpty()
+    @IsString()
+    eventId: string;
+
+    @IsNotEmpty()
+    @IsString()
+    chatId: string;
+
+    @IsOptional()
+    @IsString()
+    messageId?: string;
+
+    @IsNotEmpty()
+    @IsString()
+    user: string;
+
+    @IsNotEmpty()
+    @IsString()
+    username: string;
+
+    @IsNotEmpty()
+    @IsString()
+    message: string;
+
+    @IsNotEmpty()
+    @IsString()
+    timestamp: string;
+}
+
+export interface Message {
+    messageId: string
+    username: string
+    user: string
+    message: string
+    timestamp: string
+  }
+  
+export interface Chats {
+    chatId: string,
+    messages: Message[]
 }

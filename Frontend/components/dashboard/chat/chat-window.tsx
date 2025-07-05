@@ -5,7 +5,6 @@ import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import ChatInput, { Chats, Events, Message } from './chat-input';
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip"
-import { mockChat2 } from '@/public/mockData';
 import MessageCard from './message-card';
 import { useAppSelector } from '@/lib/store';
 import { ChatInfo } from '@/lib/features/chat-info-slice';
@@ -20,8 +19,6 @@ export interface EventChat {
   members: number;
   messages: Message[];
 }
-
-// export const chatMockData: EventChat[] = mockChat2
 
 export function chatOptions(num: number) {
   return (
@@ -79,9 +76,8 @@ export function chatTypeCheck(estDate: Date, chatType: string, chatInfo: ChatInf
 export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, accType}: {eventId: string, chatTab: chatTypes, selectedChat: EventSelectedInChatTab, setSelectedChat: React.Dispatch<React.SetStateAction<EventSelectedInChatTab>>, accType: string}) => {
   const chatInfo = useAppSelector((state)=>state.chatsInfoReducer).chats.filter(chat=> chat.eventId===eventId)
   const chatSelected = chatInfo[0]?.details?.filter((chat: ChatInfo)=>chat.chatId===selectedChat[chatTab])[0]
-  // const chatData = chatMockData.find((chat) => chat.chatId === selectedChat[chatTab])?.messages ?? []
-  const chatData = useAppSelector((state) => state.chatMessageReducer)?.msgHistory.filter((Events: Events)=> Events.eventId === eventId)[0]?.chats.filter((Chats: Chats)=> Chats.chatId === selectedChat[chatTab])[0]?.messages ?? []
-  console.log("chatData", useAppSelector((state) => state.chatMessageReducer)?.msgHistory)
+  const chat =  useAppSelector((state) => state.chatMessageReducer)?.msgHistory.filter((Events: Events)=> Events.eventId === eventId)[0]?.chats.filter((Chats: Chats)=> Chats.chatId === selectedChat[chatTab])[0]
+  const chatData = chat?.messages ?? []
   const initRef = useRef(true);
   const [startChatFlag, setStartChatFlag] = useState<boolean>(false)
   const changeSelectedChat = (chatId: string) => {
@@ -93,7 +89,6 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
   const bottomRef = useRef<HTMLDivElement>(null);
 
   async function startChat(eventId: string, chatId: string) {
-    console.log(" starting chat, eventId:", eventId, "chatId:", chatId)
     try {
       const response = await apiUrl.post(`/chats/start?eventId=${eventId}&chatId=${chatId}`)
       if(response.data.success){

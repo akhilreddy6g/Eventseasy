@@ -1,50 +1,73 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
 import { HydratedDocument } from "mongoose"
+import { Chats } from "../dto/chats.dto";
 
 export type ChatDocument = HydratedDocument<Chat>
-export type Chat_Restricted_UserDocument = HydratedDocument<Chat_Restricted_User>
+export type ChatRestrictedUserDocument = HydratedDocument<Chat_Restricted_User>
+export type ChatServersDocument = HydratedDocument<Chat_Servers>;
+export type ChatMesssagesDocument = HydratedDocument<Chat_Messages>
 
 @Schema({versionKey: false})
 export class Chat {
-    @Prop({required: true})
+    @Prop({})
     eventId: string
     
-    @Prop({required: true})
+    @Prop({})
     chatName: string
 
     @Prop()
     chatDescription: string
     
-    @Prop({required: true})
+    @Prop({})
     chatType: string
     
-    @Prop({required: true})
+    @Prop({})
     chatDate: string
     
-    @Prop({required: true})
+    @Prop({})
     chatStartTime: string
     
-    @Prop({required: true})
+    @Prop({})
     chatEndTime: string
 
-    @Prop({required: true})
+    @Prop({})
     chatStatus: boolean
     
-    @Prop({ required: true, default: [] })
+    @Prop({ default: [] })
     restrictedUsers: string []
 }
 
 @Schema({versionKey: false})
 export class Chat_Restricted_User {
-    @Prop({required: true})
+    @Prop({})
     eventId: string
 
-    @Prop({required: true})
+    @Prop({})
     chatId: string
 
-    @Prop({required: true})
+    @Prop({})
     user: string
 }
 
+@Schema({versionKey: false})
+export class Chat_Messages {
+    @Prop({})
+    eventId: string
+
+    @Prop({})
+    chats: Chats []
+}
+
+@Schema()
+export class Chat_Servers {
+    @Prop()
+    csClientId: string
+
+    @Prop()
+    csApiUrl: string
+}
+
+export const ChatServersSchema = SchemaFactory.createForClass(Chat_Servers);
 export const ChatSchema = SchemaFactory.createForClass(Chat)
-export const Chat_Restricted_UserSchema = SchemaFactory.createForClass(Chat_Restricted_User)
+export const ChatRestrictedUserSchema = SchemaFactory.createForClass(Chat_Restricted_User)
+export const ChatMessagesSchema = SchemaFactory.createForClass(Chat_Messages)
