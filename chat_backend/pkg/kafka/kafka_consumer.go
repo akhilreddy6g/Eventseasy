@@ -7,17 +7,36 @@ import (
 	"fmt"
 	"log"
 
+	"os"
+
+	"github.com/joho/godotenv"
 	"github.com/segmentio/kafka-go"
 )
 
 func StartKafkaConsumer(pool *websocket.Pool, client string) {
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("No .env file found or failed to load")
+	}
+	brokers := os.Getenv("KAFKA_CLIENT_URL")
+	if brokers == "" {
+		brokers = "localhost:9092"
+	}
+	topic := os.Getenv("KAFKA_TOPIC_NAME")
+	if topic == "" {
+		topic = "cm-2"
+	}
+	groupId := os.Getenv("KAFKA_CONSUMER_GROUP_ID")
+	if groupId == "" {
+		groupId = "cg-2"
+	}
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Dialer: &kafka.Dialer{
 			ClientID: client,
 		},
-		Brokers: []string{"localhost:9092"},
-		Topic:   "cm-2",
-		GroupID: "cg-2",
+		Brokers: []string{brokers},
+		Topic:   topic,
+		GroupID: groupId,
 	})
 
 	fmt.Println("👂 Listening for messages...")

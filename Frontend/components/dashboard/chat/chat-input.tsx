@@ -55,7 +55,7 @@ export default function ChatInput({eventId, chatId}:{eventId: string, chatId: st
 
   async function getConnStr (eventId: string, chatId: string) {
     const apiRequest = await apiUrl.post(`/chats/new-ws-conn?eventId=${eventId}&chatId=${chatId}`)
-    return apiRequest.data.response
+    return apiRequest.data
   }  
 
   if (socketConn) {
@@ -105,13 +105,15 @@ export default function ChatInput({eventId, chatId}:{eventId: string, chatId: st
     if (!EventChatWsConnState.wsConnState.find((prev) => prev.eventId === eventId)?.chats.find((c) => c.chatId === chatId)?.connectionFlag){
       (async () => {
         try {
-          const data: {success: string, data: string} = await getConnStr(eventId, chatId); 
-          const socket = new WebSocket(`ws://${data.success? data.data.split('//')[1] : "localhost:4001"}/ws?eventId=${eventId}&chatId=${chatId}&user=${userInfo.user || sessionStorage.getItem("user")}`);
-          setSocketConn(socket);
-          socket.onopen = () => {
-            console.log("WebSocket connection opened");
-            dispatch(onChatCompRender({eventId: eventId, chatId: chatId, connectionFlag: true}));
-          };
+          const data: {success: string, response: string} = await getConnStr(eventId, chatId); 
+          if (data.success){
+            const socket = new WebSocket(`ws://${data.response.split('//')[1]}/ws?eventId=${eventId}&chatId=${chatId}&user=${userInfo.user || sessionStorage.getItem("user")}`);
+            setSocketConn(socket);
+            socket.onopen = () => {
+              console.log("WebSocket connection opened");
+              dispatch(onChatCompRender({eventId: eventId, chatId: chatId, connectionFlag: true}));
+            };
+          }
         } catch (error) {
           console.error("Error fetching connection string or initializing socket:", error);
         }

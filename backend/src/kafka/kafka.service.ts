@@ -1,4 +1,4 @@
-// backend/src/kafka/kafka.service.ts
+import 'dotenv/config'
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { kafka } from './kafka-client'
 import { LogInfoService } from 'src/auth/logger/logger.service'
@@ -19,8 +19,8 @@ export class KafkaService implements OnModuleInit {
       const result = await admin.createTopics({
         topics: [
           {
-            topic: 'cm-2',
-            numPartitions: 6,
+            topic: process.env.KAFKA_TOPIC_NAME ?? 'cm-2',
+            numPartitions: Number(process.env.KAFKA_TOPIC_PARTITIONS ?? 6),
             replicationFactor: 1,
           },
         ],
