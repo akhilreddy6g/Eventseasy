@@ -64,8 +64,8 @@ export function DashboardSidebar(): ReactNode {
     const user = userState.user || sessionStorage.getItem("user")
     if(user){
       const flag = JSON.parse(sessionStorage.getItem("eventChange")|| "")
-      const res = await apiUrl.get(`/events/data?user=${user}&status=${flag}`);
-      return res.data
+      const apiRequest = await apiUrl.get(`/events/data?user=${user}&status=${flag}`);
+      return apiRequest.data
     }
   };
 

@@ -46,8 +46,8 @@ export default function ChatForm({newFutureChat, eventId}:{newFutureChat: boolea
   useEffect(() => {
     const fetchRestrictedUsers = async () => {
       try {
-        const response = await apiUrl.get(`events/users?eventId=${eventId}`);
-        const fetchedRestrictedUsers = response.data.success ? response.data.data : [];
+        const apiRequest = await apiUrl.get(`events/users?eventId=${eventId}`);
+        const fetchedRestrictedUsers = apiRequest.data.success ? apiRequest.data.response : [];
         setInitialUsers(fetchedRestrictedUsers);
       } catch (error) {
         console.error("Error fetching restricted users:", error);
@@ -65,8 +65,8 @@ export default function ChatForm({newFutureChat, eventId}:{newFutureChat: boolea
     const data = {}
     try {
       const data = { eventId, chatName, chatDescription, chatType, chatDate: chatDate instanceof Date ? chatDate.toISOString().split('T')[0] : undefined, chatStartTime: formattedTime(chatStartTime), chatEndTime: formattedTime(chatEndTime), chatStatus: false, restrictedUsers };
-      const response = await apiUrl.post("/chats/create", data)
-      if(response?.data?.success){
+      const apiRequest = await apiUrl.post("/chats/create", data)
+      if(apiRequest?.data?.success){
         setChatName("");
         setchatDescription("");
         setChatDate(calcTime(-8));

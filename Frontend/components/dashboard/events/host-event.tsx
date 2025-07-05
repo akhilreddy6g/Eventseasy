@@ -109,8 +109,8 @@ export default function HostEvent() {
       } else {
         sessionStorage.setItem("eventChange", JSON.stringify(0));
       }
-      const response = (await apiUrl.post(`/events/host`, body)).data
-      if (response && response.success){
+      const apiRequest = (await apiUrl.post(`/events/host`, body)).data
+      if (apiRequest && apiRequest.success){
         dispatch(onAddNewEvent())
       }
       } else {

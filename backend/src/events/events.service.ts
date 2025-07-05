@@ -25,25 +25,25 @@ export class EventService{
         const result = await this.insertEvent(data);
         try {
           if (result.success){
-            const result1 = await this.insertIntoViewers(data, result.message)
+            const result1 = await this.insertIntoViewers(data, result.response)
             if(result.success){
               this.logService.Logger({request: "Host Event Service", source: "events service -> hostEvent", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Created an event and recorded it in viewers", error: "none"});
-              return {success: true, message: "successfully created an event for the host"}
+              return {success: true, response: "successfully created an event for the host"}
             } else {
               this.logService.Logger({request: "Host Event Service", source: "events service -> hostEvent", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Created an event but couldn't record it in viewers", error: "none"});
-              return {success: true, message: "Created the event for the host, but couldn't update viewers"}
+              return {success: true, response: "Created the event for the host, but couldn't update viewers"}
             }
           } else {
             this.logService.Logger({request: "Host Event Service", source: "events service -> hostEvent", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Failed to create an event for host", error: "none"});
-            return {success: false, message: "Request failed, please enter all the required information"}
+            return {success: false, response: "Request failed, please enter all the required information"}
           }
         } catch (error) {
           this.logService.Logger({request: "Host Event Service", source: "events service -> hostEvent", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while insering record into viewers", error: error});
-          return {success: false, message: error}
+          return {success: false, response: error}
         }
       } catch (error) {
         this.logService.Logger({request: "Host Event Service", source: "events service -> hostEvent", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error creating an event for the host", error: error})
-        return {success: false, message: error}
+        return {success: false, response: error}
       }
     }
 
@@ -58,26 +58,26 @@ export class EventService{
               const result1 = await this.insertIntoViewers(data, data.eventId)
               if (result1.success){
                 this.logService.Logger({request: "Attendant Verification Service", source: "events service -> verifyJoinee", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Successfully recorded the change in viewers", error: "none"})
-                return {success: true, message: "Event joined successfully"};
+                return {success: true, response: "Event joined successfully"};
               } else {
                 this.logService.Logger({request: "Attendant Verification Service", source: "events service -> verifyJoinee", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Failed to record the change in viewers", error: "none"})
-                return {success: false, message: "Event joined successfully, but couldn't record change in viewers"};
+                return {success: false, response: "Event joined successfully, but couldn't record change in viewers"};
               }
             } catch (error) {
               this.logService.Logger({request: "Attendant Verification Service", source: "events service -> verifyJoinee", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while recording the change in viewers", error: error})
-              return {success: false, message: "Event joined successfully, but faced errors while recording the change in viewers"};
+              return {success: false, response: "Event joined successfully, but faced errors while recording the change in viewers"};
             }
           } catch (error) {
             this.logService.Logger({request: "Attendant Verification Service", source: "events service -> verifyJoinee", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while verifying attendant credentials", error: error})
-            return {success: false, message: "Error while trying to join the event"};
+            return {success: false, response: "Error while trying to join the event"};
           }
         } else {
           this.logService.Logger({request: "Attendant Verification Service", source: "events service -> verifyJoinee", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Credentials unverifiable/ access already granted", error: "none"})
-          return {success: false, message: "Event joined already/Invalid credentials"};
+          return {success: false, response: "Event joined already/Invalid credentials"};
         }
       } catch (error) {
           this.logService.Logger({request: "Attendant Verification Service", source: "events service -> verifyJoinee", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while verifying joinee credentials", error: error})
-          return {success: false, message: "Error while verifying joinee credentials"};
+          return {success: false, response: "Error while verifying joinee credentials"};
       }
     }
 
@@ -89,13 +89,13 @@ export class EventService{
           { upsert: true, new: true }
         );
         if (result) {
-          return { success: true, message: result.createdAt ? "New viewer added successfully" : "Viewer already exists; no insertion needed", data: result,};
+          return { success: true, response: result.createdAt ? "New viewer added successfully" : "Viewer already exists; no insertion needed", data: result,};
         } else {
-          return { success: false, message: "Failed to insert or fetch the viewer"};
+          return { success: false, response: "Failed to insert or fetch the viewer"};
         }
       } catch (error) {
         this.logService.Logger({request: "Insert into Viewers Service", source: "events service -> insertIntoViewers", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while inserting the event into viewers", error: error})
-        return {success: false, message: "Error while inserting the event into viewers"}
+        return {success: false, response: "Error while inserting the event into viewers"}
       }
     }
 
@@ -122,20 +122,20 @@ export class EventService{
     async eventManagers(data: GetEventId){
       try {
         const eventGuests = await this.attendantModel.find({eventId:data.eventId, accType:"Manage"})
-        return {success: true, data:eventGuests}
+        return {success: true, response:eventGuests}
       } catch (error) {
         this.logService.Logger({request: "Event Managers Info Service", source: "events service -> eventManagers", timestamp: new Date(), queryParams: true, bodyParams: false, response: "Error fetching event managers", error: error})
-        return {success: false, data: null}
+        return {success: false, response: null}
       }
     }
 
     async insertEvent(data: HostBodyData){
       try {
         const result = await this.userModel.create([data])
-        return {success: true, message: result[0]._id}
+        return {success: true, response: result[0]._id}
       } catch (error) {
         this.logService.Logger({request: "Host Event Insertion Service", source: "events service -> insertEvent", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error inserting a host event", error: error})
-        return {success: false, message: null}
+        return {success: false, response: null}
       }
     }
 
@@ -146,10 +146,10 @@ export class EventService{
           const result = await this.attendantModel.deleteOne({user: data.user, eventId: data.eventId, accType: data.accType})
           const result1 = await this.viewerModel.deleteOne({user: data.user, eventId: data.eventId, accType: data.accType})
           if (result.deletedCount>0 && result1.deletedCount>0){
-            return {success: true, message: "Succeessfully deleted the user from the event"}
+            return {success: true, response: "Succeessfully deleted the user from the event"}
           }
         }
-        return {success: false, message: "Unable to delete the user from one of the documents/user doesn't have privileges"}
+        return {success: false, response: "Unable to delete the user from one of the documents/user doesn't have privileges"}
       } catch (error) {
         this.logService.Logger({request: "Event User Deletion Service", source: "events service -> deleteUserFromEvent", timestamp: new Date(), queryParams: true, bodyParams: false, response: "Error removing the user from the event", error: error})
       }
@@ -162,10 +162,10 @@ export class EventService{
           const response = await this.inviteService.sendEmail({username: data.username, user:data.user, hostName:data.hostName, eventId:data.eventId, accType:data.accType, access:data.access, eventName: hostCheck[0].event, message: data.message, flag:true})
           return response;
         }
-        return {success: false, message: "Unable to reinvite the user/user doesn't have privileges"}
+        return {success: false, response: "Unable to reinvite the user/user doesn't have privileges"}
       } catch (error) {
         this.logService.Logger({request: "Reinvite User Service", source: "events service -> reInviteUser", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error reinviting the user to the event", error: error})
-        return {success: false, message: "Error reinviting user to the event"}
+        return {success: false, response: "Error reinviting user to the event"}
       }
     }
 
@@ -178,7 +178,7 @@ export class EventService{
           if(redisStatus==userdata.status){
             if(redisData){
               this.logService.Logger({request: "User Data Retrieval Service", source: "events service -> userData", timestamp: new Date(), queryParams: true, bodyParams: false, response: "User data retrieval from redis successful", error: null})
-              return {success: true, data: redisData}
+              return {success: true, response: redisData}
             } 
           }
         }
@@ -213,10 +213,10 @@ export class EventService{
         ]);
         this.redisService.set(userdata.user, {redisStatus:userdata.status, redisData:data});
         this.logService.Logger({request: "User Data Retrieval Service", source: "users service -> userData", timestamp: new Date(), queryParams: true, bodyParams: false, response: "User data retrieval from db successful", error: null})
-        return {success: true, data: data};
+        return {success: true, response: data};
       } catch (error) {
         this.logService.Logger({request: "User Data Retrieval Service", source: "users service -> userData", timestamp: new Date(), queryParams: true, bodyParams: false, response: "Error retrieving user data", error: error})
-        return {success: false, data: null};
+        return {success: false, response: null};
       }
     }
 
@@ -224,10 +224,10 @@ export class EventService{
       try {
         const restrictedUsers = await this.attendantModel.find({eventId: eventId}, {user:1, userName:1, accType:1})
       this.logService.Logger({request: "Event Users Retrieval Service", source: "users service -> eventUsers", timestamp: new Date(), queryParams: true, bodyParams: false, response: "Event users retrieved successfully", error: null})
-        return {success: true, data: restrictedUsers}
+        return {success: true, response: restrictedUsers}
       } catch (error) {
         this.logService.Logger({request: "eventUsers", source: "users service -> eventUsers", timestamp: new Date(), queryParams: true, bodyParams: false, response: "Error retrieving event users", error: error})
-        return {success: false, data: null};
+        return {success: false, response: null};
       }
     }
 }

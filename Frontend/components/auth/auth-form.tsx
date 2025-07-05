@@ -33,27 +33,28 @@ export function AuthForm({ type }: AuthFormProps) {
               user: data.email,
               password: data.password,
             };
-      const response = await apiUrl.post(route, body);
-      if (response.headers["authorization"]) {
+      const apiRequest = await apiUrl.post(route, body);
+      const authenticated = apiRequest.data.success;
+      if (apiRequest.headers["authorization"]) {
         apiUrl.defaults.headers.common["Authorization"] =
-          response.headers["authorization"];
+          apiRequest.headers["authorization"];
         apiServerUrl.defaults.headers.common["Authorization"] =
-          response.headers["authorization"];
+          apiRequest.headers["authorization"];
         sessionStorage.setItem(
           "authorization",
-          response.headers["authorization"]
+          apiRequest.headers["authorization"]
         );
       } else if (sessionStorage.getItem("authorization")) {
         apiUrl.defaults.headers.common["Authorization"] =
           sessionStorage.getItem("authorization");
       }
-      if (response.data.Authenticated) {
+      if (authenticated) {
         dispatch(
-          onLogIn({ user: data.user, userName: response.data.userName })
+          onLogIn({ user: data.user, userName: apiRequest.data.userName })
         );
         sessionStorage.setItem("user", data.email);
         sessionStorage.setItem("eventChange", JSON.stringify(0));
-        sessionStorage.setItem("userName", response.data.userName);
+        sessionStorage.setItem("userName", apiRequest.data.userName);
         router.push(`/dashboard`);
       } else {
         console.error("Authentication failed");

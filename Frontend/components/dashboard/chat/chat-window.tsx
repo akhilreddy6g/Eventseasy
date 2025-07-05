@@ -90,8 +90,8 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
 
   async function startChat(eventId: string, chatId: string) {
     try {
-      const response = await apiUrl.post(`/chats/start?eventId=${eventId}&chatId=${chatId}`)
-      if(response.data.success){
+      const apiRequest = await apiUrl.post(`/chats/start?eventId=${eventId}&chatId=${chatId}`)
+      if(apiRequest.data.success){
         alert("Chat Started Successfully")
         setStartChatFlag((prev: boolean)=> !prev)
       } else {

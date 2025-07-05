@@ -25,10 +25,10 @@ export class SessionService {
         try {
             const user = jwt.verify(data.accessToken, process.env.ACCESS_TOKEN_SECRET);
             this.logService.Logger({request: "Token Verification Service", source: "session service -> verToken ", timestamp: new Date(), queryParams: true, bodyParams: false, response: "Token verified", error: "none"})
-            return { user: user, Authenticated: true };
+            return { user: user, success: true };
         } catch (error) {
             this.logService.Logger({request: "Token Verification Service", source: "session service -> verToken ", timestamp: new Date(), queryParams: true, bodyParams: false, response: "Error verifying token", error: error})
-            return { user: null, Authenticated: false };
+            return { user: null, success: false };
         }
     }
 

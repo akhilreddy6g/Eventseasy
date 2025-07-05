@@ -24,13 +24,13 @@ export default async function EventLayout({
       arr[arr.length - 1].length == 1 &&
       (arr[arr.length - 1] == "0" || arr[arr.length - 1] == "1")
     ) {
-      const response = await apiServerUrl.get(
+      const apiRequest = await apiServerUrl.get(
         `/events/data?user=${user}&status=${arr[arr.length - 1]}`
       );
       const eventId = arr[0];
-      const object = response.data;
-      if (object?.["success"]) {
-        const objectData: userEvents[] = object.data;
+      const object = apiRequest.data;
+      if (object?.success) {
+        const objectData: userEvents[] = object.response;
         const checkEvent = objectData.filter(
           (curr) => curr.eventId == eventId && curr.accType == "Host"
         );

@@ -43,8 +43,8 @@ export function GuestList({eventId}: GuestInvite ) {
   const queryClient = useQueryClient()
   const [count, changeCount] = useState({totalIAGuests:0, totalIRPGuests: 0})
   const fetchData = async () => {
-    const res = await apiUrl.get(`/events/guests?eventId=${eventId}`);
-    return res.data
+    const apiRequest = await apiUrl.get(`/events/guests?eventId=${eventId}`);
+    return apiRequest.data
   };
   const newInviteState = useAppSelector((state)=> state.eventGuestsSliceReducer).guestsAdded
   const { data, error, isLoading } = useQuery({

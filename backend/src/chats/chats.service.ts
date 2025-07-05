@@ -9,6 +9,7 @@ import { Producer } from "kafkajs";
 import { kafka } from "src/kafka/kafka-client";
 import { v4 as uuidv4 } from 'uuid';
 import * as crypto from 'crypto'; 
+import { response } from "express";
 
 @Injectable()
 export class ChatsService {
@@ -48,11 +49,11 @@ export class ChatsService {
         try {
             const isUserExists = await this.viewerModel.find({user: user, eventId: eventId})
             if (isUserExists.length > 0){
-                return {success: true, message: isUserExists, accType: isUserExists[0].accType}
+                return {success: true, response: isUserExists, accType: isUserExists[0].accType}
             }
-            return {success: false, message: "User doesn't exist in the event", accType: "none"}
+            return {success: false, response: "User doesn't exist in the event", accType: "none"}
         } catch (error) {
-            return {success: false, message: error, accType: "none"}
+            return {success: false, response: error, accType: "none"}
         }
     }
 
@@ -60,25 +61,28 @@ export class ChatsService {
       try {
         const update = await this.chatModel.updateOne({eventId: query.eventId, _id: query.chatId}, {$set : {chatStatus: true}})
         this.logService.Logger({request: "Chat Activation Service", source: "chats service -> startChat", timestamp: new Date(), queryParams: true, bodyParams: false, response: "Chat Activated Successfully", error: "none"})
-        return {success: true, message: "Chat Activated successfully"}
+        return {success: true, response: "Chat Activated successfully"}
       } catch (error) {
         this.logService.Logger({request: "Chat Activation Service", source: "chats service -> startChat", timestamp: new Date(), queryParams: true, bodyParams: false, response: "Unable to Activate Chat", error: error})
-        return {success: false, message: error}
+        return {success: false, response: error}
       }
     }
 
     async getNewWsConn(data: EventIdChatIdQueryParams){
       try {
         const allSubs = await this.getAllSubscribers()
-        const partition = this.computePartition(data.eventId, data.chatId, allSubs.output.length)
-        const targetClient = allSubs.output.filter((item: {clientId: string, partition: number}) => item.partition === partition)
-        const targetClientID = targetClient[0].clientId
-        const targetServerApi = (await this.chatServersModel.findOne({csClientId: targetClientID})).csApiUrl
-        this.logService.Logger({request: "Websocket Connection Service", source: "chats service -> getNewWsConn", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Successfully retrieved go server api url to establish websocket connection", error: "none"})
-        return {success: true, data: targetServerApi}
+        const partition = this.computePartition(data.eventId, data.chatId, allSubs.response.length)
+        if(allSubs.success && Array.isArray(allSubs.response) && allSubs.response.length > 0){
+          const targetClient = allSubs.response.filter((item: {clientId: string, partition: number}) => item.partition === partition)
+          const targetClientID = targetClient[0].clientId
+          const targetServerApi = (await this.chatServersModel.findOne({csClientId: targetClientID})).csApiUrl
+          this.logService.Logger({request: "Websocket Connection Service", source: "chats service -> getNewWsConn", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Successfully retrieved go server api url to establish websocket connection", error: "none"})
+          return {success: true, response: targetServerApi}
+        }
+        return {success: false, response: "Unable to retrieve go server api url"}
       } catch (error) {
         this.logService.Logger({request: "Websocket Connection Service", source: "chats service -> getNewWsConn", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while getting go server api url", error: error})
-        return {success: false, message: `Error while getting connection string: ${error.message}`}
+        return {success: false, response: `Error while getting connection string: ${error.message}`}
       }
     }
 
@@ -134,10 +138,10 @@ export class ChatsService {
             messages: [{ value: JSON.stringify(data), partition: this.computePartition(data.eventId, data.chatId, 6)}],
           })
           this.logService.Logger({request: "Message Push Service", source: "chats service -> pushMsgToQueue", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Message successfully pushed to the queue", error: "none"})
-          return { success: true, message: 'Message pushed successfully to the queue', messageId: data.messageId }
+          return { success: true, response: data.messageId }
       } catch (error) {
         this.logService.Logger({request: "Message Push Service", source: "chats service -> pushMsgToQueue", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while pushing message to the queue", error: error})
-        return { success: false, message: `Error while pushing message to the queue: ${error.message}` }
+        return { success: false, response: `Error while pushing message to the queue: ${error.message}` }
       }
     }
 
@@ -153,13 +157,13 @@ export class ChatsService {
                 }));                
                 const updateRestrictedUserResponse = await this.cruModel.insertMany(recordsToInsert);
                 this.logService.Logger({request: "Chat Creation Service", source: "chats service -> createChat", timestamp: new Date(), queryParams: false, bodyParams: true, response: "User verified, and new chat created successfully", error: "none"})
-                return {success: true, message: "Successfully created the chat"}
+                return {success: true, response: "Successfully created the chat"}
             }
             this.logService.Logger({request: "Chat Creation Service", source: "chats service -> createChat", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Unable to create the chat - user doesn't have privileges", error: "none"})
-            return {success: false, message: "Unable to create the chat - user doesn't have privileges"}
+            return {success: false, response: "Unable to create the chat - user doesn't have privileges"}
         } catch (error) {
             this.logService.Logger({request: "Chat Creation Service", source: "chats service -> createChat", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while creating the chat", error: error})
-            return {success: false, message: error}
+            return {success: false, response: error}
         }
     }
 
@@ -201,17 +205,17 @@ export class ChatsService {
         }        
         await admin.disconnect();
         this.logService.Logger({request: "Kafka Subscriber Info Service", source: "chats service -> getAllSubscribers", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Successfully fetched info of all kafka consumers", error: "none"})
-        return { success: true, message: 'Active Kafka consumers and their partitions', output};
+        return { success: true, response: output};
       } catch (error) {
         this.logService.Logger({request: "Kafka Subscriber Info Service", source: "chats service -> getAllSubscribers", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Error while fetching kafka consumers info", error: error})
-        return { success: false, message: `Error while fetching consumers: ${error.message}`};
+        return { success: false, response: `Error while fetching consumers: ${error.message}`};
       }
     }
 
     async getChats(query: EventIdQueryParams, eventUser: string){
         try {
             const userCheck = await this.findUserInEvent(eventUser, query.eventId)
-            if(userCheck.success && userCheck.message.length > 0){
+            if(userCheck.success && userCheck.response.length > 0){
                 const accType = userCheck.accType
                 this.logService.Logger({request: "Chat Info Retrieval Service", source: "chats service -> getChats", timestamp: new Date(), queryParams: true, bodyParams: false, response: "User verified successfully", error: "none"})
                 const data = await this.chatModel.aggregate([
@@ -264,15 +268,15 @@ export class ChatsService {
                   }
                 ])
                 if(data.length>0){
-                    return {success: true, message: data}
+                    return {success: true, response: data}
                 }
                 this.logService.Logger({request: "Chat Info Retrieval Service", source: "chats service -> getChats", timestamp: new Date(), queryParams: false, bodyParams: true, response: "No chats found", error: "none"})
             }
             this.logService.Logger({request: "Chat Info Retrieval Service", source: "chats service -> getChats", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Failed to retrieve chats - user doesn't have privileges", error: "none"})
-            return {success: false, message: "No chats found/ User doesn't have privileges"}
+            return {success: false, response: "No chats found/ User doesn't have privileges"}
         } catch (error) {
             this.logService.Logger({request: "Chat Info Retrieval Service", source: "chats service -> getChats", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while retrieving the event chats", error: error})
-            return {success: false, message: error}
+            return {success: false, response: error}
         }
     }
 }

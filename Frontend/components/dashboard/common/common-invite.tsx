@@ -50,8 +50,8 @@ export default function InviteUser({accType, eventId}: InviteType) {
     if (!flag) return;
     if(userEmail!=email){
       const body = {username: username, user: email, hostName: sessionStorage.getItem("userName") ?? "someone who you might know", eventId: eventId, eventName:appState?.userData?.filter((curr)=> curr?.eventId===eventId)?.[0]?.eventData?.[0]?.event, accType: accType, access: false, message: message, flag: false}
-      const response = await apiUrl.post(`/invite/send`, body)
-      if(response && response.data.success){
+      const apiRequest = await apiUrl.post(`/invite/send`, body)
+      if(apiRequest && apiRequest.data?.success){
           alert(`Invitation sent to the ${user}!`);
           accType=="Attend" ? dispatch(onNewGuestInvite()) : dispatch(onNewManagerInvite())
       } else {

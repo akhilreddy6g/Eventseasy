@@ -22,8 +22,8 @@ const InvitationAcceptedList = (props : {eventId: string}) => {
       user?.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const removeUser = async (email: string, eventId: string, accType: string) => {
-    const response  = await apiUrl.delete(`/events/attendee?user=${email}&eventId=${eventId}&accType=${accType}`)
-    if(response?.data?.success){
+    const apiRequest = await apiUrl.delete(`/events/attendee?user=${email}&eventId=${eventId}&accType=${accType}`)
+    if(apiRequest.data?.success){
       setAcceptedUsers((prev) => prev.filter((user) => user.email !== email));
       dispatch(onNewGuestInvite())
     } else {

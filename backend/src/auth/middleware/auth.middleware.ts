@@ -26,7 +26,7 @@ export class AuthMiddleware implements NestMiddleware {
       next(); 
     } catch (error) {
       this.logService.Logger({request: "Service Request", source: "AuthMiddleware ", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Token Missing in Auth Headers/ Wrong Token", error: error})
-      res.status(401).json({message: "token missing/expired"})
+      res.status(401).json({response: "token missing/expired"})
     }
   }
 }

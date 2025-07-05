@@ -33,8 +33,8 @@ const ManagersOverview = ({eventId}: ManagerInvite) => {
   const dispatch = useDispatch<AppDispatch>()
   const queryClient = useQueryClient()
   const fetchData = async () => {
-    const res = await apiUrl.get(`/events/managers?eventId=${eventId}`);
-    return res.data
+    const apiRequest = await apiUrl.get(`/events/managers?eventId=${eventId}`);
+    return apiRequest.data
   };
   const newInviteState = useAppSelector((state)=> state.eventManagersSliceReducer).managersAdded
   const { data, error, isLoading } = useQuery({

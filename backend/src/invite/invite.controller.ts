@@ -12,13 +12,13 @@ export class InviteController{
         try {
             const op = await this.iService.sendEmail(data)
             if(op.success){
-                return {success: true, message: "Mail sent successfully"}
+                return {success: true, response: "Mail sent successfully"}
             } else {
-                return {success: false, message: "Unable to send the mail"}
+                return {success: false, response: "Unable to send the mail"}
             }
         } catch (error) {
             console.log("error: ", error)
-            return {success: false, message: "Error while sending the mail"}
+            return {success: false, response: "Error while sending the mail"}
         }
     }
 } 

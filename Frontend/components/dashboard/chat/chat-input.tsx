@@ -54,8 +54,8 @@ export default function ChatInput({eventId, chatId}:{eventId: string, chatId: st
   const chat =  useAppSelector((state) => state.chatMessageReducer)?.msgHistory.filter((Events: Events)=> Events.eventId === eventId)[0]?.chats.filter((Chats: Chats)=> Chats.chatId === chatId)[0]
 
   async function getConnStr (eventId: string, chatId: string) {
-    const data = await apiUrl.post(`/chats/new-ws-conn?eventId=${eventId}&chatId=${chatId}`)
-    return data.data
+    const apiRequest = await apiUrl.post(`/chats/new-ws-conn?eventId=${eventId}&chatId=${chatId}`)
+    return apiRequest.data.response
   }  
 
   if (socketConn) {
@@ -80,20 +80,23 @@ export default function ChatInput({eventId, chatId}:{eventId: string, chatId: st
 
   let sendMessage = async () => {
     const data = {eventId: eventId, chatId: chatId, user: userInfo.user || sessionStorage.getItem("user"), username: userInfo.userName || sessionStorage.getItem("userName"), message: message, timestamp: new Date()}
-    const response = await apiUrl.post('/chats/push-msg', data)
-    const messageId = response.data.messageId
-    const copy = {
-      eventId: eventId,
-      chatId: chatId,
-      messageId: messageId,
-      username: userInfo.userName || sessionStorage.getItem("userName") || "",
-      message: message,
-      timestamp: data.timestamp.toISOString(),
-      user:( userInfo.user || sessionStorage.getItem("user")) ?? ""
-    }
-    if (response.data.success){
-      dispatch(onNewMessage(copy))
-      setMessage("");
+    const apiRequest = await apiUrl.post('/chats/push-msg', data)
+    const success = apiRequest.data.success
+    if (success){
+      const messageId = apiRequest.data.response
+      const copy = {
+        eventId: eventId,
+        chatId: chatId,
+        messageId: messageId,
+        username: userInfo.userName || sessionStorage.getItem("userName") || "",
+        message: message,
+        timestamp: data.timestamp.toISOString(),
+        user:( userInfo.user || sessionStorage.getItem("user")) ?? ""
+      }
+      if (apiRequest.data.success){
+        dispatch(onNewMessage(copy))
+        setMessage("");
+      }
     }
   };
 
@@ -120,8 +123,8 @@ export default function ChatInput({eventId, chatId}:{eventId: string, chatId: st
       if (chat===undefined || !("messageFetchFlag" in chat) || !chat.messageFetchFlag) {
         (async () => {
           const apiRequest = await apiUrl.get(`/chats/fetch-msgs?eventId=${eventId}&chatId=${chatId}`)
-          const messages = apiRequest.data.response
           if (apiRequest.data.success) {
+            const messages = apiRequest.data.response
             dispatch(onInitialMsgsFetch({eventId: eventId, chatId: chatId, messages: messages, messageFetchFlag: true}));
           }
         })();

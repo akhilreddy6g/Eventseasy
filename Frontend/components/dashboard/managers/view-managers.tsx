@@ -41,14 +41,16 @@ export function ManagerList(props: {eventId: string}){
 
       const resendInvite = async () => {
         const data = {user: eventUser.current.email, username: eventUser.current.name, eventId: props.eventId, message: message, accType: "Manage", access: false, hostName: userDetails.userName || sessionStorage.getItem("userName")}
-        await apiUrl.post("/events/reinvite", data)
-        setResendFlag(!resendFlag)
-        console.info(`Invite resent to ${eventUser.current.email}`);
+        const apiRequest = await apiUrl.post("/events/reinvite", data)
+        if(apiRequest.data?.success){
+          setResendFlag(!resendFlag)
+          console.info(`Invite resent to ${eventUser.current.email}`);
+        }
       };
 
       const removeUser = async (email: string, eventId: string, accType: string) => {
-        const response  = await apiUrl.delete(`/events/attendee?user=${email}&eventId=${eventId}&accType=${accType}`)
-        if(response?.data?.success){
+        const apiRequest  = await apiUrl.delete(`/events/attendee?user=${email}&eventId=${eventId}&accType=${accType}`)
+        if(apiRequest.data?.success){
           setEventUsers((prev) => prev.filter((user) => user.email !== email));
           dispatch(onNewManagerInvite())
         } else {

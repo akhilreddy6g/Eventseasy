@@ -33,8 +33,8 @@ export function ChatTabs({accType, eventId}:{accType: string, eventId: string}) 
 
   const fetchData = async () => {
     try {
-      const res = await apiUrl.get(`/chats/data?eventId=${eventId}`);
-      const data : ChatInfo[] = res.data.success ? res.data.message : []
+      const apiRequest = await apiUrl.get(`/chats/data?eventId=${eventId}`);
+      const data : ChatInfo[] = apiRequest.data.success ? apiRequest.data.response : []
       return data
     } catch (error) {
       console.error("Error fetching data:", error);

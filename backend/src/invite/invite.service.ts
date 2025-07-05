@@ -14,10 +14,10 @@ export class InviteService{
         try {
             const entry = await this.attendantModel.updateOne({user:data.user, userName:data.username, accType:data.accType, eventId: data.eventId}, {$set: { access: data.access }}, {upsert: true})
             this.logService.Logger({request: `Send Invite Service (${data.accType})`, source: "invite service -> codeEntry", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Successfully logged the attendant record in db", error: "none"});
-            return {success: true, message: "Successfully logged the attendant record in db"}
+            return {success: true, response: "Successfully logged the attendant record in db"}
         } catch (error) {
             this.logService.Logger({request: `Send Invite Service (${data.accType})`, source: "invite service -> codeEntry", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while logging the attendant record in the db", error: error});
-            return {success: false, message: error}
+            return {success: false, response: error}
         }
     }
 
@@ -41,11 +41,11 @@ export class InviteService{
 
     async sendEmail(data: EmailBody){
         try {
-            let response = {success: true, message: "null"}
+            let finalResponse = {success: true, response: "none"}
             if(!data.flag){
-                response = await this.attendantEntry(data);
+                finalResponse = await this.attendantEntry(data);
             }
-            if(response.success){
+            if(finalResponse.success){
                 try {
                     const html = `<h1> Hey ${data.username} </h1>`
                     let transporter = nodemailer.createTransport({
@@ -64,18 +64,18 @@ export class InviteService{
                         html: this.emailBody(data)
                     });
                     this.logService.Logger({request: `Send Invite Service (${data.accType})`, source: "invite service -> sendEmail", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Email sent successfully", error: "none"});
-                    return {success: true, message: "Email sent successfully"}
+                    return {success: true, response: "Email sent successfully"}
                 } catch (error) {
                     this.logService.Logger({request: `Send Invite Service (${data.accType})`, source: "invite service -> sendEmail", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while sending the email", error: error});
-                    return {success: false, message: error}
+                    return {success: false, response: error}
                 }
             } else {
                 this.logService.Logger({request: `Send Invite Service (${data.accType})`, source: "invite service -> sendEmail", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Failed to send the email", error: "none"});
-                return {success: false, message: "unable to send the mail"}
+                return {success: false, response: "unable to send the mail"}
             }
         } catch (error) {
             this.logService.Logger({request: `Send Invite Service (${data.accType})`, source: "invite service -> sendEmail", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while generating and saving the hashed key in the db, thus failing to send an email", error: error});
-            return {success: false, message: error}
+            return {success: false, response: error}
         }
     }
 }

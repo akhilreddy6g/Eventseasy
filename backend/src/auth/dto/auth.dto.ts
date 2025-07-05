@@ -7,7 +7,7 @@ export interface HashPass{
 
 export interface Response{
   success: boolean
-  message: string
+  response: string
 }
 
 export class UserData{
@@ -37,8 +37,8 @@ export class Tokens{
 }
 
 export class SigninResponse{
-  authneticated: boolean
-  message: string
+  success: boolean
+  response: string
   accessToken: string
   refreshToken: string
   username?: string

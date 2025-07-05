@@ -33,9 +33,11 @@ const InvitedList = (props: {eventId: string}) => {
 
   async function resendInvite(){
     const data = {user: eventUser.current.email, username: eventUser.current.name, eventId: props.eventId, message: message, accType: "Attend", access: false, hostName: userDetails.userName || sessionStorage.getItem("userName")}
-    await apiUrl.post("/events/reinvite", data)
-    setResendFlag(!resendFlag)
+    const apiRequest = await apiUrl.post("/events/reinvite", data)
+    if(apiRequest.data?.success){
+      setResendFlag(!resendFlag)
     console.info(`Invite resent to ${eventUser.current.email}`);
+    }
   }
 
   function specialComponent(guestParam: any, property: string, key:string){

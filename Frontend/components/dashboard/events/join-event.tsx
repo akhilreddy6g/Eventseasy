@@ -40,8 +40,8 @@ export default function JoinEvent({accType}: EventJoinee){
             } else {
               sessionStorage.setItem("eventChange", JSON.stringify(0));
             }
-            const response = (await apiUrl.post(`/events/join`, body)).data
-            if (response && response.success){
+            const apiRequest = (await apiUrl.post(`/events/join`, body)).data
+            if (apiRequest && apiRequest.success){
                 dispatch(onAddNewEvent())
                 console.log("entry to the event granted")
                 setError("");
