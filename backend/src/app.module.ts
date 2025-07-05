@@ -39,9 +39,5 @@ export class AppModule {
         path: 'invite/*',
         method: RequestMethod.ALL,
       },
-      {
-        path: 'message/*',
-        method: RequestMethod.ALL,
-      }
     );}
 }

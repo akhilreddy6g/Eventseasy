@@ -211,7 +211,7 @@ export class EventService{
             },
           },
         ]);
-        this.redisService.set(userdata.user, {redisStatus:userdata.status, redisData:data});
+        this.redisService.set(userdata.user, {redisStatus:userdata.status, redisData:data, ttl: 15*60});
         this.logService.Logger({request: "User Data Retrieval Service", source: "users service -> userData", timestamp: new Date(), queryParams: true, bodyParams: false, response: "User data retrieval from db successful", error: null})
         return {success: true, response: data};
       } catch (error) {

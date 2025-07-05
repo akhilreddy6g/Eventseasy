@@ -33,7 +33,7 @@ export class AuthController {
       if (result.success) {
         res.cookie("accessToken", JSON.stringify({ act: result.accessToken, user: data.user }),{secure: process.env.NODE_ENV === "production",sameSite: "strict", maxAge: 7200000});
         res.cookie("auth", JSON.stringify({ rft: result.refreshToken, user: data.user }), {secure: process.env.NODE_ENV === "production",sameSite: "strict", maxAge: 86400000, httpOnly: true});        
-        res.setHeader("Authorization", `Bearer ${result.accessToken}`);
+        res.setHeader("authorization", result.accessToken);
         return res.status(HttpStatus.OK).json({ success: true, response: result.response, user:data.user, userName: data.username });
       } else {
         return res.status(HttpStatus.UNAUTHORIZED).json({ success: false, response: result.response});
@@ -68,7 +68,7 @@ export class AuthController {
       res.clearCookie('auth', { secure: process.env.NODE_ENV === "production",sameSite: "strict", httpOnly: true });
       res.clearCookie('accessToken', {secure: process.env.NODE_ENV === "production",sameSite: "strict"})
       res.removeHeader("authorization");
-      return res.status(HttpStatus.OK).json({ success: false, response: "Logout successful" });
+      return res.status(HttpStatus.OK).json({ success: true, response: "Logout successful" });
     } 
     return res.status(HttpStatus.OK).json({ success: false, response: "User Logged out already" });
   }

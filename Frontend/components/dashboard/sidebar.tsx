@@ -76,7 +76,7 @@ export function DashboardSidebar(): ReactNode {
   })
 
   const mappedData = useMemo(() => {
-    return data?.data?.map((curr: userEvents) => ({
+    return data?.response?.map((curr: userEvents) => ({
       eventId: curr?.eventId,
       eventName: curr?.eventData?.[0]?.event,
       action: curr?.accType
