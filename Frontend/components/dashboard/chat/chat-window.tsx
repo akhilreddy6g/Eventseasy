@@ -6,12 +6,14 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import ChatInput, { Chats, Events, Message } from './chat-input';
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip"
 import MessageCard from './message-card';
-import { useAppSelector } from '@/lib/store';
+import { AppDispatch, useAppSelector } from '@/lib/store';
 import { ChatInfo } from '@/lib/features/chat-info-slice';
 import { chatTypes, EventSelectedInChatTab } from './chat-tabs';
 import { CirclePlay } from 'lucide-react';
 import { InfoCircle } from '@mynaui/icons-react';
 import { apiUrl } from '@/components/noncomponents';
+import { onInitialMsgsFetch } from '@/lib/features/chat-slice';
+import { useDispatch } from 'react-redux';
 
 export interface EventChat {
   chatId: string;
@@ -80,13 +82,15 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
   const chatData = chat?.messages ?? []
   const initRef = useRef(true);
   const [startChatFlag, setStartChatFlag] = useState<boolean>(false)
-  const changeSelectedChat = (chatId: string) => {
-    setSelectedChat((prev: EventSelectedInChatTab)=>({...prev, [chatTab] : chatId}));
-  };
+  const dispatch = useDispatch<AppDispatch>();
+  const allChats = useAppSelector((state) => state.chatMessageReducer)?.msgHistory;
   const [userName, setUserName] = useState<string | null>(useAppSelector((state)=> state.userLoginSliceReducer).userName);
   const [user, setUser] = useState<string | null>(useAppSelector((state)=> state.userLoginSliceReducer).user);
   const estDate = calcTime(-4)
   const bottomRef = useRef<HTMLDivElement>(null);
+  const changeSelectedChat = (chatId: string) => {
+    setSelectedChat((prev: EventSelectedInChatTab)=>({...prev, [chatTab] : chatId}));
+  };
 
   async function startChat(eventId: string, chatId: string) {
     try {
@@ -154,6 +158,20 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
     }
   }, [chatData.length]);
 
+  useEffect(() => {
+    if(chatSelected?.chatId.length>0 && chatTab!="upcoming"){
+    const currentChat = allChats?.find((e) => e.eventId === eventId)?.chats.find((c) => c.chatId === chatSelected.chatId);
+    if (currentChat===undefined || !("messageFetchFlag" in currentChat) || !currentChat.messageFetchFlag) {
+        (async () => {
+          const apiRequest = await apiUrl.get(`/chats/fetch-msgs?eventId=${eventId}&chatId=${chatSelected.chatId}`)
+          if (apiRequest.data.success) {
+            const messages = apiRequest.data.response
+            dispatch(onInitialMsgsFetch({eventId: eventId, chatId: chatSelected.chatId, messages: messages, messageFetchFlag: true}));
+          }
+        })();
+      }}
+  }, [eventId, chatSelected, chatTab])
+
   return (
     <div className="flex flex-1 bg-gray-50 rounded-md shadow-md">
       {Array.isArray(chatInfo?.[0]?.details) && chatInfo[0].details.length > 0 && chatInfo?.[0]?.details?.some((record: ChatInfo)=> chatTypeCheck(estDate, chatTab, record))?
@@ -179,10 +197,9 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
          <>
           <ScrollArea key={`ScrollArea_${selectedChat[chatTab]}`} className="flex flex-1 pb-2 overflow-y-auto">
               {((chatTab !== "upcoming" && chatSelected?.chatStatus) || startChatFlag ) && <InfoTab message='Info Tab' key={`InfoTab_${selectedChat[chatTab]}`}></InfoTab>}
-              {chatTab === "past" || chatSelected?.chatStatus || startChatFlag ? chatData.length > 0 ?
-              (
-                <>
-                  {chatData.map((message, index) => (
+                {chatTab === "past" || chatSelected?.chatStatus || startChatFlag ? chatData.length > 0 ?
+                  (Array.isArray(chatData) && chatData.length>0 ? chatData?.map((message, index) => (
+                    <div key={`Message_out_container_${message.messageId}`}>
                     <MessageCard
                       key={`Message_${message.messageId}`}
                       containerKey={`Message_${message.messageId}`}
@@ -193,12 +210,11 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
                       prev={index==0? false: message.user===chatData[index-1].user}
                       last={index===chatData.length-1}
                     />
-                  ))}
-                  <div ref={bottomRef} />
-                </>
-              )
-               : <DefaultChat eventId={eventId} chatId={chatSelected?.chatId} accType={accType} chatStatus={chatSelected?.chatStatus} chatTab={chatTab} empty={true}></DefaultChat>
-               : <DefaultChat eventId={eventId} chatId={chatSelected?.chatId} accType={accType} chatStatus={chatSelected?.chatStatus} chatTab={chatTab} empty={false}></DefaultChat>}
+                    {index==chatData.length-1 && <div ref={bottomRef} />}
+                    </div>
+                  )): <DefaultChat eventId={eventId} chatId={chatSelected?.chatId} accType={accType} chatStatus={chatSelected?.chatStatus} chatTab={chatTab} empty={true}></DefaultChat>)
+                : <DefaultChat eventId={eventId} chatId={chatSelected?.chatId} accType={accType} chatStatus={chatSelected?.chatStatus} chatTab={chatTab} empty={true}></DefaultChat>
+              : <DefaultChat eventId={eventId} chatId={chatSelected?.chatId} accType={accType} chatStatus={chatSelected?.chatStatus} chatTab={chatTab} empty={false}></DefaultChat>}
           </ScrollArea>
           {chatTab === "current" && (chatSelected?.chatStatus || startChatFlag) && <div key={`ChatInput_${selectedChat[chatTab]}`} className="p-2 flex items-center ">
             <ChatInput eventId={eventId} chatId={chatSelected?.chatId}/>

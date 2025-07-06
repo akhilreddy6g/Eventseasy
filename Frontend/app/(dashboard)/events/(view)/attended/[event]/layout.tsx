@@ -1,6 +1,6 @@
 import EventSidebar from "@/components/dashboard/events/event-sidebar";
 import { ReactNode } from "react";
-import { apiServerUrl } from "@/components/noncomponents";
+import { apiUrl } from "@/components/noncomponents";
 import { cookies } from "next/headers";
 import { userEvents } from "@/components/dashboard/sidebar";
 import { redirect } from "next/navigation";
@@ -19,12 +19,12 @@ export default async function EventLayout({
     const actValue = parsedCookie.act;
     const user = parsedCookie.user;
     const arr = event.split("sstc");
-    apiServerUrl.defaults.headers.common["Authorization"] = actValue;
+    apiUrl.defaults.headers.common["Authorization"] = actValue;
     if (
       arr[arr.length - 1].length == 1 &&
       (arr[arr.length - 1] == "0" || arr[arr.length - 1] == "1")
     ) {
-      const apiRequest = await apiServerUrl.get(
+      const apiRequest = await apiUrl.get(
         `/events/data?user=${user}&status=${arr[arr.length - 1]}`
       );
       const eventId = arr[0];

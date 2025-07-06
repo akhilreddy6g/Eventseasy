@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { AppDispatch, useAppSelector } from "@/lib/store";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { onNewMessage, onChatCompRender, onInitialMsgsFetch } from "@/lib/features/chat-slice";
+import { onNewMessage, onChatCompRender } from "@/lib/features/chat-slice";
 import { apiUrl } from "@/components/noncomponents";
 
 export interface Message {
@@ -50,8 +50,6 @@ export default function ChatInput({eventId, chatId}:{eventId: string, chatId: st
   const [socketConn, setSocketConn] = useState<WebSocket>();
   const userInfo = useAppSelector((state)=> state.userLoginSliceReducer);
   const EventChatWsConnState = useAppSelector((state)=> state.chatMessageReducer);
-  const localFlag = useRef(true);
-  const chat =  useAppSelector((state) => state.chatMessageReducer)?.msgHistory.filter((Events: Events)=> Events.eventId === eventId)[0]?.chats.filter((Chats: Chats)=> Chats.chatId === chatId)[0]
 
   async function getConnStr (eventId: string, chatId: string) {
     const apiRequest = await apiUrl.post(`/chats/new-ws-conn?eventId=${eventId}&chatId=${chatId}`)
@@ -120,18 +118,6 @@ export default function ChatInput({eventId, chatId}:{eventId: string, chatId: st
       })();
     }
   }, [eventId, chatId]);
-
-    useEffect(() => {
-      if (chat===undefined || !("messageFetchFlag" in chat) || !chat.messageFetchFlag) {
-        (async () => {
-          const apiRequest = await apiUrl.get(`/chats/fetch-msgs?eventId=${eventId}&chatId=${chatId}`)
-          if (apiRequest.data.success) {
-            const messages = apiRequest.data.response
-            dispatch(onInitialMsgsFetch({eventId: eventId, chatId: chatId, messages: messages, messageFetchFlag: true}));
-          }
-        })();
-      }
-    }, [eventId, chatId]);
 
   return (
     <div key={"ChatInput"+eventId} className="flex w-full"> 

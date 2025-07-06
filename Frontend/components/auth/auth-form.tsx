@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons";
 import { useRouter } from "next/navigation";
-import { apiServerUrl, apiUrl } from "../noncomponents";
+import { apiUrl } from "../noncomponents";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/lib/store";
 import { onLogIn } from "@/lib/features/user-slice";
@@ -38,7 +38,7 @@ export function AuthForm({ type }: AuthFormProps) {
       if (apiRequest.headers["authorization"]) {
         apiUrl.defaults.headers.common["Authorization"] =
           apiRequest.headers["authorization"];
-        apiServerUrl.defaults.headers.common["Authorization"] =
+        apiUrl.defaults.headers.common["Authorization"] =
           apiRequest.headers["authorization"];
         sessionStorage.setItem(
           "authorization",

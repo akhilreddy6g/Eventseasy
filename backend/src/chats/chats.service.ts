@@ -119,7 +119,7 @@ export class ChatsService {
         }
     
         this.logService.Logger({request: "Messages Fetch Service", source: "chats service -> fetchMsgs", timestamp: new Date(), queryParams: true, bodyParams: false, response: "No messages found", error: "none"})
-        return { success: false, response: "No messages found" };
+        return { success: true, response: "No messages found" };
       } catch (error) {
         this.logService.Logger({request: "Messages Fetch Service", source: "chats service -> fetchMsgs", timestamp: new Date(), queryParams: true, bodyParams: false, response: "Error while fetching messages", error: error})
         return { success: false, response: error };
