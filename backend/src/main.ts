@@ -11,7 +11,9 @@ async function bootstrap() {
   app.enableCors({
     origin: [process.env.CLIENT_URL, 'http://localhost:3001'],
     credentials: true,
-    exposedHeaders: ["Authorization"]
+    exposedHeaders: ["Authorization"],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
   app.useGlobalPipes(new ValidationPipe())
   await app.listen(process.env.PORT ?? 4000);
