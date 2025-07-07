@@ -10,11 +10,8 @@ import { RedisService } from './redis.service';
     {
       provide: 'REDIS_CLIENT',
       useFactory: async (configService: ConfigService) => {
-        return new Redis({
-          host: configService.get<string>('REDIS_HOST', 'localhost'),
-          port: configService.get<number>('REDIS_PORT', 6379),
-          password: configService.get<string>('REDIS_PASSWORD', ''),
-        });
+        const redisUrl = configService.get<string>('REDIS_URL') || 'redis://127.0.0.1:6379';
+        return new Redis(redisUrl);
       },
       inject: [ConfigService],
     },
