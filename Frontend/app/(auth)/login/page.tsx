@@ -3,8 +3,8 @@ import Link from "next/link"
 import { AuthForm } from "@/components/auth/auth-form"
 
 export const metadata: Metadata = {
-  title: "Login - EventBuzz",
-  description: "Login to your EventBuzz account",
+  title: "Login - Eventseasy",
+  description: "Login to your Eventseasy account",
 }
 
 export default function LoginPage() {

@@ -17,7 +17,7 @@ export default function Home() {
                   Your Events, Simplified
                 </h1>
                 <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
-                  Seamlessly manage events, collaborate with teams, and create memorable experiences with EventBuzz.
+                  Seamlessly manage events, collaborate with teams, and create memorable experiences with Eventseasy.
                 </p>
               </div>
               <div className="space-x-4">

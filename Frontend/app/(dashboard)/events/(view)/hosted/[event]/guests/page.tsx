@@ -2,7 +2,7 @@ import { Metadata } from "next"
 import { GuestList } from "@/components/dashboard/guests/guest-overview"
 
 export const metadata: Metadata = {
-  title: "Guests - EventBuzz",
+  title: "Guests - Eventseasy",
   description: "Manage event guests and invitations",
 }
 

@@ -4,7 +4,7 @@ import { UpcomingEvents } from "@/components/dashboard/upcoming-events"
 import { RecentActivity } from "@/components/dashboard/recent-activity"
 
 export const metadata: Metadata = {
-  title: "Dashboard - EventBuzz",
+  title: "Dashboard - Eventseasy",
   description: "Manage your events and view analytics",
 }
 

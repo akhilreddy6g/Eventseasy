@@ -3,7 +3,7 @@ import { LandmarksList } from "@/components/dashboard/landmarks/landmarks-list"
 import { PathToDestination } from "@/components/dashboard/landmarks/path-to-destination"
 
 export const metadata: Metadata = {
-  title: "Landmarks - EventBuzz",
+  title: "Landmarks - Eventseasy",
   description: "Manage event locations and landmarks",
 }
 

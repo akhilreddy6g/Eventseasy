@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Live Chat - EventBuzz",
+  title: "Live Chat - Eventseasy",
   description: "Chat with event participants",
 }
 

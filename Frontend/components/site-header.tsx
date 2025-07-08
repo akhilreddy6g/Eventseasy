@@ -11,7 +11,7 @@ export function SiteHeader() {
         <div className="mr-8">
           <Link href="/" className="flex items-center space-x-2">
             {/* <CalendarDays className="h-6 w-6" /> */}
-            <span className="font-bold text-2xl">EventBuzz</span>
+            <span className="font-bold text-2xl">Eventseasy</span>
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">

@@ -3,8 +3,8 @@ import { TeamMember } from "@/components/about/team-member"
 import { MissionSection } from "@/components/about/mission-section"
 
 export const metadata: Metadata = {
-  title: "About - EventBuzz",
-  description: "Learn about EventBuzz's mission and the team behind the platform",
+  title: "About - Eventseasy",
+  description: "Learn about Eventseasy's mission and the team behind the platform",
 }
 
 export default function AboutPage() {
@@ -12,7 +12,7 @@ export default function AboutPage() {
     <div className="flex justify-center items-center">
       <div className="max-w-3xl mx-auto py-20 space-y-16">
         <div className="space-y-4 text-center">
-          <h1 className="text-4xl font-bold tracking-tight">About EventBuzz</h1>
+          <h1 className="text-4xl font-bold tracking-tight">About Eventseasy</h1>
           <p className="text-xl text-muted-foreground">
             Transforming event management through innovation and collaboration
           </p>
@@ -20,7 +20,7 @@ export default function AboutPage() {
 
         <MissionSection title="Mission">
           <p>
-            At EventBuzz, we believe that every event has the potential to create lasting memories. 
+            At Eventseasy, we believe that every event has the potential to create lasting memories. 
             Our mission is to empower event organizers with innovative tools that simplify planning, 
             enhance collaboration, and create exceptional experiences.
           </p>

@@ -6,8 +6,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
 
 export const metadata: Metadata = {
-  title: "Sign Up - EventBuzz",
-  description: "Create your EventBuzz account",
+  title: "Sign Up - Eventseasy",
+  description: "Create your Eventseasy account",
 }
 
 export default function SignUpPage() {

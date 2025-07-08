@@ -2,7 +2,7 @@ import ManagersOverview from "@/components/dashboard/managers/managers-overview"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Guests - EventBuzz",
+  title: "Guests - Eventseasy",
   description: "Manage event guests and invitations",
 }
 

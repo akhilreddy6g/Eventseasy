@@ -61,7 +61,7 @@ export function FeaturesContent() {
 
       <FeatureSection 
         title="Platform Benefits" 
-        description="Why EventBuzz is the perfect choice for your events"
+        description="Why Eventseasy is the perfect choice for your events"
       >
         <FeatureCard
           Icon={Shield}

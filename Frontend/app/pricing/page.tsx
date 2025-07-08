@@ -2,7 +2,7 @@ import { Metadata } from "next"
 import { PriceCard } from "@/components/pricing/price-card"
 
 export const metadata: Metadata = {
-  title: "Pricing - EventBuzz",
+  title: "Pricing - Eventseasy",
   description: "Simple, transparent pricing for events of all sizes",
 }
 

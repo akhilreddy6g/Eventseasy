@@ -10,8 +10,8 @@ import StoreProvider from './StoreProvider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'EventBuzz - Modern Event Management Platform',
-  description: 'Seamlessly manage events, collaborate with teams, and create memorable experiences with EventBuzz.',
+  title: 'Eventseasy - Modern Event Management Platform',
+  description: 'Seamlessly manage events, collaborate with teams, and create memorable experiences with Eventseasy.',
 };
 
 export default function RootLayout({

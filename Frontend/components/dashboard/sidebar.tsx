@@ -127,7 +127,7 @@ export function DashboardSidebar(): ReactNode {
     <div className="flex flex-col w-48 border-r bg-muted/10 relative h-screen overflow-scroll">
       <div className="p-6">
         <Link href="/dashboard" className="flex items-center gap-2 font-bold text-lg">
-          <span className="text-2xl">EventBuzz</span>
+          <span className="text-2xl">Eventseasy</span>
         </Link>
       </div>
       <nav className="flex-1 px-4 space-y-1">
