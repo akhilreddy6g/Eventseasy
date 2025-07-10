@@ -3,7 +3,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { apiUrl } from '../noncomponents';
+import { apiUrl } from '../constants';
 
 export default function LogoutButton() {
   const router = useRouter();

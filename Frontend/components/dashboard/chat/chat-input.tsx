@@ -6,7 +6,7 @@ import { AppDispatch, useAppSelector } from "@/lib/store";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { onNewMessage, onChatCompRender } from "@/lib/features/chat-slice";
-import { apiUrl } from "@/components/noncomponents";
+import { apiUrl } from "@/components/constants";
 
 export interface Message {
   messageId: string

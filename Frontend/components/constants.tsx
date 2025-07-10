@@ -5,3 +5,9 @@ export const apiUrl = axios.create({
   withCredentials: true,
   headers: { "Content-Type": "application/json" },
 });
+
+export const serverApi = axios.create({
+  baseURL: `${process.env.API_URL || "http://localhost:4000"}/api`,
+  withCredentials: true,
+  headers: { "Content-Type": "application/json" },
+});

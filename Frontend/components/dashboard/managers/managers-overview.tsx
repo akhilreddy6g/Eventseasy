@@ -10,7 +10,7 @@ import InviteUser from "../common/common-invite";
 import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "@/lib/store";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiUrl } from "@/components/noncomponents";
+import { apiUrl } from "@/components/constants";
 import { onManagersLoad } from "@/lib/features/manager-slice";
 
 interface ManagerInvite {

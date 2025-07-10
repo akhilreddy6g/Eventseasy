@@ -7,7 +7,7 @@ import { MessageSquare, History, Calendar } from "lucide-react";
 import { useEffect, useState } from "react";
 import GeneralChat, { calcTime, chatTypeCheck } from "./chat-window";
 import ChatForm from "./chat-form";
-import { apiUrl } from "@/components/noncomponents";
+import { apiUrl } from "@/components/constants";
 import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "@/lib/store";
 import { useQuery, useQueryClient } from "@tanstack/react-query";

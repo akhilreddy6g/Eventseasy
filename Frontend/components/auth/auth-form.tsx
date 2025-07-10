@@ -2,65 +2,52 @@
 
 import * as React from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons";
-import { useRouter } from "next/navigation";
-import { apiUrl } from "../noncomponents";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/lib/store";
 import { onLogIn } from "@/lib/features/user-slice";
+import { authLoginServerAction } from "../actions/auth";
+import { apiUrl } from "../constants";
 
 interface AuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   type: "login" | "signup";
 }
 
 export function AuthForm({ type }: AuthFormProps) {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const form = useForm();
+  const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
+  const form = useForm();
   async function onSubmit(data: any) {
     setIsLoading(true);
-    const route = type === "login" ? "/auth/signin" : "/auth/signup";
     try {
-      const body =
-        type === "login"
-          ? { user: data.email, password: data.password }
-          : {
-              username: data.username,
-              user: data.email,
-              password: data.password,
-            };
-      const apiRequest = await apiUrl.post(route, body);
-      const authenticated = apiRequest.data.success;
-      if (apiRequest.headers["authorization"]) {
-        apiUrl.defaults.headers.common["Authorization"] =
-          apiRequest.headers["authorization"];
-        apiUrl.defaults.headers.common["Authorization"] =
-          apiRequest.headers["authorization"];
-        sessionStorage.setItem(
-          "authorization",
-          apiRequest.headers["authorization"]
-        );
-      } else if (sessionStorage.getItem("authorization")) {
-        apiUrl.defaults.headers.common["Authorization"] =
-          sessionStorage.getItem("authorization");
+      const formData = new FormData();
+      formData.append("email", data.email);
+      formData.append("password", data.password);
+      if (type === "signup") {
+        formData.append("username", data.username);
       }
-      if (authenticated) {
-        dispatch(
-          onLogIn({ user: data.user, userName: apiRequest.data.userName })
-        );
+      const result = await authLoginServerAction(formData);
+      const authenticated = result.success;
+      if (authenticated && result.accessToken) {
+        dispatch(onLogIn({ user: data.user, userName: result.userName }));
+        apiUrl.defaults.headers.common["Authorization"] = result.accessToken
+        sessionStorage.setItem("authorization", result.accessToken)
         sessionStorage.setItem("user", data.email);
         sessionStorage.setItem("eventChange", JSON.stringify(0));
-        sessionStorage.setItem("userName", apiRequest.data.userName);
+        sessionStorage.setItem("userName", result.userName);
         router.push(`/dashboard`);
+      } else if (sessionStorage.getItem("authorization")) {
+        apiUrl.defaults.headers.common["Authorization"] =sessionStorage.getItem("authorization");
       } else {
         console.error("Authentication failed");
       }
     } catch (error) {
-      console.error("An error occurred:", error);
+      console.error("Error during login:", error);
     } finally {
       setIsLoading(false);
     }
@@ -70,15 +57,12 @@ export function AuthForm({ type }: AuthFormProps) {
     <div className="grid gap-6">
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="grid gap-4">
-          {type == "signup" && (
+          {type === "signup" && (
             <div className="grid gap-2">
-              <Label htmlFor="email">Name</Label>
+              <Label htmlFor="username">Name</Label>
               <Input
                 id="username"
                 type="text"
-                autoCapitalize="none"
-                autoComplete="none"
-                autoCorrect="off"
                 disabled={isLoading}
                 required
                 {...form.register("username")}
@@ -90,9 +74,6 @@ export function AuthForm({ type }: AuthFormProps) {
             <Input
               id="email"
               type="email"
-              autoCapitalize="none"
-              autoComplete="email"
-              autoCorrect="off"
               disabled={isLoading}
               required
               {...form.register("email")}
@@ -103,7 +84,6 @@ export function AuthForm({ type }: AuthFormProps) {
             <Input
               id="password"
               type="password"
-              autoComplete="current-password"
               disabled={isLoading}
               required
               {...form.register("password")}

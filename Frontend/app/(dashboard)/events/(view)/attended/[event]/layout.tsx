@@ -1,6 +1,6 @@
 import EventSidebar from "@/components/dashboard/events/event-sidebar";
 import { ReactNode } from "react";
-import { apiUrl } from "@/components/noncomponents";
+import { apiUrl } from "@/components/constants";
 import { cookies } from "next/headers";
 import { userEvents } from "@/components/dashboard/sidebar";
 import { redirect } from "next/navigation";

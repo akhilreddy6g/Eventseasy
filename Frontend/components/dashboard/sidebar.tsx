@@ -8,7 +8,7 @@ import { useState, ReactNode, useEffect, useRef} from "react";
 import { ChevronRight } from "@mynaui/icons-react";
 import { Plus } from "@mynaui/icons-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiUrl } from "../noncomponents";
+import { apiUrl } from "../constants";
 import { useMemo } from "react";
 import { useDispatch} from "react-redux";
 import { onInitialLogIn } from "@/lib/features/initial-slice";

@@ -6,7 +6,7 @@ import { TableCell } from "@/components/ui/table";
 import { useMemo, useRef, useState } from "react";
 import { AppDispatch, useAppSelector } from "@/lib/store";
 import CommonAttendeeView from "../common/common-attendee-view";
-import { apiUrl } from "@/components/noncomponents";
+import { apiUrl } from "@/components/constants";
 import { useAppDispatch } from "@/lib/hooks";
 import { onNewManagerInvite } from "@/lib/features/manager-slice";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";

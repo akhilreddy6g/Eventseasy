@@ -7,7 +7,7 @@ import { TableCell } from "@/components/ui/table";
 import { useAppSelector } from "@/lib/store";
 import { Guest } from "./view-guests";
 import CommonAttendeeView from "../common/common-attendee-view";
-import { apiUrl } from "@/components/noncomponents";
+import { apiUrl } from "@/components/constants";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const InvitedList = (props: {eventId: string}) => {

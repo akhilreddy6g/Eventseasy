@@ -9,7 +9,7 @@ import GuestTable, { Guest } from "./view-guests"
 import InvitedList from "./invited-guests"
 import InvitationAcceptedList from "./invitation-accepted-guests"
 import InviteUser from "../common/common-invite"
-import { apiUrl } from "@/components/noncomponents"
+import { apiUrl } from "@/components/constants"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useMemo, useState } from "react"
 import { useDispatch} from "react-redux";

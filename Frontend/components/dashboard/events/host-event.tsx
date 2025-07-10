@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon, Flag} from "lucide-react";
 import { format, isBefore, addMinutes, startOfDay } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
-import { apiUrl } from '@/components/noncomponents';
+import { apiUrl } from '@/components/constants';
 import Cookies from 'js-cookie'
 import { useDispatch} from 'react-redux';
 import { onAddNewEvent } from '@/lib/features/initial-slice';

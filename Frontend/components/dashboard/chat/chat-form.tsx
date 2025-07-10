@@ -10,7 +10,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { SearchUser } from "./search-user";
 import { mockUsers } from "@/public/mockData";
-import { apiUrl } from "@/components/noncomponents";
+import { apiUrl } from "@/components/constants";
 import { useAppDispatch } from "@/lib/hooks";
 import { AppDispatch } from "@/lib/store";
 import { onNewChat } from "@/lib/features/chat-info-slice";

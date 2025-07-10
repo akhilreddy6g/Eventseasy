@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import Cookies from 'js-cookie'
-import { apiUrl } from "@/components/noncomponents";
+import { apiUrl } from "@/components/constants";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/lib/store";
 import { onAddNewEvent } from "@/lib/features/initial-slice";

@@ -11,7 +11,7 @@ import { ChatInfo } from '@/lib/features/chat-info-slice';
 import { chatTypes, EventSelectedInChatTab } from './chat-tabs';
 import { CirclePlay } from 'lucide-react';
 import { InfoCircle } from '@mynaui/icons-react';
-import { apiUrl } from '@/components/noncomponents';
+import { apiUrl } from '@/components/constants';
 import { onInitialMsgsFetch } from '@/lib/features/chat-slice';
 import { useDispatch } from 'react-redux';
 

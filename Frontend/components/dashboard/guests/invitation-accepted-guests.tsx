@@ -7,7 +7,7 @@ import { TableCell} from "@/components/ui/table";
 import { AppDispatch, useAppSelector } from "@/lib/store";
 import { Guest } from "./view-guests";
 import CommonAttendeeView from "../common/common-attendee-view";
-import { apiUrl } from "@/components/noncomponents";
+import { apiUrl } from "@/components/constants";
 import { useDispatch } from "react-redux";
 import { onNewGuestInvite } from "@/lib/features/guest-slice";
 
