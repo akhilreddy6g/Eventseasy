@@ -58,7 +58,7 @@ const ManagersOverview = ({eventId}: ManagerInvite) => {
 
   const mappedData: MappedDataStrcuture = useMemo(() => {
     if(data?.success){
-      const separatedEvents = separateEventManagers(data?.data);
+      const separatedEvents = separateEventManagers(data?.response);
       const invited: Manager [] = separatedEvents?.invited?.map((curr: ManagerStructure) => ({name: curr.userName ?? "Missing", email: curr.user, status: "Invited"}))
       const attending: Manager [] = separatedEvents?.attending?.map((curr: any) => ({name: curr.userName ?? "Missing", email: curr.user, status: "Accepted"}))     
       const combined: Manager [] = [...invited, ...attending]

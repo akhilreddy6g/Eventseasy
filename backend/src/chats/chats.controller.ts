@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Req} from "@nestjs/common";
+import { Body, Controller, Get, Post, Query, Req, UnauthorizedException} from "@nestjs/common";
 import { ChatsService } from "./chats.service";
 import { ChatBodyData, EventIdQueryParams, EventIdChatIdQueryParams, MessageBody} from "./dto/chats.dto";
 import { Request } from "express";
@@ -8,14 +8,18 @@ export class ChatsController{
     constructor(private chatService: ChatsService){}
     @Post("/create")
     createChat(@Body() data: ChatBodyData, @Req() req: Request){
-        const eventUser = JSON.parse(req.cookies.auth)?.user
+        const authCookie = req.cookies?.auth;
+        if (!authCookie) throw new UnauthorizedException("Missing auth cookie");
+        const eventUser = JSON.parse(authCookie)?.user;
         const finalData = {...data, restrictedUsers: data.restrictedUsers.map(user => user.user)}
         return this.chatService.createChat(finalData, eventUser)
     }
 
     @Get("/data")
     getChats(@Query() query: EventIdQueryParams, @Req() req: Request){
-        const eventUser = JSON.parse(req.cookies.auth)?.user
+        const authCookie = req.cookies?.auth;
+        if (!authCookie) throw new UnauthorizedException("Missing auth cookie");
+        const eventUser = JSON.parse(authCookie)?.user;
         return this.chatService.getChats(query, eventUser)
     }
 

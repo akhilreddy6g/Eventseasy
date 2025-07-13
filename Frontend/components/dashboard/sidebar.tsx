@@ -92,8 +92,8 @@ export function DashboardSidebar(): ReactNode {
   };
 
   useEffect(() => {
-    if (data?.data) {
-      dispatch(onInitialLogIn(data?.data));
+    if (data?.response) {
+      dispatch(onInitialLogIn(data?.response));
     }
     setEvents((prevEvents) =>
         prevEvents.map(event => ({
