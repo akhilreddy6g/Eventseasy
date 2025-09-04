@@ -40,7 +40,8 @@ export function AuthForm({ type }: AuthFormProps) {
         sessionStorage.setItem("user", data.email);
         sessionStorage.setItem("eventChange", JSON.stringify(0));
         sessionStorage.setItem("userName", result.userName);
-        router.push(`/dashboard`);
+        // Should be redirected to the dashboard. Temporarily redirecting to events
+        router.push(`/events`);
       } else if (sessionStorage.getItem("authorization")) {
         apiUrl.defaults.headers.common["Authorization"] =sessionStorage.getItem("authorization");
       } else {

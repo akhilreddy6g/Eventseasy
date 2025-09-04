@@ -53,8 +53,8 @@ export function DashboardSidebar(): ReactNode {
   const routes = {hosted: "Host", attended: "Attend", managed: "Manage"}
 
   const navigation = [
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Events", href: "/events/summary", icon: CalendarDays },
+    // { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    // { name: "Events", href: "/events/summary", icon: CalendarDays },
   ];
   
   const fetchData = async () => {
@@ -126,12 +126,13 @@ export function DashboardSidebar(): ReactNode {
   return (
     <div className="flex flex-col w-48 border-r bg-muted/10 relative h-screen overflow-scroll">
       <div className="p-6">
-        <Link href="/dashboard" className="flex items-center gap-2 font-bold text-lg">
+        {/* Should be /dashboard, but temporarily using /events. */}
+        <Link href="/events" className="flex items-center gap-2 font-bold text-lg"> 
           <span className="text-2xl">Eventseasy</span>
         </Link>
       </div>
       <nav className="flex-1 px-4 space-y-1">
-        {navigation?.map((item) => (
+        {/* {navigation?.map((item) => (
            <div key={`nav-item-${item?.name}`}>
             <Link
               href={item?.href}
@@ -148,7 +149,7 @@ export function DashboardSidebar(): ReactNode {
               {item?.name}
             </Link>
           </div>
-        ))}
+        ))} */}
         <div className="mt-1">
             {events?.map((event, eventIndex) => (
               <div key={`event-group-${eventIndex}`}>

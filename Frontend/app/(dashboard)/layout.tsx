@@ -9,8 +9,6 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const accessToken = cookies().get("accessToken")
-  console.log("other cookies are:", cookies().getAll())
-  console.log("accessToken in dashboard layout is:", accessToken)
   if (!accessToken) {
     redirect("/") 
   }

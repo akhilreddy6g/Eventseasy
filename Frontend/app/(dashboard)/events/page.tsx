@@ -1,5 +1,7 @@
-import { redirect } from "next/navigation";
+import Welcome from "@/components/dashboard/welcome";
 
 export default function Page(){
-    return null
+    return (
+        <Welcome />
+    )
 }

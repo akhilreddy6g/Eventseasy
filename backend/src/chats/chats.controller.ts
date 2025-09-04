@@ -8,7 +8,7 @@ export class ChatsController{
     constructor(private chatService: ChatsService){}
     @Post("/create")
     createChat(@Body() data: ChatBodyData, @Req() req: Request){
-        const authCookie = req.cookies?.auth;
+        const authCookie = req.cookies?.refreshToken;
         if (!authCookie) throw new UnauthorizedException("Missing auth cookie");
         const eventUser = JSON.parse(authCookie)?.user;
         const finalData = {...data, restrictedUsers: data.restrictedUsers.map(user => user.user)}
@@ -17,7 +17,7 @@ export class ChatsController{
 
     @Get("/data")
     getChats(@Query() query: EventIdQueryParams, @Req() req: Request){
-        const authCookie = req.cookies?.auth;
+        const authCookie = req.cookies?.refreshToken;
         if (!authCookie) throw new UnauthorizedException("Missing auth cookie");
         const eventUser = JSON.parse(authCookie)?.user;
         return this.chatService.getChats(query, eventUser)
