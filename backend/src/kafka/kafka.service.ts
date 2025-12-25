@@ -31,9 +31,34 @@ export class KafkaService implements OnModuleInit {
       } else {
         this.logService.Logger({request: "Kafka Topic Creation Service", source: "kafka service -> createKafkaTopic", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Topic already exists. No changes made", error: "none"})
       }
-    } catch (error) {
-      this.logService.Logger({request: "Kafka Topic Creation Service", source: "kafka service -> createKafkaTopic", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Error creating topic", error: error})
-    } finally {
+    } catch (error: any) {
+      const details = {
+        name: error?.name,
+        message: error?.message,
+        type: error?.type,
+        code: error?.code,
+        retriable: error?.retriable,
+        innerErrors: error?.errors?.map((e: any) => ({
+          name: e?.name,
+          message: e?.message,
+          type: e?.type,
+          code: e?.code,
+          retriable: e?.retriable,
+          help: e?.help,
+        })),
+      };
+    
+      this.logService.Logger({
+        request: "Kafka Topic Creation Service",
+        source: "kafka service -> createKafkaTopic",
+        timestamp: new Date(),
+        queryParams: false,
+        bodyParams: false,
+        response: "Error creating topic",
+        error: JSON.stringify(details),
+      });
+    }
+     finally {
       await admin.disconnect()
     }
   }
