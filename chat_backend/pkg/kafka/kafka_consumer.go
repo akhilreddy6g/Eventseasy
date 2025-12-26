@@ -3,41 +3,80 @@ package kafka
 import (
 	"chat_server/pkg/websocket"
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"fmt"
 	"log"
-
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 	"github.com/segmentio/kafka-go"
+	"github.com/segmentio/kafka-go/sasl/scram"
 )
 
 func StartKafkaConsumer(pool *websocket.Pool, client string) {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("No .env file found or failed to load")
-	}
+	// Load .env only for local dev; Render/prod should use platform env vars
+	_ = godotenv.Load()
+
+	// --- Required env vars ---
 	brokers := os.Getenv("KAFKA_CLIENT_URL")
 	if brokers == "" {
-		brokers = "localhost:9092"
+		log.Fatal("KAFKA_CLIENT_URL is missing (Environment Variables not set or wrong key)")
 	}
+	brokerList := strings.Split(brokers, ",")
+
 	topic := os.Getenv("KAFKA_TOPIC_NAME")
 	if topic == "" {
-		topic = "cm-2"
+		log.Fatal("KAFKA_TOPIC_NAME is missing")
 	}
+
 	groupId := os.Getenv("KAFKA_CONSUMER_GROUP_ID")
 	if groupId == "" {
-		groupId = "cg-2"
+		log.Fatal("KAFKA_CONSUMER_GROUP_ID is missing")
 	}
-	r := kafka.NewReader(kafka.ReaderConfig{
-		Dialer: &kafka.Dialer{
-			ClientID: client,
+
+	caPEM := os.Getenv("KAFKA_CLIENT_CA_CERT")
+	if caPEM == "" {
+		log.Fatal("KAFKA_CLIENT_CA_CERT is missing")
+	}
+	roots := x509.NewCertPool()
+	if !roots.AppendCertsFromPEM([]byte(caPEM)) {
+		log.Fatal("failed to parse KAFKA_CLIENT_CA_CERT")
+	}
+
+	user := os.Getenv("KAFKA_USERNAME")
+	pass := os.Getenv("KAFKA_PASSWORD")
+	if user == "" || pass == "" {
+		log.Fatal("KAFKA_USERNAME or KAFKA_PASSWORD is missing")
+	}
+
+	// If your cluster uses SCRAM-SHA-512, change scram.SHA256 -> scram.SHA512
+	mech, err := scram.Mechanism(scram.SHA256, user, pass)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dialer := &kafka.Dialer{
+		ClientID: client,
+		TLS: &tls.Config{
+			RootCAs:    roots,
+			MinVersion: tls.VersionTLS12,
 		},
-		Brokers: []string{brokers},
+		SASLMechanism: mech,
+	}
+
+	r := kafka.NewReader(kafka.ReaderConfig{
+		Dialer:  dialer,
+		Brokers: brokerList,
 		Topic:   topic,
 		GroupID: groupId,
 	})
+
+	defer func() {
+		_ = r.Close()
+	}()
 
 	fmt.Println("👂 Listening for messages...")
 
@@ -46,7 +85,7 @@ func StartKafkaConsumer(pool *websocket.Pool, client string) {
 		if err != nil {
 			log.Fatalf("error while reading: %v", err)
 		}
-		// 🔄 Deserialize Kafka message into WebSocket message
+
 		var wsMessage websocket.Body
 		if err := json.Unmarshal(msg.Value, &wsMessage); err != nil {
 			fmt.Println("❌ Failed to parse Kafka message:", err)
@@ -55,65 +94,3 @@ func StartKafkaConsumer(pool *websocket.Pool, client string) {
 		pool.Broadcast <- wsMessage
 	}
 }
-
-// func StartKafkaConsumer(pool *websocket.Pool, client string) {
-// 	reader := kafka.NewReader(kafka.ReaderConfig{
-// 		Dialer: &kafka.Dialer{
-// 			ClientID: client,
-// 		},
-// 		Brokers:     []string{"localhost:9092"},
-// 		Topic:       "cm-2",
-// 		GroupID:     "cg-2",
-// 	})
-
-// 	// Initial connection test with timeout
-// collection := mongodb.MongoClient.Database("test").Collection("chat_messages")
-// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-// defer cancel()
-
-// 	_, err := reader.FetchMessage(ctx)
-// 	if err != nil {
-// 		log.Printf("🚫 Kafka not ready or unreachable: %v", err)
-// 		if closeErr := reader.Close(); closeErr != nil {
-// 			log.Printf("❌ Failed to close Kafka reader: %v", closeErr)
-// 		}
-// 		return // Exit gracefully — don’t block server
-// 	}
-// 	log.Println("✅ Kafka is reachable. Starting consumer...")
-
-// 	// Resume full context and consumer loop
-// 	ctx, cancel = context.WithCancel(context.Background())
-// 	defer cancel()
-
-// 	go handleShutdown(cancel)
-
-// 	for {
-// 		select {
-// 		case <-ctx.Done():
-// 			log.Println("🛑 Kafka consumer shutdown requested.")
-// 			reader.Close()
-// 			return
-// 		default:
-// 			msg, err := reader.ReadMessage(ctx)
-// 			if err != nil {
-// 				log.Printf("⚠️ Kafka read error: %v", err)
-// 				time.Sleep(1 * time.Second) // basic retry delay
-// 				continue
-// 			}
-// 			var wsMessage websocket.Body
-// 			if err := json.Unmarshal(msg.Value, &wsMessage); err != nil {
-// 				log.Printf("❌ Kafka message decode error: %v", err)
-// 				continue
-// 			}
-// 			pool.Broadcast <- wsMessage
-// 		}
-// 	}
-// }
-
-// func handleShutdown(cancel context.CancelFunc) {
-// 	c := make(chan os.Signal, 1)
-// 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
-// 	<-c
-// 	log.Println("📴 Received shutdown signal...")
-// 	cancel()
-// }

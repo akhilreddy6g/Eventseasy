@@ -35,13 +35,13 @@ export class CreateEvents{
 
     @Delete("/attendee")
     deleteUserFromEvent(@Query() query: UserDetails, @Req() req: Request){
-        const eventHost = JSON.parse(req.cookies.auth)?.user
+        const eventHost = JSON.parse(req.cookies.refreshToken)?.user
         return this.eService.deleteUserFromEvent(query, eventHost);
     }
 
     @Post("/reinvite")
     reInviteUser(@Body() data: ReinviteUser, @Req() req: Request){
-        const eventHost = JSON.parse(req.cookies.auth)?.user
+        const eventHost = JSON.parse(req.cookies.refreshToken)?.user
         return this.eService.reInviteUser(data, eventHost)
     }
 

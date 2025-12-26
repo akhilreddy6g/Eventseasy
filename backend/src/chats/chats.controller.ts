@@ -9,6 +9,7 @@ export class ChatsController{
     @Post("/create")
     createChat(@Body() data: ChatBodyData, @Req() req: Request){
         const authCookie = req.cookies?.refreshToken;
+        console.log("cookies are: ", req.cookies);
         if (!authCookie) throw new UnauthorizedException("Missing auth cookie");
         const eventUser = JSON.parse(authCookie)?.user;
         const finalData = {...data, restrictedUsers: data.restrictedUsers.map(user => user.user)}
@@ -18,6 +19,7 @@ export class ChatsController{
     @Get("/data")
     getChats(@Query() query: EventIdQueryParams, @Req() req: Request){
         const authCookie = req.cookies?.refreshToken;
+        console.log("cookies are: ", req.cookies);
         if (!authCookie) throw new UnauthorizedException("Missing auth cookie");
         const eventUser = JSON.parse(authCookie)?.user;
         return this.chatService.getChats(query, eventUser)

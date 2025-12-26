@@ -177,7 +177,7 @@ export class EventService{
           const redisData = JSON.parse(redisUserData)?.["redisData"]
           if(redisStatus==userdata.status){
             if(redisData){
-              this.logService.Logger({request: "User Data Retrieval Service", source: "events service -> userData", timestamp: new Date(), queryParams: true, bodyParams: false, response: "User data retrieval from redis successful", error: null})
+              this.logService.Logger({request: "User Data Retrieval Service", source: "events service -> userData", timestamp: new Date(), queryParams: true, bodyParams: false, response: "User data retrieval from redis successful", error: 'none'})
               return {success: true, response: redisData}
             } 
           }
@@ -212,7 +212,7 @@ export class EventService{
           },
         ]);
         this.redisService.set(userdata.user, {redisStatus:userdata.status, redisData:data, ttl: 15*60});
-        this.logService.Logger({request: "User Data Retrieval Service", source: "users service -> userData", timestamp: new Date(), queryParams: true, bodyParams: false, response: "User data retrieval from db successful", error: null})
+        this.logService.Logger({request: "User Data Retrieval Service", source: "users service -> userData", timestamp: new Date(), queryParams: true, bodyParams: false, response: "User data retrieval from db successful", error: 'none'})
         return {success: true, response: data};
       } catch (error) {
         this.logService.Logger({request: "User Data Retrieval Service", source: "users service -> userData", timestamp: new Date(), queryParams: true, bodyParams: false, response: "Error retrieving user data", error: error})
@@ -223,7 +223,7 @@ export class EventService{
     async eventUsers(eventId: string) {
       try {
         const restrictedUsers = await this.attendantModel.find({eventId: eventId}, {user:1, userName:1, accType:1})
-      this.logService.Logger({request: "Event Users Retrieval Service", source: "users service -> eventUsers", timestamp: new Date(), queryParams: true, bodyParams: false, response: "Event users retrieved successfully", error: null})
+      this.logService.Logger({request: "Event Users Retrieval Service", source: "users service -> eventUsers", timestamp: new Date(), queryParams: true, bodyParams: false, response: "Event users retrieved successfully", error: 'none'})
         return {success: true, response: restrictedUsers}
       } catch (error) {
         this.logService.Logger({request: "eventUsers", source: "users service -> eventUsers", timestamp: new Date(), queryParams: true, bodyParams: false, response: "Error retrieving event users", error: error})

@@ -9,7 +9,6 @@ import { Producer } from "kafkajs";
 import { kafka } from "src/kafka/kafka-client";
 import { v4 as uuidv4 } from 'uuid';
 import * as crypto from 'crypto'; 
-import { response } from "express";
 
 @Injectable()
 export class ChatsService {
@@ -134,8 +133,8 @@ export class ChatsService {
           }
           data['messageId'] = this.genUuid()
           const ans = await this.producer.send({
-            topic: 'cm-2',
-            messages: [{ value: JSON.stringify(data), partition: this.computePartition(data.eventId, data.chatId, 6)}],
+            topic: process.env.KAFKA_TOPIC_NAME,
+            messages: [{ value: JSON.stringify(data), partition: this.computePartition(data.eventId, data.chatId, Number(process.env.KAFKA_TOPIC_PARTITIONS))}],
           })
           this.logService.Logger({request: "Message Push Service", source: "chats service -> pushMsgToQueue", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Message successfully pushed to the queue", error: "none"})
           return { success: true, response: data.messageId }
@@ -171,7 +170,7 @@ export class ChatsService {
       try {
         const admin = kafka.admin();
         await admin.connect();
-        const { groups } = await admin.describeGroups(['cg-2']);
+        const { groups } = await admin.describeGroups([process.env.KAFKA_CONSUMER_GROUP_ID]);
         const output = [];
     
         for (const group of groups) {

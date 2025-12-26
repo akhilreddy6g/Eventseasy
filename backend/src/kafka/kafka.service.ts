@@ -19,15 +19,15 @@ export class KafkaService implements OnModuleInit {
       const result = await admin.createTopics({
         topics: [
           {
-            topic: process.env.KAFKA_TOPIC_NAME ?? 'cm-2',
-            numPartitions: Number(process.env.KAFKA_TOPIC_PARTITIONS ?? 6),
+            topic: process.env.KAFKA_TOPIC_NAME,
+            numPartitions: Number(process.env.KAFKA_TOPIC_PARTITIONS),
             replicationFactor: 1,
           },
         ],
       })
 
       if (result) {
-        this.logService.Logger({request: "Kafka Topic Creation Service", source: "kafka service -> createKafkaTopic", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Topic created successfully with 6 partitions", error: "none"})
+        this.logService.Logger({request: "Kafka Topic Creation Service", source: "kafka service -> createKafkaTopic", timestamp: new Date(), queryParams: false, bodyParams: false, response: `Topic created successfully with ${process.env.KAFKA_TOPIC_PARTITIONS} partitions`, error: "none"})
       } else {
         this.logService.Logger({request: "Kafka Topic Creation Service", source: "kafka service -> createKafkaTopic", timestamp: new Date(), queryParams: false, bodyParams: false, response: "Topic already exists. No changes made", error: "none"})
       }

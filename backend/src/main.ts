@@ -9,13 +9,13 @@ async function bootstrap() {
   app.setGlobalPrefix('api')
   app.use(cookieParser());
   app.enableCors({
-    origin: [process.env.CLIENT_URL, 'http://localhost:3001'],
+    origin: process.env.NODE_ENV === 'production' ? process.env.CLIENT_URL : 'http://localhost:3000',
     credentials: true,
     exposedHeaders: ["Authorization"],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
   app.useGlobalPipes(new ValidationPipe())
-  await app.listen(process.env.PORT ?? 4000);
+  await app.listen(process.env.PORT);
 }
 bootstrap();

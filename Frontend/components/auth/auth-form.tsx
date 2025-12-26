@@ -10,7 +10,7 @@ import { Icons } from "@/components/icons";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/lib/store";
 import { onLogIn } from "@/lib/features/user-slice";
-import { authLoginServerAction } from "../actions/auth";
+import { authLoginClientAction } from "./auth";
 import { apiUrl } from "../constants";
 
 interface AuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -31,16 +31,25 @@ export function AuthForm({ type }: AuthFormProps) {
       if (type === "signup") {
         formData.append("username", data.username);
       }
-      const result = await authLoginServerAction(formData);
+      const result = await authLoginClientAction(formData);
       const authenticated = result.success;
       if (authenticated && result.accessToken) {
         dispatch(onLogIn({ user: data.user, userName: result.userName }));
         apiUrl.defaults.headers.common["Authorization"] = result.accessToken
+        const cookieResponse = await fetch("/api/set-cookie", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ accessToken: result.accessToken, user: result.user })
+        });
+        if (!cookieResponse.ok) {
+          console.error("Error setting cookie:", cookieResponse.statusText);
+        }
         sessionStorage.setItem("authorization", result.accessToken)
         sessionStorage.setItem("user", data.email);
         sessionStorage.setItem("eventChange", JSON.stringify(0));
         sessionStorage.setItem("userName", result.userName);
         // Should be redirected to the dashboard. Temporarily redirecting to events
+        console.log("Login successful, redirecting to events");
         router.push(`/events`);
       } else if (sessionStorage.getItem("authorization")) {
         apiUrl.defaults.headers.common["Authorization"] =sessionStorage.getItem("authorization");
