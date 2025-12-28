@@ -67,7 +67,7 @@ export const chatSlice = createSlice({
       const { eventId, chatId, username, messageId, message, user, timestamp } = action.payload;
       let event = state.msgHistory.find((prev) => prev.eventId === eventId);
 
-      if (!event) {
+      if (event==null || event==undefined){
         state.msgHistory.push({
           eventId,
           chats: [
@@ -82,7 +82,7 @@ export const chatSlice = createSlice({
         });
       } else {
         let chat = event.chats.find((c) => c.chatId === chatId);
-        if (!chat) {
+        if (chat==null || chat==undefined) {
           event.chats.push({
             chatId,
             messages: [
@@ -108,7 +108,7 @@ export const chatSlice = createSlice({
         });
       } else {
         let chat = event.chats.find((c) => c.chatId === chatId);
-        if (!chat) {
+        if (chat==null || chat==undefined) {
           event.chats.push({
             chatId,
             connectionFlag

@@ -51,7 +51,7 @@ export function ChatTabs({accType, eventId}:{accType: string, eventId: string}) 
   useEffect(()=> {
     if(Array.isArray(data) && data.length > 0){
       dispatch(onNewEventChatsFetch([{eventId:eventId, details: data as ChatInfo []}]));
-      const estDate = calcTime(-4);
+      const estDate = calcTime(-5);
       const pastInitialChat = data.filter((chat: ChatInfo) => chatTypeCheck(estDate, "past", chat))?.[0]?.chatId || "";
       const currentInitialChat = data.filter((chat: ChatInfo) => chatTypeCheck(estDate, "current", chat))?.[0]?.chatId || "";
       const upcomingInitialChat = data.filter((chat: ChatInfo) => chatTypeCheck(estDate, "upcoming", chat))?.[0]?.chatId || "";

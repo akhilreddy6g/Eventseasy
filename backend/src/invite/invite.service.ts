@@ -4,7 +4,14 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Attendant, AttendeeDocument } from "src/events/eventdata/events.eventdata.schema";
 import { Model } from "mongoose";
 import { LogInfoService } from "src/auth/logger/logger.service";
-const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
+const mailjet = require('node-mailjet');
+
+const mj = mailjet.apiConnect(
+  process.env.MJ_APIKEY_PUBLIC,
+  process.env.MJ_APIKEY_PRIVATE
+);
+
 @Injectable()
 
 export class InviteService{
@@ -47,24 +54,57 @@ export class InviteService{
             }
             if(finalResponse.success){
                 try {
-                    const html = `<h1> Hey ${data.username} </h1>`
-                    let transporter = nodemailer.createTransport({
-                        host: "smtp.gmail.com",
-                        port: 587,
-                        secure: false,
-                        auth: {
-                            user: process.env.MAIL,
-                            pass: process.env.MAIL_PASS,
-                        },
-                    }); 
-                    let info = await transporter.sendMail({
-                        from: `Eventseasy <${process.env.MAIL}>`,
-                        to: `${data.user}`,
-                        subject: `You have been Invited to ${data.eventName} by ${data.hostName} ${data.accType==="manager" ? "as a manager" : ""}`,
-                        html: this.emailBody(data)
-                    });
-                    this.logService.Logger({request: `Send Invite Service (${data.accType})`, source: "invite service -> sendEmail", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Email sent successfully", error: "none"});
-                    return {success: true, response: "Email sent successfully"}
+                    if(process.env.NODE_ENV === "production"){
+                        const request = mj
+                        .post("send", {'version': 'v3.1'})
+                        .request({
+                            "Messages":[
+                                {
+                                    "From": {
+                                        "Email": process.env.MAIL,
+                                        "Name": `Eventseasy <${process.env.MAIL}>`
+                                    },
+                                    "To": [
+                                        {
+                                            "Email": `${data.user}`,
+                                            "Name": `${data.hostName}`
+                                        }
+                                    ],
+                                    "Subject": `You have been Invited to ${data.eventName} by ${data.hostName} ${data.accType==="manager" ? "as a manager" : ""}`,
+                                    "TextPart": "Welcome to Eventseasy",
+                                    "HTMLPart": this.emailBody(data)
+                                }
+                            ]
+                        })
+                        request.then((result) => {
+                            console.log(result.body)
+                        })
+                        .catch((err) => {
+                            console.log(err.statusCode)
+                        })
+                        this.logService.Logger({request: `Send Invite Service (${data.accType})`, source: "invite service -> sendEmail (Mailjet)", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Email sent successfully", error: "none"});
+                        return {success: true, response: "Email sent successfully via Mailjet"}
+                    } else {
+                        const html = `<h1> Hey ${data.username} </h1>`
+                        let transporter = nodemailer.createTransport({
+                            host: "smtp.gmail.com",
+                            port: 465,
+                            secure: true,
+                            auth: {
+                                user: process.env.MAIL,
+                                pass: process.env.MAIL_PASS,
+                            },
+                        }); 
+                        let info = await transporter.sendMail({
+                            from: `Eventseasy <${process.env.MAIL}>`,
+                            to: `${data.user}`,
+                            subject: `You have been Invited to ${data.eventName} by ${data.hostName} ${data.accType==="manager" ? "as a manager" : ""}`,
+                            html: this.emailBody(data)
+                        });
+                        this.logService.Logger({request: `Send Invite Service (${data.accType})`, source: "invite service -> sendEmail (Nodemailer)", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Email sent successfully", error: "none"});
+                        return {success: true, response: "Email sent successfully via Nodemailer"}
+                    }
+
                 } catch (error) {
                     this.logService.Logger({request: `Send Invite Service (${data.accType})`, source: "invite service -> sendEmail", timestamp: new Date(), queryParams: false, bodyParams: true, response: "Error while sending the email", error: error});
                     return {success: false, response: error}

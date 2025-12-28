@@ -64,7 +64,7 @@ export function ChatHeader({ chatHeading, changeChatView, containerKey, memberCo
 }
 
 export function chatTypeCheck(estDate: Date, chatType: string, chatInfo: ChatInfo){
-  const chatDate = new Date(chatInfo.chatDate + "T00:00:00-04:00")
+  const chatDate = new Date(chatInfo.chatDate + "T00:00:00-05:00")
   if(chatType === "past"){
     return chatDate.toDateString() !== estDate.toDateString() && chatDate < estDate
   } else if(chatType === "current"){
@@ -131,7 +131,7 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
             </button>
             {(!chatStatus || chatTab === "upcoming") && (
               <p className="italic text-muted-foreground">
-                {accType === "Host" || accType === "Manage" ? (<>Hit <span className="font-extrabold">Start Chat</span> to begin the Live Session</>) : (<>Chat <span className='font-extrabold'>Not Live Yet!</span> Stay Tuned</>)}
+                {accType === "Host" || accType === "Manage" ? (<>Tap <span className="font-extrabold">Start Chat</span> to begin the Live Session</>) : (<>Chat <span className='font-extrabold'>Not Live Yet!</span> Stay Tuned</>)}
               </p>
             )}
           </>
