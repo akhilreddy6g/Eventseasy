@@ -38,6 +38,29 @@ func serveWS(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 	pool.Register <- client
 }
 
+func runCronHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("run-cron endpoint hit")
+
+	// Only allow POST
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	reqApiKey := os.Getenv("CRON_JOB_API_KEY")
+	apiKey := r.Header.Get("api-key")
+
+	if reqApiKey == "" || apiKey == "" || reqApiKey != apiKey {
+		fmt.Println("❌ No / wrong API key provided")
+		http.Error(w, "Unauthorized", http.StatusForbidden)
+		return
+	}
+
+	fmt.Println("✅ Successfully activated the server")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte(`{"message":"Server activated successfully"}`))
+}
+
 func main() {
 	fmt.Println("Go's server started.")
 	config.LoadEnv()
@@ -61,6 +84,8 @@ func main() {
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWS(pool, w, r)
 	})
+
+	http.HandleFunc("/awake", runCronHandler)
 
 	http.ListenAndServe("0.0.0.0:"+*port, nil)
 }
