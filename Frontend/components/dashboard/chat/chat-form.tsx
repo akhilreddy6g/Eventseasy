@@ -98,7 +98,7 @@ export default function ChatForm({newFutureChat, eventId}:{newFutureChat: boolea
           {newFutureChat && <div className="px-1">
             <Label className="block mb-2 text-sm font-medium">Chat Date</Label>
             <div className="flex justify-center">
-            <Calendar selected={chatDate} onDayClick={(date: any) => (date >= new Date().setHours(new Date().getHours()-4)) && setChatDate(date)} disabled={(date: Date) => new Date(date.setHours(23, 59, 59, 999)).getTime() < new Date().getTime() - 4 * 60 * 60 * 1000}            />
+            <Calendar selected={chatDate} onDayClick={(date: any) => (date >= new Date().setHours(new Date().getHours()-4)) && setChatDate(date)} disabled={(date: Date) => new Date(date.setHours(23, 59, 59, 999)).getTime() < new Date().getTime() - 5 * 60 * 60 * 1000}            />
             </div>
           </div>}
 

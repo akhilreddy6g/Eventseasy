@@ -9,6 +9,7 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
+	"os"
 )
 
 func serveWS(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
@@ -46,8 +47,8 @@ func main() {
 			fmt.Println("❌ MongoDB disconnect error:", err)
 		}
 	}()
-	port := flag.String("port", "4001", "Port to run the WebSocket server on")
-	clientID := flag.String("clientid", "go-api-server", "Client ID to use when connecting to Kafka")
+	port := flag.String("port", os.Getenv("PORT"), "Port to run the WebSocket server on")
+	clientID := flag.String("clientid", os.Getenv("SERVER_CLIENT_ID"), "Client ID to use when connecting to Kafka")
 	flag.Parse() // Parse command-line flags
 
 	pool := websocket.NewPool()

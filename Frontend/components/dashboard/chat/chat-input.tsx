@@ -60,7 +60,6 @@ export default function ChatInput({eventId, chatId}:{eventId: string, chatId: st
     socketConn.onmessage = (event: MessageEvent) => {
       try {
         const data: MessageBody = JSON.parse(event.data);
-        console.log("new message is: ", data)
         dispatch(onNewMessage(data));
       } catch (err) {
         console.error("Failed to parse WebSocket message:", event.data, err);

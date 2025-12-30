@@ -42,7 +42,7 @@ export function SiteHeader() {
             {/* <Link href="/signup">
               <Button>Get Started</Button>
             </Link> */}
-            <ModeToggle />
+            {/* <ModeToggle /> */}
           </div>
         </div>
       </div>

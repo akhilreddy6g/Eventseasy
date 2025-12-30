@@ -165,7 +165,7 @@ export const GeneralChat = ({eventId, chatTab, selectedChat, setSelectedChat, ac
         (async () => {
           const apiRequest = await apiUrl.get(`/chats/fetch-msgs?eventId=${eventId}&chatId=${chatSelected.chatId}`)
           if (apiRequest.data.success) {
-            const messages = apiRequest.data.response
+            const messages = Array.isArray(apiRequest.data.response) ? apiRequest.data.response : []
             dispatch(onInitialMsgsFetch({eventId: eventId, chatId: chatSelected.chatId, messages: messages, messageFetchFlag: true}));
           }
         })();
