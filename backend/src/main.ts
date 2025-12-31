@@ -9,7 +9,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api')
   app.use(cookieParser());
   app.enableCors({
-    origin: process.env.NODE_ENV === 'production' ? process.env.CLIENT_URL : 'http://localhost:3000',
+    origin: process.env.NODE_ENV === 'production' ? process.env.CLIENT_URL : 'http://localhost:3001',
     credentials: true,
     exposedHeaders: ["Authorization"],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

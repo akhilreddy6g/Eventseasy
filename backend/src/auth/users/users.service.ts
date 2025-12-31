@@ -15,9 +15,9 @@ export class UsersService {
     try {
       const user = await this.userModel.findOne({ user: data.user }).lean().exec();
       if(user){
-        this.logService.Logger({request: "User Search", source: "users service -> findUser", timestamp: new Date(), queryParams: false, bodyParams: true, response: "User does not exist", error: "none"})
-      } else {
         this.logService.Logger({request: "User Search", source: "users service -> findUser", timestamp: new Date(), queryParams: false, bodyParams: true, response: "User exists", error: "none"})
+      } else {
+        this.logService.Logger({request: "User Search", source: "users service -> findUser", timestamp: new Date(), queryParams: false, bodyParams: true, response: "User does not exist", error: "none"})
       }
       return user;
     } catch (error) {

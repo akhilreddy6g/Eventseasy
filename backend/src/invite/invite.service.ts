@@ -4,7 +4,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Attendant, AttendeeDocument } from "src/events/eventdata/events.eventdata.schema";
 import { Model } from "mongoose";
 import { LogInfoService } from "src/auth/logger/logger.service";
-import nodemailer from "nodemailer";
+const nodemailer = require("nodemailer");
 const mailjet = require('node-mailjet');
 
 const mj = mailjet.apiConnect(

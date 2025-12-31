@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   const cookie = serialize('accessToken', JSON.stringify({ act: accessToken, user: user }), {
     path: '/',
     maxAge: secondsUntilExpiry,
-    sameSite: 'none',
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     httpOnly: false, // so layout.tsx or cookies() can read it
     secure: process.env.NODE_ENV === 'production',
   });
