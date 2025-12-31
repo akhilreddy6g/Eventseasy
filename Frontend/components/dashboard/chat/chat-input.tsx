@@ -104,7 +104,7 @@ export default function ChatInput({eventId, chatId}:{eventId: string, chatId: st
         try {
           const data: {success: string, response: string} = await getConnStr(eventId, chatId); 
           if (data.success){
-            const socket = new WebSocket(`wss://${data.response.split('//')[1]}/ws?eventId=${eventId}&chatId=${chatId}&user=${userInfo.user || sessionStorage.getItem("user")}`);
+            const socket = new WebSocket(`${process.env.NODE_ENV === "production" ? "wss" : "ws"}://${data.response.split('//')[1]}/ws?eventId=${eventId}&chatId=${chatId}&user=${userInfo.user || sessionStorage.getItem("user")}`);
             setSocketConn(socket);
             socket.onopen = () => {
               console.log("WebSocket connection opened");

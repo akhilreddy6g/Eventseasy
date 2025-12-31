@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "ES6", // or ES2015+
+    "lib": ["ES6", "DOM"], // Ensure 'ES6' or higher is included
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  }
+}

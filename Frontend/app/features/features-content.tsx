@@ -10,16 +10,16 @@ import { FeatureSection } from "@/components/features/feature-section"
 export function FeaturesContent() {
   return (
     <div className="container">
-      <div className="text-center py-20 space-y-4">
+      {/* <div className="text-center py-20 space-y-4">
         <h1 className="text-4xl font-bold tracking-tight">Powerful Features</h1>
         <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
           Everything you need to create, manage, and deliver exceptional events
         </p>
-      </div>
+      </div> */}
 
       <FeatureSection 
         title="Event Management" 
-        description="Comprehensive tools to plan and execute successful events"
+        description="Comprehensive tools to create, manage, and deliver exceptional events"
       >
         <FeatureCard
           Icon={Calendar}

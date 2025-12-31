@@ -58,13 +58,21 @@ func StartKafkaConsumer(pool *websocket.Pool, client string) {
 		log.Fatal(err)
 	}
 
-	dialer := &kafka.Dialer{
-		ClientID: client,
-		TLS: &tls.Config{
-			RootCAs:    roots,
-			MinVersion: tls.VersionTLS12,
-		},
-		SASLMechanism: mech,
+	var dialer *kafka.Dialer
+
+	if os.Getenv("NODE_ENV") == "production" {
+		dialer = &kafka.Dialer{
+			ClientID: client,
+			TLS: &tls.Config{
+				RootCAs:    roots,
+				MinVersion: tls.VersionTLS12,
+			},
+			SASLMechanism: mech,
+		}
+	} else {
+		dialer = &kafka.Dialer{
+			ClientID: client,
+		}
 	}
 
 	r := kafka.NewReader(kafka.ReaderConfig{

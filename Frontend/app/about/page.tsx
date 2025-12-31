@@ -38,17 +38,17 @@ export default function AboutPage() {
           </p>
         </MissionSection>
 
-        <div className="space-y-8">
+        {/* <div className="space-y-8">
           <h2 className="text-2xl font-bold tracking-tight text-center">Meet the Team</h2>
           <div className="grid md:grid-cols-1 gap-8">
             <TeamMember
               name="Akhil Reddy"
               role="Developer"
               image="images/profilepic.jpg"
-              bio="Full Stack Intern at The Commons XR and Graduate at University of Florida"
+              bio="Software Engineer at University of Florida"
             />
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )

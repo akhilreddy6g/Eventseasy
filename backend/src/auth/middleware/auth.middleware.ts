@@ -17,8 +17,8 @@ export class AuthMiddleware implements NestMiddleware {
       }
       const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
       if (!decoded) {
-        res.clearCookie('accessToken', {secure: process.env.NODE_ENV === "production",sameSite: "none"})
-        res.clearCookie('refreshToken', { secure: process.env.NODE_ENV === "production",sameSite: "none", httpOnly: true });
+        res.clearCookie('accessToken', {secure: process.env.NODE_ENV === "production",sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"})
+        res.clearCookie('refreshToken', { secure: process.env.NODE_ENV === "production",sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", httpOnly: true });
         res.removeHeader("authorization");
         throw new UnauthorizedException('Invalid token');
       }

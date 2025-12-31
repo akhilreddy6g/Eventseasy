@@ -4,7 +4,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Attendant, AttendeeDocument } from "src/events/eventdata/events.eventdata.schema";
 import { Model } from "mongoose";
 import { LogInfoService } from "src/auth/logger/logger.service";
-import nodemailer from "nodemailer";
+const nodemailer = require("nodemailer");
 const mailjet = require('node-mailjet');
 
 const mj = mailjet.apiConnect(
@@ -35,7 +35,7 @@ export class InviteService{
         <hr/>
         ${data.message && "<p> Here's what" + " " + data.hostName + " has to say: <br/> &emsp;" + data.message +"</p>"}
         <ol>
-            <li> Signup with the same email on <a href="www.google.com">Eventseasy</a></li>
+            <li> Signup with the same email on <a href="https://eventseasy.onrender.com/">Eventseasy</a></li>
             <li> Enter the event id: <h3>${data.eventId}</3> </li>
             <li> Join the event ${data.accType==="Attend"? "and keep yourself updated" : ""}</li>
         </ol>

@@ -14,8 +14,8 @@ export class AuthController {
     try {
       const result = await this.authService.signin(data);
       if (result.success) {
-        res.cookie("accessToken", JSON.stringify({ act: result.accessToken, user: data.user }),{secure: process.env.NODE_ENV === "production",sameSite: "none", path: '/', maxAge: 7200000, domain: process.env.ENV === 'production' && '.onrender.com'});
-        res.cookie("refreshToken", JSON.stringify({ rft: result.refreshToken, user: data.user }), {secure: process.env.NODE_ENV === "production",sameSite: "none", path: '/', maxAge: 86400000, httpOnly: true, domain: process.env.ENV === 'production' && '.onrender.com'});       
+        res.cookie("accessToken", JSON.stringify({ act: result.accessToken, user: data.user }),{secure: process.env.NODE_ENV === "production",sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", path: '/', maxAge: 7200000, domain: process.env.ENV === 'production' && '.onrender.com'});
+        res.cookie("refreshToken", JSON.stringify({ rft: result.refreshToken, user: data.user }), {secure: process.env.NODE_ENV === "production",sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", path: '/', maxAge: 86400000, httpOnly: true, domain: process.env.ENV === 'production' && '.onrender.com'});       
         res.setHeader("authorization", result.accessToken)
         return res.status(HttpStatus.OK).json({success: true, response: result.response, user: data.user, userName: result.username, accessToken: result.accessToken});
       } else {
@@ -31,8 +31,8 @@ export class AuthController {
     try {
       const result = await this.authService.signup(data);
       if (result.success) {
-        res.cookie("accessToken", JSON.stringify({ act: result.accessToken, user: data.user }),{secure: process.env.NODE_ENV === "production",sameSite: "none", path: '/', maxAge: 7200000, domain: process.env.ENV === 'production' && '.onrender.com'});
-        res.cookie("refreshToken", JSON.stringify({ rft: result.refreshToken, user: data.user }), {secure: process.env.NODE_ENV === "production",sameSite: "none", path: '/', maxAge: 86400000, httpOnly: true, domain: process.env.ENV === 'production' && '.onrender.com'});        
+        res.cookie("accessToken", JSON.stringify({ act: result.accessToken, user: data.user }),{secure: process.env.NODE_ENV === "production",sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", path: '/', maxAge: 7200000, domain: process.env.ENV === 'production' && '.onrender.com'});
+        res.cookie("refreshToken", JSON.stringify({ rft: result.refreshToken, user: data.user }), {secure: process.env.NODE_ENV === "production",sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", path: '/', maxAge: 86400000, httpOnly: true, domain: process.env.ENV === 'production' && '.onrender.com'});        
         res.setHeader("authorization", result.accessToken);
         return res.status(HttpStatus.OK).json({ success: true, response: result.response, user:data.user, userName: data.username, accessToken: result.accessToken });
       } else {
@@ -48,8 +48,8 @@ export class AuthController {
     try {
       const result = this.sessionService.refreshAccessToken(req);
       if (result.accessToken && result.refreshToken) {
-        res.cookie("accessToken", JSON.stringify({ act: result.accessToken, user: result.user }),{secure: process.env.NODE_ENV === "production",sameSite: "none", path: '/', maxAge: 7200000, domain: process.env.ENV === 'production' && '.onrender.com'});
-        res.cookie("refreshToken", JSON.stringify({ rft: result.refreshToken, user: result.user }), {secure: process.env.NODE_ENV === "production",sameSite: "none", path: '/', maxAge: 86400000, httpOnly: true, domain: process.env.ENV === 'production' && '.onrender.com'});
+        res.cookie("accessToken", JSON.stringify({ act: result.accessToken, user: result.user }),{secure: process.env.NODE_ENV === "production",sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", path: '/', maxAge: 7200000, domain: process.env.ENV === 'production' && '.onrender.com'});
+        res.cookie("refreshToken", JSON.stringify({ rft: result.refreshToken, user: result.user }), {secure: process.env.NODE_ENV === "production",sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", path: '/', maxAge: 86400000, httpOnly: true, domain: process.env.ENV === 'production' && '.onrender.com'});
         res.setHeader("authorization", result.accessToken)        
         return res.status(HttpStatus.OK).json({success: true, response: "Successfully regenerated access token",user: result.user});
       } else {
@@ -65,8 +65,8 @@ export class AuthController {
     // if (req.cookies.refreshToken){
       // const user = JSON.parse(req.cookies.auth).user;
       // this.redisService.del(user)
-      res.clearCookie('accessToken', {secure: process.env.NODE_ENV === "production", sameSite: "none"})
-      res.clearCookie('refreshToken', { secure: process.env.NODE_ENV === "production", sameSite: "none", httpOnly: true });
+      res.clearCookie('accessToken', {secure: process.env.NODE_ENV === "production", sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"})
+      res.clearCookie('refreshToken', { secure: process.env.NODE_ENV === "production", sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", httpOnly: true });
       res.removeHeader("authorization");
       return res.status(HttpStatus.OK).json({ success: true, response: "Logout successful" });
     // } 
