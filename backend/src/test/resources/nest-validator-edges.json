@@ -1,0 +1,192 @@
+[
+  {
+    "kind": "email",
+    "input": "a@example.com",
+    "expected": true
+  },
+  {
+    "kind": "email",
+    "input": "a..b@example.com",
+    "expected": false
+  },
+  {
+    "kind": "email",
+    "input": "a@localhost",
+    "expected": false
+  },
+  {
+    "kind": "email",
+    "input": "a@1.2",
+    "expected": false
+  },
+  {
+    "kind": "email",
+    "input": "a@-foo.com",
+    "expected": false
+  },
+  {
+    "kind": "email",
+    "input": "a@foo-.com",
+    "expected": false
+  },
+  {
+    "kind": "email",
+    "input": "a@foo_bar.com",
+    "expected": false
+  },
+  {
+    "kind": "email",
+    "input": "a@foo.com.",
+    "expected": false
+  },
+  {
+    "kind": "email",
+    "input": "a@foo.c",
+    "expected": false
+  },
+  {
+    "kind": "email",
+    "input": "a+b@example.com",
+    "expected": true
+  },
+  {
+    "kind": "email",
+    "input": "\"a b\"@example.com",
+    "expected": true
+  },
+  {
+    "kind": "email",
+    "input": "é@example.com",
+    "expected": true
+  },
+  {
+    "kind": "email",
+    "input": "a@éxample.com",
+    "expected": true
+  },
+  {
+    "kind": "email",
+    "input": "A@EXAMPLE.COM",
+    "expected": true
+  },
+  {
+    "kind": "email",
+    "input": "a@xn--p1ai.ru",
+    "expected": true
+  },
+  {
+    "kind": "email",
+    "input": "a@foo.123",
+    "expected": false
+  },
+  {
+    "kind": "email",
+    "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@example.com",
+    "expected": false
+  },
+  {
+    "kind": "date",
+    "input": "2026",
+    "expected": true
+  },
+  {
+    "kind": "date",
+    "input": "202610",
+    "expected": false
+  },
+  {
+    "kind": "date",
+    "input": "2026-10",
+    "expected": true
+  },
+  {
+    "kind": "date",
+    "input": "20261004",
+    "expected": true
+  },
+  {
+    "kind": "date",
+    "input": "2026-10-04",
+    "expected": true
+  },
+  {
+    "kind": "date",
+    "input": "2026-02-31",
+    "expected": true
+  },
+  {
+    "kind": "date",
+    "input": "2026-W12-1",
+    "expected": true
+  },
+  {
+    "kind": "date",
+    "input": "2026-123",
+    "expected": true
+  },
+  {
+    "kind": "date",
+    "input": "2026-10-04T10:20:30.000Z",
+    "expected": true
+  },
+  {
+    "kind": "date",
+    "input": "2026-10-04T10:20:30+05:30",
+    "expected": true
+  },
+  {
+    "kind": "date",
+    "input": "2026-10-04T25:00:00Z",
+    "expected": false
+  },
+  {
+    "kind": "date",
+    "input": "2026-10-04T10:2030Z",
+    "expected": false
+  },
+  {
+    "kind": "date",
+    "input": "2026-10-04T1020:30Z",
+    "expected": false
+  },
+  {
+    "kind": "date",
+    "input": "2026-10-04T102030Z",
+    "expected": true
+  },
+  {
+    "kind": "date",
+    "input": "2026-10-04T10Z",
+    "expected": true
+  },
+  {
+    "kind": "date",
+    "input": "2026-10-04T24:00Z",
+    "expected": true
+  },
+  {
+    "kind": "date",
+    "input": "2026-10-04T",
+    "expected": true
+  },
+  {
+    "kind": "date",
+    "input": "invalid",
+    "expected": false
+  },
+  {
+    "kind": "date",
+    "input": "2026-13-04",
+    "expected": false
+  },
+  {
+    "kind": "date",
+    "input": "2026-10-00",
+    "expected": false
+  },
+  {
+    "kind": "date",
+    "input": "2026-10-04 10:20:30z",
+    "expected": true
+  }
+]

@@ -1,0 +1,28 @@
+services:
+  web:
+    develop:
+      watch:
+        - action: sync
+          path: ./web
+          target: /app
+          initial_sync: true
+          ignore:
+            - node_modules/
+            - .next/
+        - action: rebuild
+          path: ./Frontend/package.json
+        - action: rebuild
+          path: ./Frontend/package-lock.json
+
+  backend:
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/src
+          target: /app/src
+          initial_sync: true
+        - action: rebuild
+          path: ./backend/pom.xml
+
+  # Add chat_backend watch rules after the local Kafka credential validation
+  # blocker in chat_backend/pkg/kafka/kafka_consumer.go is approved/fixed.

@@ -1,0 +1,242 @@
+{
+  "ChatBodyData": {
+    "eventId": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "chatName": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "chatDescription": [
+      "IsString"
+    ],
+    "chatType": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "chatDate": [
+      "IsDateString",
+      "IsNotEmpty"
+    ],
+    "chatStartTime": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "chatEndTime": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "chatStatus": [
+      "IsBoolean",
+      "IsNotEmpty"
+    ],
+    "restrictedUsers": [
+      "IsArray"
+    ]
+  },
+  "EventIdQueryParams": {
+    "eventId": [
+      "IsString",
+      "IsNotEmpty"
+    ]
+  },
+  "EventIdChatIdQueryParams": {
+    "eventId": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "chatId": [
+      "IsString",
+      "IsNotEmpty"
+    ]
+  },
+  "MessageBody": {
+    "eventId": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "chatId": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "messageId": [
+      "IsString",
+      "IsOptional"
+    ],
+    "user": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "username": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "message": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "timestamp": [
+      "IsString",
+      "IsNotEmpty"
+    ]
+  },
+  "HostBodyData": {
+    "startDate": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "endDate": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "startTime": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "endTime": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "accType": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "user": [
+      "IsNotEmpty",
+      "IsEmail"
+    ],
+    "event": [
+      "IsNotEmpty",
+      "IsString"
+    ]
+  },
+  "JoineeBodyData": {
+    "user": [
+      "IsEmail",
+      "IsNotEmpty"
+    ],
+    "accType": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "eventId": [
+      "IsNotEmpty"
+    ]
+  },
+  "GetEventsQueryDto": {
+    "user": [
+      "IsEmail",
+      "IsNotEmpty"
+    ],
+    "status": [
+      "IsString",
+      "IsOptional"
+    ]
+  },
+  "GetEventId": {
+    "eventId": [
+      "IsString",
+      "IsNotEmpty"
+    ]
+  },
+  "UserDetails": {
+    "user": [
+      "IsEmail",
+      "IsNotEmpty"
+    ],
+    "eventId": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "accType": [
+      "IsString",
+      "IsNotEmpty"
+    ]
+  },
+  "ReinviteUser": {
+    "user": [
+      "IsEmail",
+      "IsNotEmpty"
+    ],
+    "username": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "eventId": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "message": [
+      "IsString"
+    ],
+    "accType": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "access": [
+      "IsBoolean",
+      "IsNotEmpty"
+    ],
+    "hostName": [
+      "IsString",
+      "IsNotEmpty"
+    ]
+  },
+  "UserData": {
+    "username": [
+      "IsOptional",
+      "IsString"
+    ],
+    "user": [
+      "IsNotEmpty",
+      "IsEmail"
+    ],
+    "password": [
+      "IsNotEmpty",
+      "IsString"
+    ]
+  },
+  "AccToken": {
+    "accessToken": [
+      "IsNotEmpty",
+      "IsNotEmpty"
+    ]
+  },
+  "EmailBody": {
+    "username": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "user": [
+      "IsEmail",
+      "IsNotEmpty"
+    ],
+    "hostName": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "eventId": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "eventName": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "accType": [
+      "IsString",
+      "IsNotEmpty"
+    ],
+    "access": [
+      "IsBoolean",
+      "IsNotEmpty"
+    ],
+    "message": [
+      "IsString"
+    ],
+    "flag": [
+      "IsBoolean"
+    ]
+  }
+}

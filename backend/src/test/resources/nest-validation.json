@@ -1,0 +1,1109 @@
+[
+  {
+    "schema": "UserData",
+    "input": {},
+    "status": 400,
+    "body": {
+      "message": [
+        "user should not be empty",
+        "user must be an email",
+        "password should not be empty",
+        "password must be a string"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "UserData",
+    "input": {
+      "user": "not-an-email",
+      "password": 123
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "user must be an email",
+        "password must be a string"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "UserData",
+    "input": {
+      "user": "a@example.com",
+      "password": "secret",
+      "username": null
+    },
+    "status": 200
+  },
+  {
+    "schema": "UserData",
+    "input": {
+      "user": "a@example.com",
+      "username": "Guest",
+      "password": "secret",
+      "hostName": "Host",
+      "eventId": "e",
+      "eventName": "Party",
+      "event": "Party",
+      "accType": "Attend",
+      "access": false,
+      "message": "",
+      "flag": false,
+      "startDate": "2026-10-04",
+      "endDate": "2026-10-05",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "chatId": "c",
+      "chatName": "Chat",
+      "chatDescription": "",
+      "chatType": "current",
+      "chatDate": "2026-10-04",
+      "chatStartTime": "10:00",
+      "chatEndTime": "11:00",
+      "chatStatus": false,
+      "restrictedUsers": [],
+      "timestamp": "now"
+    },
+    "status": 200
+  },
+  {
+    "schema": "HostBodyData",
+    "input": {},
+    "status": 400,
+    "body": {
+      "message": [
+        "startDate must be a string",
+        "startDate should not be empty",
+        "endDate must be a string",
+        "endDate should not be empty",
+        "startTime must be a string",
+        "startTime should not be empty",
+        "endTime must be a string",
+        "endTime should not be empty",
+        "accType must be a string",
+        "accType should not be empty",
+        "user should not be empty",
+        "user must be an email",
+        "event should not be empty",
+        "event must be a string"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "HostBodyData",
+    "input": {
+      "user": "not-an-email",
+      "password": 123
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "startDate must be a string",
+        "startDate should not be empty",
+        "endDate must be a string",
+        "endDate should not be empty",
+        "startTime must be a string",
+        "startTime should not be empty",
+        "endTime must be a string",
+        "endTime should not be empty",
+        "accType must be a string",
+        "accType should not be empty",
+        "user must be an email",
+        "event should not be empty",
+        "event must be a string"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "HostBodyData",
+    "input": {
+      "user": "a@example.com",
+      "password": "secret",
+      "username": null
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "startDate must be a string",
+        "startDate should not be empty",
+        "endDate must be a string",
+        "endDate should not be empty",
+        "startTime must be a string",
+        "startTime should not be empty",
+        "endTime must be a string",
+        "endTime should not be empty",
+        "accType must be a string",
+        "accType should not be empty",
+        "event should not be empty",
+        "event must be a string"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "HostBodyData",
+    "input": {
+      "user": "a@example.com",
+      "username": "Guest",
+      "password": "secret",
+      "hostName": "Host",
+      "eventId": "e",
+      "eventName": "Party",
+      "event": "Party",
+      "accType": "Attend",
+      "access": false,
+      "message": "",
+      "flag": false,
+      "startDate": "2026-10-04",
+      "endDate": "2026-10-05",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "chatId": "c",
+      "chatName": "Chat",
+      "chatDescription": "",
+      "chatType": "current",
+      "chatDate": "2026-10-04",
+      "chatStartTime": "10:00",
+      "chatEndTime": "11:00",
+      "chatStatus": false,
+      "restrictedUsers": [],
+      "timestamp": "now"
+    },
+    "status": 200
+  },
+  {
+    "schema": "JoineeBodyData",
+    "input": {},
+    "status": 400,
+    "body": {
+      "message": [
+        "user must be an email",
+        "user should not be empty",
+        "accType must be a string",
+        "accType should not be empty",
+        "eventId should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "JoineeBodyData",
+    "input": {
+      "user": "not-an-email",
+      "password": 123
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "user must be an email",
+        "accType must be a string",
+        "accType should not be empty",
+        "eventId should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "JoineeBodyData",
+    "input": {
+      "user": "a@example.com",
+      "password": "secret",
+      "username": null
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "accType must be a string",
+        "accType should not be empty",
+        "eventId should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "JoineeBodyData",
+    "input": {
+      "user": "a@example.com",
+      "username": "Guest",
+      "password": "secret",
+      "hostName": "Host",
+      "eventId": "e",
+      "eventName": "Party",
+      "event": "Party",
+      "accType": "Attend",
+      "access": false,
+      "message": "",
+      "flag": false,
+      "startDate": "2026-10-04",
+      "endDate": "2026-10-05",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "chatId": "c",
+      "chatName": "Chat",
+      "chatDescription": "",
+      "chatType": "current",
+      "chatDate": "2026-10-04",
+      "chatStartTime": "10:00",
+      "chatEndTime": "11:00",
+      "chatStatus": false,
+      "restrictedUsers": [],
+      "timestamp": "now"
+    },
+    "status": 200
+  },
+  {
+    "schema": "GetEventsQueryDto",
+    "input": {},
+    "status": 400,
+    "body": {
+      "message": [
+        "user must be an email",
+        "user should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "GetEventsQueryDto",
+    "input": {
+      "user": "not-an-email",
+      "password": 123
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "user must be an email"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "GetEventsQueryDto",
+    "input": {
+      "user": "a@example.com",
+      "password": "secret",
+      "username": null
+    },
+    "status": 200
+  },
+  {
+    "schema": "GetEventsQueryDto",
+    "input": {
+      "user": "a@example.com",
+      "username": "Guest",
+      "password": "secret",
+      "hostName": "Host",
+      "eventId": "e",
+      "eventName": "Party",
+      "event": "Party",
+      "accType": "Attend",
+      "access": false,
+      "message": "",
+      "flag": false,
+      "startDate": "2026-10-04",
+      "endDate": "2026-10-05",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "chatId": "c",
+      "chatName": "Chat",
+      "chatDescription": "",
+      "chatType": "current",
+      "chatDate": "2026-10-04",
+      "chatStartTime": "10:00",
+      "chatEndTime": "11:00",
+      "chatStatus": false,
+      "restrictedUsers": [],
+      "timestamp": "now"
+    },
+    "status": 200
+  },
+  {
+    "schema": "GetEventId",
+    "input": {},
+    "status": 400,
+    "body": {
+      "message": [
+        "eventId must be a string",
+        "eventId should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "GetEventId",
+    "input": {
+      "user": "not-an-email",
+      "password": 123
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "eventId must be a string",
+        "eventId should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "GetEventId",
+    "input": {
+      "user": "a@example.com",
+      "password": "secret",
+      "username": null
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "eventId must be a string",
+        "eventId should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "GetEventId",
+    "input": {
+      "user": "a@example.com",
+      "username": "Guest",
+      "password": "secret",
+      "hostName": "Host",
+      "eventId": "e",
+      "eventName": "Party",
+      "event": "Party",
+      "accType": "Attend",
+      "access": false,
+      "message": "",
+      "flag": false,
+      "startDate": "2026-10-04",
+      "endDate": "2026-10-05",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "chatId": "c",
+      "chatName": "Chat",
+      "chatDescription": "",
+      "chatType": "current",
+      "chatDate": "2026-10-04",
+      "chatStartTime": "10:00",
+      "chatEndTime": "11:00",
+      "chatStatus": false,
+      "restrictedUsers": [],
+      "timestamp": "now"
+    },
+    "status": 200
+  },
+  {
+    "schema": "UserDetails",
+    "input": {},
+    "status": 400,
+    "body": {
+      "message": [
+        "user must be an email",
+        "user should not be empty",
+        "eventId must be a string",
+        "eventId should not be empty",
+        "accType must be a string",
+        "accType should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "UserDetails",
+    "input": {
+      "user": "not-an-email",
+      "password": 123
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "user must be an email",
+        "eventId must be a string",
+        "eventId should not be empty",
+        "accType must be a string",
+        "accType should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "UserDetails",
+    "input": {
+      "user": "a@example.com",
+      "password": "secret",
+      "username": null
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "eventId must be a string",
+        "eventId should not be empty",
+        "accType must be a string",
+        "accType should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "UserDetails",
+    "input": {
+      "user": "a@example.com",
+      "username": "Guest",
+      "password": "secret",
+      "hostName": "Host",
+      "eventId": "e",
+      "eventName": "Party",
+      "event": "Party",
+      "accType": "Attend",
+      "access": false,
+      "message": "",
+      "flag": false,
+      "startDate": "2026-10-04",
+      "endDate": "2026-10-05",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "chatId": "c",
+      "chatName": "Chat",
+      "chatDescription": "",
+      "chatType": "current",
+      "chatDate": "2026-10-04",
+      "chatStartTime": "10:00",
+      "chatEndTime": "11:00",
+      "chatStatus": false,
+      "restrictedUsers": [],
+      "timestamp": "now"
+    },
+    "status": 200
+  },
+  {
+    "schema": "ReinviteUser",
+    "input": {},
+    "status": 400,
+    "body": {
+      "message": [
+        "user must be an email",
+        "user should not be empty",
+        "username must be a string",
+        "username should not be empty",
+        "eventId must be a string",
+        "eventId should not be empty",
+        "message must be a string",
+        "accType must be a string",
+        "accType should not be empty",
+        "access must be a boolean value",
+        "access should not be empty",
+        "hostName must be a string",
+        "hostName should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "ReinviteUser",
+    "input": {
+      "user": "not-an-email",
+      "password": 123
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "user must be an email",
+        "username must be a string",
+        "username should not be empty",
+        "eventId must be a string",
+        "eventId should not be empty",
+        "message must be a string",
+        "accType must be a string",
+        "accType should not be empty",
+        "access must be a boolean value",
+        "access should not be empty",
+        "hostName must be a string",
+        "hostName should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "ReinviteUser",
+    "input": {
+      "user": "a@example.com",
+      "password": "secret",
+      "username": null
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "username must be a string",
+        "username should not be empty",
+        "eventId must be a string",
+        "eventId should not be empty",
+        "message must be a string",
+        "accType must be a string",
+        "accType should not be empty",
+        "access must be a boolean value",
+        "access should not be empty",
+        "hostName must be a string",
+        "hostName should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "ReinviteUser",
+    "input": {
+      "user": "a@example.com",
+      "username": "Guest",
+      "password": "secret",
+      "hostName": "Host",
+      "eventId": "e",
+      "eventName": "Party",
+      "event": "Party",
+      "accType": "Attend",
+      "access": false,
+      "message": "",
+      "flag": false,
+      "startDate": "2026-10-04",
+      "endDate": "2026-10-05",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "chatId": "c",
+      "chatName": "Chat",
+      "chatDescription": "",
+      "chatType": "current",
+      "chatDate": "2026-10-04",
+      "chatStartTime": "10:00",
+      "chatEndTime": "11:00",
+      "chatStatus": false,
+      "restrictedUsers": [],
+      "timestamp": "now"
+    },
+    "status": 200
+  },
+  {
+    "schema": "ChatBodyData",
+    "input": {},
+    "status": 400,
+    "body": {
+      "message": [
+        "eventId must be a string",
+        "eventId should not be empty",
+        "chatName must be a string",
+        "chatName should not be empty",
+        "chatDescription must be a string",
+        "chatType must be a string",
+        "chatType should not be empty",
+        "chatDate must be a valid ISO 8601 date string",
+        "chatDate should not be empty",
+        "chatStartTime must be a string",
+        "chatStartTime should not be empty",
+        "chatEndTime must be a string",
+        "chatEndTime should not be empty",
+        "chatStatus must be a boolean value",
+        "chatStatus should not be empty",
+        "restrictedUsers must be an array"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "ChatBodyData",
+    "input": {
+      "user": "not-an-email",
+      "password": 123
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "eventId must be a string",
+        "eventId should not be empty",
+        "chatName must be a string",
+        "chatName should not be empty",
+        "chatDescription must be a string",
+        "chatType must be a string",
+        "chatType should not be empty",
+        "chatDate must be a valid ISO 8601 date string",
+        "chatDate should not be empty",
+        "chatStartTime must be a string",
+        "chatStartTime should not be empty",
+        "chatEndTime must be a string",
+        "chatEndTime should not be empty",
+        "chatStatus must be a boolean value",
+        "chatStatus should not be empty",
+        "restrictedUsers must be an array"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "ChatBodyData",
+    "input": {
+      "user": "a@example.com",
+      "password": "secret",
+      "username": null
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "eventId must be a string",
+        "eventId should not be empty",
+        "chatName must be a string",
+        "chatName should not be empty",
+        "chatDescription must be a string",
+        "chatType must be a string",
+        "chatType should not be empty",
+        "chatDate must be a valid ISO 8601 date string",
+        "chatDate should not be empty",
+        "chatStartTime must be a string",
+        "chatStartTime should not be empty",
+        "chatEndTime must be a string",
+        "chatEndTime should not be empty",
+        "chatStatus must be a boolean value",
+        "chatStatus should not be empty",
+        "restrictedUsers must be an array"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "ChatBodyData",
+    "input": {
+      "user": "a@example.com",
+      "username": "Guest",
+      "password": "secret",
+      "hostName": "Host",
+      "eventId": "e",
+      "eventName": "Party",
+      "event": "Party",
+      "accType": "Attend",
+      "access": false,
+      "message": "",
+      "flag": false,
+      "startDate": "2026-10-04",
+      "endDate": "2026-10-05",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "chatId": "c",
+      "chatName": "Chat",
+      "chatDescription": "",
+      "chatType": "current",
+      "chatDate": "2026-10-04",
+      "chatStartTime": "10:00",
+      "chatEndTime": "11:00",
+      "chatStatus": false,
+      "restrictedUsers": [],
+      "timestamp": "now"
+    },
+    "status": 200
+  },
+  {
+    "schema": "EventIdQueryParams",
+    "input": {},
+    "status": 400,
+    "body": {
+      "message": [
+        "eventId must be a string",
+        "eventId should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "EventIdQueryParams",
+    "input": {
+      "user": "not-an-email",
+      "password": 123
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "eventId must be a string",
+        "eventId should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "EventIdQueryParams",
+    "input": {
+      "user": "a@example.com",
+      "password": "secret",
+      "username": null
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "eventId must be a string",
+        "eventId should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "EventIdQueryParams",
+    "input": {
+      "user": "a@example.com",
+      "username": "Guest",
+      "password": "secret",
+      "hostName": "Host",
+      "eventId": "e",
+      "eventName": "Party",
+      "event": "Party",
+      "accType": "Attend",
+      "access": false,
+      "message": "",
+      "flag": false,
+      "startDate": "2026-10-04",
+      "endDate": "2026-10-05",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "chatId": "c",
+      "chatName": "Chat",
+      "chatDescription": "",
+      "chatType": "current",
+      "chatDate": "2026-10-04",
+      "chatStartTime": "10:00",
+      "chatEndTime": "11:00",
+      "chatStatus": false,
+      "restrictedUsers": [],
+      "timestamp": "now"
+    },
+    "status": 200
+  },
+  {
+    "schema": "EventIdChatIdQueryParams",
+    "input": {},
+    "status": 400,
+    "body": {
+      "message": [
+        "eventId must be a string",
+        "eventId should not be empty",
+        "chatId must be a string",
+        "chatId should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "EventIdChatIdQueryParams",
+    "input": {
+      "user": "not-an-email",
+      "password": 123
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "eventId must be a string",
+        "eventId should not be empty",
+        "chatId must be a string",
+        "chatId should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "EventIdChatIdQueryParams",
+    "input": {
+      "user": "a@example.com",
+      "password": "secret",
+      "username": null
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "eventId must be a string",
+        "eventId should not be empty",
+        "chatId must be a string",
+        "chatId should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "EventIdChatIdQueryParams",
+    "input": {
+      "user": "a@example.com",
+      "username": "Guest",
+      "password": "secret",
+      "hostName": "Host",
+      "eventId": "e",
+      "eventName": "Party",
+      "event": "Party",
+      "accType": "Attend",
+      "access": false,
+      "message": "",
+      "flag": false,
+      "startDate": "2026-10-04",
+      "endDate": "2026-10-05",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "chatId": "c",
+      "chatName": "Chat",
+      "chatDescription": "",
+      "chatType": "current",
+      "chatDate": "2026-10-04",
+      "chatStartTime": "10:00",
+      "chatEndTime": "11:00",
+      "chatStatus": false,
+      "restrictedUsers": [],
+      "timestamp": "now"
+    },
+    "status": 200
+  },
+  {
+    "schema": "MessageBody",
+    "input": {},
+    "status": 400,
+    "body": {
+      "message": [
+        "eventId must be a string",
+        "eventId should not be empty",
+        "chatId must be a string",
+        "chatId should not be empty",
+        "user must be a string",
+        "user should not be empty",
+        "username must be a string",
+        "username should not be empty",
+        "message must be a string",
+        "message should not be empty",
+        "timestamp must be a string",
+        "timestamp should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "MessageBody",
+    "input": {
+      "user": "not-an-email",
+      "password": 123
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "eventId must be a string",
+        "eventId should not be empty",
+        "chatId must be a string",
+        "chatId should not be empty",
+        "username must be a string",
+        "username should not be empty",
+        "message must be a string",
+        "message should not be empty",
+        "timestamp must be a string",
+        "timestamp should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "MessageBody",
+    "input": {
+      "user": "a@example.com",
+      "password": "secret",
+      "username": null
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "eventId must be a string",
+        "eventId should not be empty",
+        "chatId must be a string",
+        "chatId should not be empty",
+        "username must be a string",
+        "username should not be empty",
+        "message must be a string",
+        "message should not be empty",
+        "timestamp must be a string",
+        "timestamp should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "MessageBody",
+    "input": {
+      "user": "a@example.com",
+      "username": "Guest",
+      "password": "secret",
+      "hostName": "Host",
+      "eventId": "e",
+      "eventName": "Party",
+      "event": "Party",
+      "accType": "Attend",
+      "access": false,
+      "message": "",
+      "flag": false,
+      "startDate": "2026-10-04",
+      "endDate": "2026-10-05",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "chatId": "c",
+      "chatName": "Chat",
+      "chatDescription": "",
+      "chatType": "current",
+      "chatDate": "2026-10-04",
+      "chatStartTime": "10:00",
+      "chatEndTime": "11:00",
+      "chatStatus": false,
+      "restrictedUsers": [],
+      "timestamp": "now"
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "message should not be empty"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "EmailBody",
+    "input": {},
+    "status": 400,
+    "body": {
+      "message": [
+        "username must be a string",
+        "username should not be empty",
+        "user must be an email",
+        "user should not be empty",
+        "hostName must be a string",
+        "hostName should not be empty",
+        "eventId must be a string",
+        "eventId should not be empty",
+        "eventName must be a string",
+        "eventName should not be empty",
+        "accType must be a string",
+        "accType should not be empty",
+        "access must be a boolean value",
+        "access should not be empty",
+        "message must be a string",
+        "flag must be a boolean value"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "EmailBody",
+    "input": {
+      "user": "not-an-email",
+      "password": 123
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "username must be a string",
+        "username should not be empty",
+        "user must be an email",
+        "hostName must be a string",
+        "hostName should not be empty",
+        "eventId must be a string",
+        "eventId should not be empty",
+        "eventName must be a string",
+        "eventName should not be empty",
+        "accType must be a string",
+        "accType should not be empty",
+        "access must be a boolean value",
+        "access should not be empty",
+        "message must be a string",
+        "flag must be a boolean value"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "EmailBody",
+    "input": {
+      "user": "a@example.com",
+      "password": "secret",
+      "username": null
+    },
+    "status": 400,
+    "body": {
+      "message": [
+        "username must be a string",
+        "username should not be empty",
+        "hostName must be a string",
+        "hostName should not be empty",
+        "eventId must be a string",
+        "eventId should not be empty",
+        "eventName must be a string",
+        "eventName should not be empty",
+        "accType must be a string",
+        "accType should not be empty",
+        "access must be a boolean value",
+        "access should not be empty",
+        "message must be a string",
+        "flag must be a boolean value"
+      ],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "schema": "EmailBody",
+    "input": {
+      "user": "a@example.com",
+      "username": "Guest",
+      "password": "secret",
+      "hostName": "Host",
+      "eventId": "e",
+      "eventName": "Party",
+      "event": "Party",
+      "accType": "Attend",
+      "access": false,
+      "message": "",
+      "flag": false,
+      "startDate": "2026-10-04",
+      "endDate": "2026-10-05",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "chatId": "c",
+      "chatName": "Chat",
+      "chatDescription": "",
+      "chatType": "current",
+      "chatDate": "2026-10-04",
+      "chatStartTime": "10:00",
+      "chatEndTime": "11:00",
+      "chatStatus": false,
+      "restrictedUsers": [],
+      "timestamp": "now"
+    },
+    "status": 200
+  }
+]

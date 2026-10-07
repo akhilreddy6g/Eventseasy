@@ -1,0 +1,98 @@
+[
+  {
+    "event": "event",
+    "chat": "chat",
+    "count": 1,
+    "expected": 0
+  },
+  {
+    "event": "event",
+    "chat": "chat",
+    "count": 3,
+    "expected": 2
+  },
+  {
+    "event": "event",
+    "chat": "chat",
+    "count": 6,
+    "expected": 2
+  },
+  {
+    "event": "event",
+    "chat": "chat",
+    "count": 12,
+    "expected": 2
+  },
+  {
+    "event": "e",
+    "chat": "c",
+    "count": 1,
+    "expected": 0
+  },
+  {
+    "event": "e",
+    "chat": "c",
+    "count": 3,
+    "expected": 2
+  },
+  {
+    "event": "e",
+    "chat": "c",
+    "count": 6,
+    "expected": 5
+  },
+  {
+    "event": "e",
+    "chat": "c",
+    "count": 12,
+    "expected": 11
+  },
+  {
+    "event": "évent",
+    "chat": "讨论",
+    "count": 1,
+    "expected": 0
+  },
+  {
+    "event": "évent",
+    "chat": "讨论",
+    "count": 3,
+    "expected": 2
+  },
+  {
+    "event": "évent",
+    "chat": "讨论",
+    "count": 6,
+    "expected": 5
+  },
+  {
+    "event": "évent",
+    "chat": "讨论",
+    "count": 12,
+    "expected": 11
+  },
+  {
+    "event": "0123456789abcdef01234567",
+    "chat": "abcdef0123456789abcdef01",
+    "count": 1,
+    "expected": 0
+  },
+  {
+    "event": "0123456789abcdef01234567",
+    "chat": "abcdef0123456789abcdef01",
+    "count": 3,
+    "expected": 0
+  },
+  {
+    "event": "0123456789abcdef01234567",
+    "chat": "abcdef0123456789abcdef01",
+    "count": 6,
+    "expected": 3
+  },
+  {
+    "event": "0123456789abcdef01234567",
+    "chat": "abcdef0123456789abcdef01",
+    "count": 12,
+    "expected": 3
+  }
+]

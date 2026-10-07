@@ -1,0 +1,31 @@
+name: Chat Backend CI
+
+on:
+  pull_request:
+    paths:
+      - "chat/**"
+      - ".github/workflows/chat-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "chat/**"
+      - ".github/workflows/chat-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  chat:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: chat
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: chat/go.mod
+          cache-dependency-path: chat/go.sum
+      - run: go mod download
+      - run: go vet ./...
+      - run: go build ./...
