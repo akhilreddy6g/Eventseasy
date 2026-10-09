@@ -15,7 +15,7 @@ import static com.eventseasy.backend.Values.*;
 
 @WebMvcTest({AuthController.class, EventController.class, ChatController.class, InviteController.class, AwakeController.class})
 @Import({SessionService.class, CookieService.class, RequestValidation.class, WebConfig.class, ApiErrors.class})
-@TestPropertySource(properties = {"PORT=3000", "MONGO_URI=mongodb://localhost:27017/test", "ACCESS_TOKEN_SECRET=test-access-secret", "REFRESH_TOKEN_SECRET=test-refresh-secret", "CRON_JOB_API_KEY=test-key"})
+@TestPropertySource(properties = {"PORT=3000", "MONGO_URI=mongodb://localhost:27017/Eventseasy", "ACCESS_TOKEN_SECRET=test-access-secret", "REFRESH_TOKEN_SECRET=test-refresh-secret", "CRON_JOB_API_KEY=test-key"})
 class HttpContractTest {
     @Autowired MockMvc mvc;
     @Autowired SessionService sessions;

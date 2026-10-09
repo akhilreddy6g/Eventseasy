@@ -5,6 +5,7 @@ import (
 	"chat_server/pkg/mongodb"
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -101,7 +102,13 @@ func (pool *Pool) Start() {
 				}
 			}
 
-			collection := mongodb.MongoClient.Database("test").Collection("chat_messages")
+			databaseName := os.Getenv("DB_NAME")
+			if databaseName == "" {
+				fmt.Println("❌ DB_NAME is missing")
+				continue
+			}
+
+			collection := mongodb.MongoClient.Database(databaseName).Collection("chat_messages")
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
 

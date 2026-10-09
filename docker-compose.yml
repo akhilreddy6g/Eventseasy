@@ -48,7 +48,8 @@ services:
       NODE_ENV: development
       ENV: development
       CLIENT_URL: http://localhost:3001
-      MONGO_URI: mongodb://mongo:27017/test
+      MONGO_URI: mongodb://mongo:27017
+      DB_NAME: Eventseasy
       REDIS_URL: redis://redis:6379
       KAFKA_CLIENT_URL: kafka:19092
     depends_on:
@@ -78,9 +79,10 @@ services:
       SERVER_CLIENT_ID: chat-server-1
       NODE_ENV: development
 
-      MONGO_URI: mongodb://mongo:27017/test
+      MONGO_URI: mongodb://mongo:27017
+      DB_NAME: Eventseasy
 
-      KAFKA_CLIENT_URL: kafka:9092
+      KAFKA_CLIENT_URL: kafka:19092
       KAFKA_TOPIC_NAME: ${KAFKA_TOPIC_NAME}
       KAFKA_TOPIC_PARTITIONS: ${KAFKA_TOPIC_PARTITIONS}
       KAFKA_CONSUMER_GROUP_ID: ${KAFKA_CONSUMER_GROUP_ID}
@@ -89,10 +91,6 @@ services:
       - kafka
     ports:
       - "8080:8080"
-
-  # Local chat startup is intentionally deferred until the current Go Kafka
-  # consumer stops requiring Aiven TLS/SASL values in non-production mode.
-  # The production Dockerfile and CI/CD image build are still included.
 
 volumes:
   mongo-data:
