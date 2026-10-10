@@ -27,14 +27,19 @@ public class KafkaGateway {
         config.put("bootstrap.servers", env.getRequiredProperty("KAFKA_CLIENT_URL"));
         config.put("client.id", env.getRequiredProperty("KAFKA_CLIENT_ID"));
         if ("production".equals(env.getProperty("NODE_ENV"))) {
-            config.put("security.protocol", "SSL");
+            config.put("security.protocol", "SASL_SSL");
             config.put("ssl.truststore.type", "PEM");
             config.put("ssl.truststore.certificates", env.getRequiredProperty("KAFKA_CLIENT_CA_CERT"));
-            config.put("ssl.keystore.type", "PEM");
-            config.put("ssl.keystore.certificate.chain", env.getRequiredProperty("KAFKA_ACCESS_CERT"));
-            config.put("ssl.keystore.key", env.getRequiredProperty("KAFKA_ACCESS_KEY"));
+            config.put("sasl.mechanism", "SCRAM-SHA-256");
+            config.put("sasl.jaas.config",
+                "org.apache.kafka.common.security.scram.ScramLoginModule required " +
+                "username=\"" + escapeJaasValue(env.getRequiredProperty("KAFKA_USERNAME")) + "\" " +
+                "password=\"" + escapeJaasValue(env.getRequiredProperty("KAFKA_PASSWORD")) + "\";");
         }
         return config;
+    }
+    private static String escapeJaasValue(String value) {
+        return value.replace("\\", "\\\\").replace("\"", "\\\"");
     }
     @EventListener(ApplicationReadyEvent.class)
     public void createTopic() {
@@ -89,7 +94,6 @@ public class KafkaGateway {
             var groups = admin.describeConsumerGroups(List.of(env.getRequiredProperty("KAFKA_CONSUMER_GROUP_ID"))).all().get(30, TimeUnit.SECONDS);
             List<Document> result = new ArrayList<>();
             for (var group : groups.values()) for (var member : group.members()) {
-                // Nest's decoder reads the first topic from the assignment buffer.
                 var assigned = member.assignment().topicPartitions().stream()
                     .sorted(Comparator.comparing(org.apache.kafka.common.TopicPartition::topic).thenComparingInt(org.apache.kafka.common.TopicPartition::partition)).toList();
                 String firstTopic = assigned.isEmpty() ? null : assigned.get(0).topic();
