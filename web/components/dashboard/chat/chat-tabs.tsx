@@ -19,84 +19,131 @@ export interface EventSelectedInChatTab {
   upcoming: string;
 }
 
-export type chatTypes = "past" | "current" | "upcoming"
+export type chatTypes = "past" | "current" | "upcoming";
 
-export function ChatTabs({accType, eventId}:{accType: string, eventId: string}) {
+export function ChatTabs({
+  accType,
+  eventId,
+}: {
+  accType: string;
+  eventId: string;
+}) {
   const [newChat, toggleNewChat] = useState(false);
   const [newFutureChat, toggleNewFutureChat] = useState(false);
   const [activeTab, setActiveTab] = useState("current");
-  const dispatch = useDispatch<AppDispatch>()
-  const queryClient = useQueryClient()
-  const eventState = useAppSelector((state=>state.chatsInfoReducer))
-  const newChatState = eventState.newChat
-  const [selectedChat, setSelectedChat] = useState<EventSelectedInChatTab>({past: "", current: "", upcoming: ""});
+  const dispatch = useDispatch<AppDispatch>();
+  const queryClient = useQueryClient();
+  const eventState = useAppSelector((state) => state.chatsInfoReducer);
+  const newChatState = eventState.newChat;
+  const [selectedChat, setSelectedChat] = useState<EventSelectedInChatTab>({
+    past: "",
+    current: "",
+    upcoming: "",
+  });
 
   const fetchData = async () => {
     try {
       const apiRequest = await apiUrl.get(`/chats/data?eventId=${eventId}`);
-      const data : ChatInfo[] = apiRequest.data.success ? apiRequest.data.response : []
-      return data
+      const data: ChatInfo[] = apiRequest.data.success
+        ? apiRequest.data.response
+        : [];
+      return data;
     } catch (error) {
       console.error("Error fetching data:", error);
-      return []
+      return [];
     }
   };
 
   const { data, error, isLoading } = useQuery({
     queryKey: ["chats", newChatState, eventId],
     queryFn: fetchData,
-    retry: false
-  })
+    retry: false,
+  });
 
-  useEffect(()=> {
-    if(Array.isArray(data) && data.length > 0){
-      dispatch(onNewEventChatsFetch([{eventId:eventId, details: data as ChatInfo []}]));
+  useEffect(() => {
+    if (Array.isArray(data) && data.length > 0) {
+      dispatch(
+        onNewEventChatsFetch([
+          { eventId: eventId, details: data as ChatInfo[] },
+        ]),
+      );
       const estDate = calcTime(-5);
-      const pastInitialChat = data.filter((chat: ChatInfo) => chatTypeCheck(estDate, "past", chat))?.[0]?.chatId || "";
-      const currentInitialChat = data.filter((chat: ChatInfo) => chatTypeCheck(estDate, "current", chat))?.[0]?.chatId || "";
-      const upcomingInitialChat = data.filter((chat: ChatInfo) => chatTypeCheck(estDate, "upcoming", chat))?.[0]?.chatId || "";
+      const pastInitialChat =
+        data.filter((chat: ChatInfo) =>
+          chatTypeCheck(estDate, "past", chat),
+        )?.[0]?.chatId || "";
+      const currentInitialChat =
+        data.filter((chat: ChatInfo) =>
+          chatTypeCheck(estDate, "current", chat),
+        )?.[0]?.chatId || "";
+      const upcomingInitialChat =
+        data.filter((chat: ChatInfo) =>
+          chatTypeCheck(estDate, "upcoming", chat),
+        )?.[0]?.chatId || "";
       setSelectedChat({
         past: pastInitialChat,
         current: currentInitialChat,
         upcoming: upcomingInitialChat,
       });
     }
-  }, [data])
+  }, [data]);
 
   const toggleForm = (num: number) => {
     if (num === 0) {
       toggleNewChat(true);
       toggleNewFutureChat(false);
-    } else if (num==1) {
+    } else if (num == 1) {
       toggleNewFutureChat(true);
       toggleNewChat(false);
     } else {
       toggleNewChat(false);
       toggleNewFutureChat(false);
     }
-  }
+  };
 
   return (
     <Card className="flex-1">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Live Chat</CardTitle>
-        {accType !== "Attend" && 
-        <div className="flex gap-2">
-        <Button className={`${!newChat && "bg-yellow-100 text-yellow-600 hover:bg-yellow-100"} shadow-md`} onClick={() => toggleForm(0)}>
-          <MessageSquare className={`mr-2 h-4 w-4`}/>
-          <p>New Chat</p>
-        </Button>
-        <Button className={`${!newFutureChat && "bg-yellow-100 text-yellow-600 hover:bg-yellow-100"} shadow-md`} onClick={() => toggleForm(1)}>
-          <div className={`mr-2 h-4 w-4 ${!newFutureChat && "bg-yellow-100 text-yellow-600"}`}><img src={`/images/${!newFutureChat ? "future-orange.png" : "future-white.png"}`} alt="future icon"/></div>
-          <p>Plan Ahead</p>
-        </Button>
-        </div>}
+        <CardTitle>Chat</CardTitle>
+        {accType !== "Attend" && (
+          <div className="flex gap-2">
+            <Button
+              className={`${!newChat && "bg-yellow-100 text-yellow-600 hover:bg-yellow-100"} shadow-md`}
+              onClick={() => toggleForm(0)}
+            >
+              <MessageSquare className={`mr-2 h-4 w-4`} />
+              <p>New Chat</p>
+            </Button>
+            <Button
+              className={`${!newFutureChat && "bg-yellow-100 text-yellow-600 hover:bg-yellow-100"} shadow-md`}
+              onClick={() => toggleForm(1)}
+            >
+              <div
+                className={`mr-2 h-4 w-4 ${!newFutureChat && "bg-yellow-100 text-yellow-600"}`}
+              >
+                <img
+                  src={`/images/${!newFutureChat ? "future-orange.png" : "future-white.png"}`}
+                  alt="future icon"
+                />
+              </div>
+              <p>Plan Ahead</p>
+            </Button>
+          </div>
+        )}
       </CardHeader>
       <CardContent>
-        <Tabs value={newChat || newFutureChat ? "" : activeTab} onValueChange={setActiveTab}>
-          <TabsList className="w-full flex-1" onClick={()=> {toggleForm(2)}}>
+        <Tabs
+          value={newChat || newFutureChat ? "" : activeTab}
+          onValueChange={setActiveTab}
+        >
+          <TabsList
+            className="w-full flex-1"
+            onClick={() => {
+              toggleForm(2);
+            }}
+          >
             <TabsTrigger value="past" className="w-1/3">
-              <History className="mr-2 h-4"/>
+              <History className="mr-2 h-4" />
               Past Chats
             </TabsTrigger>
             <TabsTrigger value="current" className="w-1/3">
@@ -109,17 +156,39 @@ export function ChatTabs({accType, eventId}:{accType: string, eventId: string}) 
             </TabsTrigger>
           </TabsList>
           <TabsContent value="past" className="my-4">
-            <GeneralChat eventId={eventId} selectedChat={selectedChat} setSelectedChat={setSelectedChat} chatTab="past" accType={accType}></GeneralChat>
+            <GeneralChat
+              eventId={eventId}
+              selectedChat={selectedChat}
+              setSelectedChat={setSelectedChat}
+              chatTab="past"
+              accType={accType}
+            ></GeneralChat>
           </TabsContent>
           <TabsContent value="current" className="my-4">
-            <GeneralChat eventId={eventId} selectedChat={selectedChat} setSelectedChat={setSelectedChat} chatTab="current" accType={accType}></GeneralChat>
+            <GeneralChat
+              eventId={eventId}
+              selectedChat={selectedChat}
+              setSelectedChat={setSelectedChat}
+              chatTab="current"
+              accType={accType}
+            ></GeneralChat>
           </TabsContent>
           <TabsContent value="upcoming" className="my-4">
-            <GeneralChat eventId={eventId} selectedChat={selectedChat} setSelectedChat={setSelectedChat} chatTab="upcoming" accType={accType}></GeneralChat>
+            <GeneralChat
+              eventId={eventId}
+              selectedChat={selectedChat}
+              setSelectedChat={setSelectedChat}
+              chatTab="upcoming"
+              accType={accType}
+            ></GeneralChat>
           </TabsContent>
         </Tabs>
-        {newChat && <ChatForm newFutureChat={false} eventId={eventId}></ChatForm>}
-        {newFutureChat && <ChatForm newFutureChat={true} eventId={eventId}></ChatForm>}
+        {newChat && (
+          <ChatForm newFutureChat={false} eventId={eventId}></ChatForm>
+        )}
+        {newFutureChat && (
+          <ChatForm newFutureChat={true} eventId={eventId}></ChatForm>
+        )}
       </CardContent>
     </Card>
   );

@@ -25,10 +25,10 @@ public class WebConfig implements WebMvcConfigurer {
                 res.setHeader("Access-Control-Allow-Origin", origin);
                 res.addHeader("Vary", "Origin");
                 res.setHeader("Access-Control-Allow-Credentials", "true");
-                res.setHeader("Access-Control-Expose-Headers", "Authorization");
+                res.setHeader("Access-Control-Expose-Headers", "Authorization,Accept-Ranges,Content-Length,Content-Range");
                 if ("OPTIONS".equals(req.getMethod())) {
                     res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
-                    res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
+                    res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization,Range");
                     res.setStatus(204); res.setContentLength(0); return;
                 }
                 chain.doFilter(req, res);
@@ -43,6 +43,10 @@ public class WebConfig implements WebMvcConfigurer {
             @Override public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws IOException {
                 if ("OPTIONS".equals(req.getMethod())) return true;
                 try {
+                    // Browser media elements cannot attach the application's Authorization header.
+                    // This one route validates its own short-lived, media-specific token instead.
+                    if (req.getRequestURI().matches("/api/events/[^/]+/media/[^/]+/content/?")
+                        || req.getRequestURI().matches("/api/events/[^/]+/content/(overview|landmark)/[^/]+/?")) return true;
                     // Deliberately mirrors the source condition, including its protocol comparison.
                     if ("production".equals(env.getProperty("NODE_ENV")) && !"http".equals(req.getScheme())) throw new IllegalArgumentException();
                     sessions.verify(req.getHeader("authorization"), false);

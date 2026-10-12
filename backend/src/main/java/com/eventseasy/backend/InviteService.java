@@ -3,6 +3,7 @@ package com.eventseasy.backend;
 import org.bson.Document;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import java.util.Date;
 import java.util.Map;
 import static com.eventseasy.backend.Values.*;
 
@@ -25,7 +26,10 @@ public class InviteService {
             if (!Boolean.TRUE.equals(data.get("flag"))) {
                 try {
                     Document filter = doc("user", data.get("user"), "userName", data.get("username"), "accType", data.get("accType"), "eventId", data.get("eventId"));
-                    store.update("attendants", filter, doc("$set", doc("access", data.get("access"))), true);
+                    store.update("attendants", filter, doc(
+                        "$set", doc("access", data.get("access"), "status", "Active", "updatedAt", new Date()),
+                        "$setOnInsert", doc("createdAt", new Date())
+                    ), true);
                     LogInfoService.Logger("Send Invite Service (" + data.get("accType") + ")", "invite service -> codeEntry",
                         false, true, "Successfully logged the attendant record in db", "none");
                 } catch (Exception e) {

@@ -1,11 +1,18 @@
-"use client"
+"use client";
 
-import { 
-  Calendar, Users, Bell, MessageSquare, 
-  Map, Camera, Shield, Gauge, Zap 
-} from "lucide-react"
-import { FeatureCard } from "@/components/features/feature-card"
-import { FeatureSection } from "@/components/features/feature-section"
+import {
+  Calendar,
+  Users,
+  Bell,
+  MessageSquare,
+  Map,
+  Camera,
+  Shield,
+  Gauge,
+  Zap,
+} from "lucide-react";
+import { FeatureCard } from "@/components/features/feature-card";
+import { FeatureSection } from "@/components/features/feature-section";
 
 export function FeaturesContent() {
   return (
@@ -17,8 +24,8 @@ export function FeaturesContent() {
         </p>
       </div> */}
 
-      <FeatureSection 
-        title="Event Management" 
+      <FeatureSection
+        title="Event Management"
         description="Comprehensive tools to create, manage, and deliver exceptional events"
       >
         <FeatureCard
@@ -38,13 +45,13 @@ export function FeaturesContent() {
         />
       </FeatureSection>
 
-      <FeatureSection 
-        title="Communication" 
+      <FeatureSection
+        title="Communication"
         description="Stay connected with your team and guests throughout the event"
       >
         <FeatureCard
           Icon={MessageSquare}
-          title="Live Chat"
+          title="Chat"
           description="Real-time communication between hosts, managers, and guests"
         />
         <FeatureCard
@@ -59,8 +66,8 @@ export function FeaturesContent() {
         />
       </FeatureSection>
 
-      <FeatureSection 
-        title="Platform Benefits" 
+      <FeatureSection
+        title="Platform Benefits"
         description="Why Eventseasy is the perfect choice for your events"
       >
         <FeatureCard
@@ -80,5 +87,5 @@ export function FeaturesContent() {
         />
       </FeatureSection>
     </div>
-  )
+  );
 }

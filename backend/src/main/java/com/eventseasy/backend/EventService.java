@@ -15,15 +15,21 @@ public class EventService {
     private final StringRedisTemplate redis;
     private final ObjectMapper json;
     private final InviteService invites;
+    private final MediaService media;
     public EventService(MongoStore store, StringRedisTemplate redis, ObjectMapper json, InviteService invites) {
-        this.store = store; this.redis = redis; this.json = json; this.invites = invites;
+        this(store, redis, json, invites, null);
+    }
+    @org.springframework.beans.factory.annotation.Autowired
+    public EventService(MongoStore store, StringRedisTemplate redis, ObjectMapper json, InviteService invites, MediaService media) {
+        this.store = store; this.redis = redis; this.json = json; this.invites = invites; this.media = media;
     }
     private Document identity(Map<String, ?> data) { return pick(data, "user", "accType", "eventId"); }
     private boolean viewer(Map<String, ?> data, String eventId) {
         try {
             Document key = pick(data, "user", "accType"); key.put("eventId", eventId);
             Document insert = new Document(key); insert.put("createdAt", new Date());
-            store.update("viewers", key, doc("$setOnInsert", insert, "$set", doc("updatedAt", new Date())), true);
+            store.update("viewers", key, doc("$setOnInsert", insert,
+                "$set", doc("status", "Active", "updatedAt", new Date())), true);
             return true;
         } catch (Exception e) {
             LogInfoService.Logger("Insert into Viewers Service", "events service -> insertIntoViewers", false, true,
@@ -36,6 +42,7 @@ public class EventService {
         try {
             event = pick(data, "startDate", "endDate", "startTime", "endTime", "user", "accType", "event");
             for (String field : List.of("startDate", "endDate")) event.put(field, date(str(data, field)));
+            event.put("status", "Active"); event.put("createdAt", new Date()); event.put("updatedAt", new Date());
             event = store.insert("events", event);
         } catch (Exception e) {
             LogInfoService.Logger("Host Event Insertion Service", "events service -> insertEvent", false, true,
@@ -46,6 +53,7 @@ public class EventService {
         }
         try {
             boolean result1 = viewer(data, event.getObjectId("_id").toHexString());
+            redis.delete(str(data, "user"));
             if (result1) {
                 LogInfoService.Logger("Host Event Service", "events service -> hostEvent", false, true,
                     "Created an event and recorded it in viewers", "none");
@@ -66,14 +74,15 @@ public class EventService {
     }
     public Document join(Map<String, Object> data) {
         try {
-            Document filter = identity(data); filter.put("access", false);
+            Document filter = identity(data); filter.put("access", false); filter.put("status", doc("$ne", "Inactive"));
             if (store.one("attendants", filter) == null) {
                 LogInfoService.Logger("Attendant Verification Service", "events service -> verifyJoinee", false, true,
                     "Credentials unverifiable/ access already granted", "none");
                 return result(false, "Event joined already/Invalid credentials");
             }
             try {
-                store.update("attendants", identity(data), doc("$set", doc("access", true)), false);
+                store.update("attendants", identity(data), doc("$set", doc("access", true, "status", "Active", "updatedAt", new Date())), false);
+                redis.delete(str(data, "user"));
                 LogInfoService.Logger("Attendant Verification Service", "events service -> verifyJoinee", false, true,
                     "Attendant credentials verified and access granted", "none");
                 try {
@@ -105,7 +114,7 @@ public class EventService {
     }
     public Document attendees(String eventId, boolean managers) {
         String field = managers ? "response" : "data";
-        try { return doc("success", true, field, store.find("attendants", doc("eventId", eventId, "accType", managers ? "Manage" : "Attend"))); }
+        try { return doc("success", true, field, store.find("attendants", doc("eventId", eventId, "accType", managers ? "Manage" : "Attend", "status", doc("$ne", "Inactive")))); }
         catch (Exception e) {
             LogInfoService.Logger(managers ? "Event Managers Info Service" : "Event Guests Info Service",
                 managers ? "events service -> eventManagers" : "events service -> eventGuests", true, false,
@@ -115,10 +124,15 @@ public class EventService {
     }
     public Object delete(Map<String, Object> data, String host) {
         try {
-            if (store.one("events", doc("user", host, "_id", new ObjectId(str(data, "eventId")))) != null) {
-                long first = store.delete("attendants", identity(data));
-                long second = store.delete("viewers", identity(data));
-                if (first > 0 && second > 0) return result(true, "Succeessfully deleted the user from the event");
+            String eventId = str(data, "eventId");
+            String user = str(data, "user");
+            if (store.one("events", doc("user", host, "_id", new ObjectId(eventId), "status", doc("$ne", "Inactive"))) != null) {
+                Date now = new Date();
+                store.update("attendants", identity(data), doc("$set", doc("access", false, "status", "Inactive", "inactiveAt", now, "updatedAt", now)), false);
+                store.update("viewers", identity(data), doc("$set", doc("status", "Inactive", "inactiveAt", now, "updatedAt", now)), false);
+                if (media != null) media.markUploaderInactive(eventId, user);
+                redis.delete(user);
+                return result(true, "Successfully removed the user from the event");
             }
             return result(false, "Unable to delete the user from one of the documents/user doesn't have privileges");
         } catch (Exception e) {
@@ -129,10 +143,14 @@ public class EventService {
     }
     public Document reinvite(Map<String, Object> data, String host) {
         try {
-            Document event = store.one("events", doc("user", host, "_id", new ObjectId(str(data, "eventId"))));
+            Document event = store.one("events", doc("user", host, "_id", new ObjectId(str(data, "eventId")), "status", doc("$ne", "Inactive")));
             if (event == null) return result(false, "Unable to reinvite the user/user doesn't have privileges");
             Document body = pick(data, "username", "user", "hostName", "eventId", "accType", "access", "message");
-            body.put("eventName", event.get("event")); body.put("flag", true);
+            Document existing = store.one("attendants", identity(data));
+            if (existing != null) {
+                store.update("attendants", identity(data), doc("$set", doc("access", false, "status", "Active", "updatedAt", new Date())), false);
+            }
+            body.put("eventName", event.get("event")); body.put("flag", existing != null);
             return invites.send(body);
         } catch (Exception e) {
             LogInfoService.Logger("Reinvite User Service", "events service -> reInviteUser", false, true,
@@ -152,9 +170,9 @@ public class EventService {
                     return result(true, value.get("redisData"));
                 }
             }
-            List<Document> pipeline = List.of(doc("$match", doc("user", user)), doc("$lookup", doc(
+            List<Document> pipeline = List.of(doc("$match", doc("user", user, "status", doc("$ne", "Inactive"))), doc("$lookup", doc(
                 "from", "events", "let", doc("eventIdStr", "$eventId"), "pipeline", List.of(
-                    doc("$match", doc("$expr", doc("$eq", List.of("$_id", doc("$toObjectId", "$$eventIdStr"))))),
+                    doc("$match", doc("$expr", doc("$eq", List.of("$_id", doc("$toObjectId", "$$eventIdStr"))), "status", doc("$ne", "Inactive"))),
                     doc("$project", doc("event", 1))), "as", "eventData")));
             List<Document> data = store.aggregate("viewers", pipeline);
             Document value = doc("redisData", data, "ttl", 900);
@@ -172,7 +190,7 @@ public class EventService {
     }
     public Document users(String eventId) {
         try {
-            List<Document> users = store.aggregate("attendants", List.of(doc("$match", doc("eventId", eventId)),
+            List<Document> users = store.aggregate("attendants", List.of(doc("$match", doc("eventId", eventId, "status", doc("$ne", "Inactive"))),
                 doc("$project", doc("user", 1, "userName", 1, "accType", 1))));
             LogInfoService.Logger("Event Users Retrieval Service", "users service -> eventUsers", true, false,
                 "Event users retrieved successfully", "none");

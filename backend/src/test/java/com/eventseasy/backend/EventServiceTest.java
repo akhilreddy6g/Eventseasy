@@ -28,7 +28,10 @@ class EventServiceTest {
         assertEquals(result(false, "Event joined already/Invalid credentials"), events.join(data));
         when(store.one(eq("attendants"), any())).thenReturn(data);
         assertEquals(result(true, "Event joined successfully"), events.join(data));
-        verify(store).update(eq("attendants"), eq(data), eq(doc("$set", doc("access", true))), eq(false));
+        verify(store).update(eq("attendants"), eq(data), argThat((Document update) -> {
+            Document set = update.get("$set", Document.class);
+            return set != null && Boolean.TRUE.equals(set.getBoolean("access")) && "Active".equals(set.getString("status")) && set.get("updatedAt") instanceof Date;
+        }), eq(false));
     }
     @Test void guestsAndManagersKeepDifferentResponseKeys() {
         when(store.find(eq("attendants"), any())).thenReturn(List.of());
@@ -41,7 +44,7 @@ class EventServiceTest {
         verify(store, never()).delete(anyString(), any());
         when(store.one(eq("events"), any())).thenReturn(doc("event", "Party"));
         when(store.delete(anyString(), any())).thenReturn(1L);
-        assertEquals(result(true, "Succeessfully deleted the user from the event"), events.delete(data, "host@example.com"));
+        assertEquals(result(true, "Successfully removed the user from the event"), events.delete(data, "host@example.com"));
     }
     @Test void matchingRedisStatusReturnsCachedValue() {
         @SuppressWarnings("unchecked") ValueOperations<String, String> values = mock(ValueOperations.class);

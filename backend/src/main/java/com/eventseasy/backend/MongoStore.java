@@ -1,6 +1,7 @@
 package com.eventseasy.backend;
 
 import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.IndexOptions;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -13,6 +14,9 @@ public class MongoStore {
     public MongoStore(MongoTemplate mongo) { this.mongo = mongo; }
     public Document one(String collection, Document filter) { return mongo.getCollection(collection).find(filter).first(); }
     public List<Document> find(String collection, Document filter) { return mongo.getCollection(collection).find(filter).into(new ArrayList<>()); }
+    public List<Document> find(String collection, Document filter, Document sort) {
+        return mongo.getCollection(collection).find(filter).sort(sort).into(new ArrayList<>());
+    }
     public List<Document> aggregate(String collection, List<Document> pipeline) { return mongo.getCollection(collection).aggregate(pipeline).into(new ArrayList<>()); }
     public Document insert(String collection, Document value) {
         if (!value.containsKey("_id")) value.put("_id", new ObjectId());
@@ -21,6 +25,12 @@ public class MongoStore {
     }
     public void update(String collection, Document filter, Document update, boolean upsert) {
         mongo.getCollection(collection).updateOne(filter, update, new UpdateOptions().upsert(upsert));
+    }
+    public long updateMany(String collection, Document filter, Document update) {
+        return mongo.getCollection(collection).updateMany(filter, update).getModifiedCount();
+    }
+    public void ensureIndex(String collection, Document fields, String name) {
+        mongo.getCollection(collection).createIndex(fields, new IndexOptions().name(name));
     }
     public long delete(String collection, Document filter) { return mongo.getCollection(collection).deleteOne(filter).getDeletedCount(); }
 }

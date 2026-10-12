@@ -14,7 +14,7 @@ public class ChatService {
     private final ObjectMapper json;
     public ChatService(MongoStore store, KafkaGateway kafka, ObjectMapper json) { this.store = store; this.kafka = kafka; this.json = json; }
     private Document viewer(String user, String eventId) {
-        try { return store.one("viewers", doc("user", user, "eventId", eventId)); } catch (Exception e) { return null; }
+        try { return store.one("viewers", doc("user", user, "eventId", eventId, "status", doc("$ne", "Inactive"))); } catch (Exception e) { return null; }
     }
     public Document create(Map<String, Object> data, String user) {
         try {
@@ -24,9 +24,10 @@ public class ChatService {
                 return result(false, "Unable to create the chat - user doesn't have privileges");
             }
             Document chat = pick(data, "eventId", "chatName", "chatDescription", "chatType", "chatDate", "chatStartTime", "chatEndTime", "chatStatus", "restrictedUsers");
+            chat.put("status", "Active"); chat.put("createdAt", new Date()); chat.put("updatedAt", new Date());
             chat = store.insert("chats", chat);
             for (Object restricted : (List<?>) data.get("restrictedUsers"))
-                store.insert("chat_restricted_users", doc("eventId", data.get("eventId"), "chatId", chat.getObjectId("_id").toHexString(), "user", restricted));
+                store.insert("chat_restricted_users", doc("eventId", data.get("eventId"), "chatId", chat.getObjectId("_id").toHexString(), "user", restricted, "status", "Active"));
             LogInfoService.Logger("Chat Creation Service", "chats service -> createChat", false, true,
                 "User verified, and new chat created successfully", "none");
             return result(true, "Successfully created the chat");
@@ -44,7 +45,7 @@ public class ChatService {
                 LogInfoService.Logger("Chat Info Retrieval Service", "chats service -> getChats", true, false,
                     "User verified successfully", "none");
                 List<Document> data = store.aggregate("chats", List.of(
-                    doc("$match", doc("eventId", eventId)),
+                    doc("$match", doc("eventId", eventId, "status", doc("$ne", "Inactive"))),
                     doc("$lookup", doc("from", "chat_restricted_users", "let", doc("chatId", doc("$toString", "$_id"), "user", user),
                         "pipeline", List.of(doc("$match", doc("$expr", doc("$and", List.of(doc("$eq", List.of("$chatId", "$$chatId")), doc("$eq", List.of("$user", "$$user"))))))), "as", "matchingRecords")),
                     doc("$match", doc("matchingRecords", doc("$eq", List.of()))),

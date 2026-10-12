@@ -1,5 +1,6 @@
 package com.eventseasy.backend;
 
+import org.bson.Document;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.env.MockEnvironment;
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,7 +15,11 @@ class InviteServiceTest {
     org.bson.Document body() { return doc("user", "a@example.com", "username", "Guest", "eventId", "e", "eventName", "Party", "hostName", "Host", "accType", "Attend", "access", false, "message", "Welcome", "flag", false); }
     @Test void invitationUpsertsOriginalAttendantFields() throws Exception {
         assertEquals(result(true, "Email sent successfully via Nodemailer"), invites.send(body()));
-        verify(store).update(eq("attendants"), eq(doc("user", "a@example.com", "userName", "Guest", "accType", "Attend", "eventId", "e")), eq(doc("$set", doc("access", false))), eq(true));
+        verify(store).update(eq("attendants"), eq(doc("user", "a@example.com", "userName", "Guest", "accType", "Attend", "eventId", "e")), argThat((Document update) -> {
+            Document set = update.get("$set", Document.class);
+            Document setOnInsert = update.get("$setOnInsert", Document.class);
+            return set != null && Boolean.FALSE.equals(set.getBoolean("access")) && "Active".equals(set.getString("status")) && set.get("updatedAt") instanceof java.util.Date && setOnInsert != null && setOnInsert.get("createdAt") instanceof java.util.Date;
+        }), eq(true));
         verify(mail).send(any(), eq("You have been Invited to Party by Host "), contains("<h3>e</3>"));
     }
     @Test void reinviteSkipsDatabaseWrite() {

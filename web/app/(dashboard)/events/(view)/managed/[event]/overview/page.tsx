@@ -1,10 +1,8 @@
-import { Metadata } from "next"
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Live Chat - Eventseasy",
+  title: "Chat - Eventseasy",
   description: "Chat with event participants",
-}
+};
 
-export default function OverviewPage(){
-
-}
+export default function OverviewPage() {}
