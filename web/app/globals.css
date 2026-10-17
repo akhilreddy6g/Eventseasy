@@ -1,3 +1,4 @@
+@import "leaflet/dist/leaflet.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -75,7 +76,7 @@
     --chart-3: 200 45% 35%;
     --chart-4: 45 70% 60%;
     --chart-5: 28 80% 60%;
-  }  
+  }
 }
 
 @layer base {
@@ -88,5 +89,5 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }

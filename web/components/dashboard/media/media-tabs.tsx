@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -32,6 +33,7 @@ import {
   Trash2,
   Upload,
   Video,
+  X,
 } from "lucide-react";
 
 type MediaType = "image" | "video";
@@ -53,6 +55,7 @@ type UploadIntent = {
   timestamp: number;
   signature: string;
   publicId: string;
+  assetFolder?: string;
   type: string;
   overwrite: boolean;
 };
@@ -93,6 +96,7 @@ export function MediaTabs({ eventId }: { eventId: string }) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [viewerItem, setViewerItem] = useState<MediaItem | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({
     complete: 0,
@@ -158,6 +162,7 @@ export function MediaTabs({ eventId }: { eventId: string }) {
     form.append("timestamp", String(intent.timestamp));
     form.append("signature", intent.signature);
     form.append("public_id", intent.publicId);
+    if (intent.assetFolder) form.append("asset_folder", intent.assetFolder);
     form.append("type", intent.type);
     form.append("overwrite", String(intent.overwrite));
 
@@ -269,8 +274,8 @@ export function MediaTabs({ eventId }: { eventId: string }) {
   const selectedCount = selected.size;
 
   return (
-    <Card className="flex-1">
-      <CardHeader className="gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <Card className="flex h-full min-h-0 flex-col overflow-hidden">
+      <CardHeader className="flex-none gap-4 border-b sm:flex-row sm:items-center sm:justify-between">
         <CardTitle>Media Gallery</CardTitle>
         <div className="flex flex-wrap items-center gap-2">
           <Button
@@ -289,7 +294,7 @@ export function MediaTabs({ eventId }: { eventId: string }) {
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="min-h-0 flex-1 overflow-y-auto">
         <Tabs
           value={mediaType}
           onValueChange={(value) => setMediaType(value as MediaType)}
@@ -351,6 +356,7 @@ export function MediaTabs({ eventId }: { eventId: string }) {
                   selectMode={selectMode}
                   selected={selected}
                   onToggle={toggleSelected}
+                  onOpen={setViewerItem}
                 />
               </section>
             ))}
@@ -362,6 +368,7 @@ export function MediaTabs({ eventId }: { eventId: string }) {
               selectMode={selectMode}
               selected={selected}
               onToggle={toggleSelected}
+              onOpen={setViewerItem}
             />
           </div>
         )}
@@ -433,6 +440,45 @@ export function MediaTabs({ eventId }: { eventId: string }) {
         </DialogContent>
       </Dialog>
 
+      <Dialog
+        open={Boolean(viewerItem)}
+        onOpenChange={(open) => !open && setViewerItem(null)}
+      >
+        <DialogContent className="h-[calc(100vh-2rem)] w-[calc(100vw-2rem)] max-w-none place-items-center border-0 bg-transparent p-0 shadow-none [&>button:last-child]:hidden">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Event media viewer</DialogTitle>
+          </DialogHeader>
+
+          <div className="relative flex h-full w-full min-h-0 min-w-0 items-center justify-center overflow-hidden p-14">
+            {viewerItem?.mediaType === "image" ? (
+              <img
+                src={deliveryUrl(viewerItem.deliveryPath)}
+                alt="Full-size event upload"
+                className="block h-auto max-h-full w-auto max-w-full rounded-md object-contain"
+              />
+            ) : viewerItem ? (
+              <video
+                src={deliveryUrl(viewerItem.deliveryPath)}
+                controls
+                autoPlay
+                className="h-auto max-h-full w-auto max-w-full rounded-md bg-black object-contain"
+                aria-label="Full-size event video"
+              />
+            ) : null}
+
+            <DialogClose asChild>
+              <button
+                type="button"
+                className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-black/70 text-white shadow-lg transition hover:scale-105 hover:bg-black/90 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
+                aria-label="Close media viewer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </DialogClose>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {selectMode && selectedCount > 0 && (
         <div className="fixed bottom-6 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-lg border bg-background px-4 py-3 shadow-lg">
           <span className="whitespace-nowrap text-sm font-medium">
@@ -484,11 +530,13 @@ function MediaGrid({
   selectMode,
   selected,
   onToggle,
+  onOpen,
 }: {
   items: MediaItem[];
   selectMode: boolean;
   selected: Set<string>;
   onToggle: (id: string, checked: boolean) => void;
+  onOpen: (item: MediaItem) => void;
 }) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
@@ -498,20 +546,36 @@ function MediaGrid({
           className="group relative aspect-square overflow-hidden rounded-md border bg-muted"
         >
           {item.mediaType === "image" ? (
-            <img
-              src={deliveryUrl(item.deliveryPath)}
-              alt="Event upload"
-              loading="lazy"
-              className="h-full w-full object-cover"
-            />
+            <button
+              type="button"
+              className="h-full w-full"
+              onClick={() => onOpen(item)}
+              aria-label="Open photo at full size"
+            >
+              <img
+                src={deliveryUrl(item.deliveryPath)}
+                alt="Event upload"
+                loading="lazy"
+                className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
+              />
+            </button>
           ) : (
-            <video
-              src={deliveryUrl(item.deliveryPath)}
-              controls
-              preload="metadata"
-              className="h-full w-full object-cover"
-              aria-label="Event video upload"
-            />
+            <button
+              type="button"
+              className="h-full w-full"
+              onClick={() => onOpen(item)}
+              aria-label="Open video player"
+            >
+              <video
+                src={deliveryUrl(item.deliveryPath)}
+                preload="metadata"
+                className="h-full w-full object-cover"
+                aria-label="Event video upload"
+              />
+              <span className="absolute inset-0 flex items-center justify-center bg-black/20 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
+                Open video
+              </span>
+            </button>
           )}
           {selectMode && (
             <div className="absolute left-2 top-2 rounded bg-background/90 p-1 shadow-sm">

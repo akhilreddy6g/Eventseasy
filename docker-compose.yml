@@ -61,11 +61,14 @@ services:
     build:
       context: ./web
       target: development
+      args:
+        NEXT_PUBLIC_GEOAPIFY_API_KEY: ${NEXT_PUBLIC_GEOAPIFY_API_KEY}
     ports:
       - "3001:3001"
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:4000
       INTERNAL_API_URL: http://backend:4000
+      NEXT_PUBLIC_GEOAPIFY_API_KEY: ${NEXT_PUBLIC_GEOAPIFY_API_KEY}
       NODE_ENV: development
     depends_on:
       - backend

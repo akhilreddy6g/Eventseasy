@@ -1,17 +1,11 @@
 import { Metadata } from "next"
-import { LandmarksList } from "@/components/dashboard/landmarks/landmarks-list"
-import { PathToDestination } from "@/components/dashboard/landmarks/path-to-destination"
+import { EventLandmarks } from "@/components/dashboard/event-content/event-landmarks"
 
 export const metadata: Metadata = {
   title: "Landmarks - Eventseasy",
   description: "Manage event locations and landmarks",
 }
 
-export default function LandmarksPage() {
-  return (
-    <div className="space-y-8 flex-1">
-      <LandmarksList />
-      <PathToDestination />
-    </div>
-  )
+export default function LandmarksPage({ params }: { params: { event: string } }) {
+  return <EventLandmarks eventId={params.event.split("sstc")[0]} />
 }

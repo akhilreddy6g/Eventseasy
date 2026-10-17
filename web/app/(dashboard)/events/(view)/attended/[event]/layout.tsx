@@ -25,21 +25,21 @@ export default async function EventLayout({
       (arr[arr.length - 1] == "0" || arr[arr.length - 1] == "1")
     ) {
       const apiRequest = await apiUrl.get(
-        `/events/data?user=${user}&status=${arr[arr.length - 1]}`
+        `/events/data?user=${user}&status=${arr[arr.length - 1]}`,
       );
       const eventId = arr[0];
       const object = apiRequest.data;
       if (object?.success) {
         const objectData: userEvents[] = object.response;
         const checkEvent = objectData.filter(
-          (curr) => curr.eventId == eventId && curr.accType == "Attend"
+          (curr) => curr.eventId == eventId && curr.accType == "Attend",
         );
         if (checkEvent.length > 0) {
           console.log("Granted guest route priveleges to the user!");
           return (
-            <div className="flex gap-2">
+            <div className="flex h-full min-h-0 min-w-0 flex-1 overflow-hidden">
               <EventSidebar type="guest" />
-              {children}
+              <div className="min-w-0 flex-1 overflow-hidden">{children}</div>
             </div>
           );
         }

@@ -23,6 +23,3 @@ services:
           initial_sync: true
         - action: rebuild
           path: ./backend/pom.xml
-
-  # Add chat_backend watch rules after the local Kafka credential validation
-  # blocker in chat_backend/pkg/kafka/kafka_consumer.go is approved/fixed.

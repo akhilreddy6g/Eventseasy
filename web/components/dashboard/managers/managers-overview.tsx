@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo} from "react";
+import React, { useEffect, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Hand, BookUser } from "@mynaui/icons-react";
@@ -14,66 +14,80 @@ import { apiUrl } from "@/components/constants";
 import { onManagersLoad } from "@/lib/features/manager-slice";
 
 interface ManagerInvite {
-  eventId: string
+  eventId: string;
 }
 
 export interface ManagerStructure {
-  user: string
-  userName: string
-  accType: string
-  access: boolean
-  eventId: string
+  user: string;
+  userName: string;
+  accType: string;
+  access: boolean;
+  eventId: string;
 }
 
 export interface MappedDataStrcuture {
-  combined: Manager []
+  combined: Manager[];
 }
 
-const ManagersOverview = ({eventId}: ManagerInvite) => {
-  const dispatch = useDispatch<AppDispatch>()
-  const queryClient = useQueryClient()
+const ManagersOverview = ({ eventId }: ManagerInvite) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const queryClient = useQueryClient();
   const fetchData = async () => {
     const apiRequest = await apiUrl.get(`/events/managers?eventId=${eventId}`);
-    return apiRequest.data
+    return apiRequest.data;
   };
-  const newInviteState = useAppSelector((state)=> state.eventManagersSliceReducer).managersAdded
+  const newInviteState = useAppSelector(
+    (state) => state.eventManagersSliceReducer,
+  ).managersAdded;
   const { data, error, isLoading } = useQuery({
     queryKey: ["managers", newInviteState],
     queryFn: fetchData,
-    retry: false
-  })
+    retry: false,
+  });
 
-  const separateEventManagers = (managerlist: ManagerStructure []) => {
-    const invited: ManagerStructure [] = []
-    const attending: ManagerStructure [] = []
-    managerlist.forEach(element => {
-      if (element.access){
-        attending.push(element)
+  const separateEventManagers = (managerlist: ManagerStructure[]) => {
+    const invited: ManagerStructure[] = [];
+    const attending: ManagerStructure[] = [];
+    managerlist.forEach((element) => {
+      if (element.access) {
+        attending.push(element);
       } else {
-        invited.push(element)
+        invited.push(element);
       }
     });
-    return {invited: invited, attending: attending}
-  }
+    return { invited: invited, attending: attending };
+  };
 
   const mappedData: MappedDataStrcuture = useMemo(() => {
-    if(data?.success){
+    if (data?.success) {
       const separatedEvents = separateEventManagers(data?.response);
-      const invited: Manager [] = separatedEvents?.invited?.map((curr: ManagerStructure) => ({name: curr.userName ?? "Missing", email: curr.user, status: "Invited"}))
-      const attending: Manager [] = separatedEvents?.attending?.map((curr: any) => ({name: curr.userName ?? "Missing", email: curr.user, status: "Accepted"}))     
-      const combined: Manager [] = [...invited, ...attending]
-      return {combined: combined}
+      const invited: Manager[] = separatedEvents?.invited?.map(
+        (curr: ManagerStructure) => ({
+          name: curr.userName ?? "Missing",
+          email: curr.user,
+          status: "Invited",
+        }),
+      );
+      const attending: Manager[] = separatedEvents?.attending?.map(
+        (curr: any) => ({
+          name: curr.userName ?? "Missing",
+          email: curr.user,
+          status: "Accepted",
+        }),
+      );
+      const combined: Manager[] = [...invited, ...attending];
+      return { combined: combined };
     }
-    return {combined: []}
-  }, [data]); 
+    return { combined: [] };
+  }, [data]);
 
-  useEffect(()=>{
-    dispatch(onManagersLoad(mappedData?.combined))
-  }, [mappedData])
+  useEffect(() => {
+    dispatch(onManagersLoad(mappedData?.combined));
+  }, [mappedData]);
 
   return (
     <Card>
-        <CardHeader>
+      <CardHeader>
         <CardTitle>Manager List</CardTitle>
       </CardHeader>
       <CardContent>
@@ -83,26 +97,26 @@ const ManagersOverview = ({eventId}: ManagerInvite) => {
               <BookUser className="mr-2 h-4" />
               All Managers ({mappedData?.combined.length})
             </TabsTrigger>
-            <TabsTrigger value="requests" className="w-1/3">
+            {/* <TabsTrigger value="requests" className="w-1/3">
               <Hand className="mr-2 h-4" />
               Requests ({2})
-            </TabsTrigger>
+            </TabsTrigger> */}
             <TabsTrigger value="invite" className="w-1/3">
               <Plus className="mr-2 h-4" />
               Send Invitation
             </TabsTrigger>
           </TabsList>
-        <TabsContent value="allmanagers" className="mt-4">
+          <TabsContent value="allmanagers" className="mt-4">
             <ManagerList eventId={eventId}></ManagerList>
-        </TabsContent>
-        <TabsContent value="requests" className="mt-4">
+          </TabsContent>
+          <TabsContent value="requests" className="mt-4">
             <ManagerRequests></ManagerRequests>
-        </TabsContent>
-        <TabsContent value="invite" className="mt-4">
+          </TabsContent>
+          <TabsContent value="invite" className="mt-4">
             <InviteUser accType="Manage" eventId={eventId}></InviteUser>
-        </TabsContent>
-      </Tabs>
-    </CardContent>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
     </Card>
   );
 };

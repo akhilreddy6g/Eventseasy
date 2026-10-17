@@ -19,6 +19,8 @@ ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ARG INTERNAL_API_URL
 ENV INTERNAL_API_URL=${INTERNAL_API_URL}
+ARG NEXT_PUBLIC_GEOAPIFY_API_KEY
+ENV NEXT_PUBLIC_GEOAPIFY_API_KEY=${NEXT_PUBLIC_GEOAPIFY_API_KEY}
 ENV NODE_ENV=production
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -28,6 +30,8 @@ FROM base AS production
 ARG INTERNAL_API_URL
 ENV NODE_ENV=production
 ENV INTERNAL_API_URL=${INTERNAL_API_URL}
+ARG NEXT_PUBLIC_GEOAPIFY_API_KEY
+ENV NEXT_PUBLIC_GEOAPIFY_API_KEY=${NEXT_PUBLIC_GEOAPIFY_API_KEY}
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/package-lock.json ./package-lock.json
 COPY --from=builder /app/node_modules ./node_modules

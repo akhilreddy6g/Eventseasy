@@ -44,8 +44,8 @@ export default function EventSidebar(props: { type: string }) {
   ];
 
   return (
-    <div className="flex flex-col w-44 border-r bg-muted/10 pr-4">
-      <nav className="flex-1 space-y-1">
+    <div className="flex h-full w-44 shrink-0 flex-col overflow-hidden bg-muted/10 pr-4">
+      <nav className="flex-1 space-y-1 overflow-y-auto">
         {navigation.map(
           (item) =>
             item.show && (
